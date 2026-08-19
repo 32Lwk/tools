@@ -13,7 +13,6 @@
     a { color: #0969da; }
     .note { color: #666; font-size: 0.9rem; }
     code { font-size: 0.9em; }
-    pre { background: #f4f4f4; padding: 0.8rem 1rem; overflow-x: auto; font-size: 0.85rem; }
     table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
     th, td { border: 1px solid #ccc; padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
     th { background: #f4f4f4; }
@@ -31,7 +30,7 @@
     .ticks-inner { position: relative; height: 2.1rem; font-size: 0.72rem; color: #666; }
     .ticks-inner span { position: absolute; transform: translateX(-50%); }
     @media (prefers-color-scheme: dark) {
-      th, pre { background: #222; }
+      th { background: #222; }
       th, td { border-color: #444; }
       .gantt-track { background: #2a2a2a; }
       .ticks-inner { color: #aaa; }
@@ -42,18 +41,53 @@
   <p class="note"><a href="../">← tools.yutok.dev</a></p>
   <h1>KEK MCA 生データ（2026-08-18〜19）</h1>
 
-  <h2>命名規則</h2>
-  <pre>日付_時刻_場所_検出器.mca
-例: 20260819_0832_管理棟2階_D1.mca</pre>
+  <h2>ファイル</h2>
   <ul>
-    <li>日付・時刻は測定の<strong>終了</strong>（開始時刻＋リアルタイムを分に四捨五入）</li>
-    <li>場所は 管理棟1階 / 管理棟2階 / linac / 放射線棟BT / 地上（linac だけ英語）</li>
-    <li><code>D1</code> と <code>d1</code> は別の検出器。大文字小文字を変えない</li>
-    <li>同じ名前の csv は <code>channel,counts</code></li>
+    <li><a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.mca">20260818_1552_管理棟2階_D1.mca</a>
+      / <a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.csv">csv</a>
+      <span class="note">— 旧: 20260818_1552_管理棟2F</span></li>
+    <li><a href="./20260818_1730_linac_D1.mca">20260818_1730_linac_D1.mca</a>
+      / <a href="./20260818_1730_linac_D1.csv">csv</a>
+      <span class="note">— 旧: 20260818_1730_linac</span></li>
+    <li><a href="./20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.mca">20260819_0832_管理棟2階_D1.mca</a>
+      / <a href="./20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.csv">csv</a>
+      <span class="note">— 旧: 管理棟2階_0819</span></li>
+    <li><a href="./20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_D1.mca">20260819_1344_管理棟1階_D1.mca</a>
+      / <a href="./20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_D1.csv">csv</a>
+      <span class="note">— 旧: 管理棟1階_0819</span></li>
+    <li><a href="./20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_d1.mca">20260819_1520_管理棟2階_d1.mca</a>
+      / <a href="./20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_d1.csv">csv</a>
+      <span class="note">— 旧: 0819放射線棟2階d1</span></li>
+    <li><a href="./20260819_1530_%E5%9C%B0%E4%B8%8A_D1.mca">20260819_1530_地上_D1.mca</a>
+      / <a href="./20260819_1530_%E5%9C%B0%E4%B8%8A_D1.csv">csv</a>
+      <span class="note">— 旧: D1＿地上_0819</span></li>
+    <li><a href="./20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_D1.mca">20260819_1854_放射線棟BT_D1.mca</a>
+      / <a href="./20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_D1.csv">csv</a>
+      <span class="note">— 旧: D1_20260819_BT</span></li>
+    <li><a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.mca">20260819_1859_放射線棟BT_d2.mca</a>
+      / <a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.csv">csv</a>
+      <span class="note">— 旧: 0819放射線BTd2</span></li>
   </ul>
+  <p class="note">名前は <code>終了日_終了時刻_場所_検出器</code>（例 <code>20260819_0832_管理棟2階_D1</code>）。<code>D</code> と <code>d</code> は別検出器、linac は英語。</p>
+  <p class="note">旧名対応: <a href="./ファイル名対応.csv">ファイル名対応.csv</a></p>
+  <table>
+    <thead>
+      <tr><th>旧名</th><th>現ファイル</th><th>備考</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>20260818_1552_管理棟2F</td><td>20260818_1552_管理棟2階_D1</td><td></td></tr>
+      <tr><td>20260818_1730_linac</td><td>20260818_1730_linac_D1</td><td></td></tr>
+      <tr><td>管理棟2階_0819</td><td>20260819_0832_管理棟2階_D1</td><td>D1 終夜</td></tr>
+      <tr><td>管理棟1階_0819</td><td>20260819_1344_管理棟1階_D1</td><td></td></tr>
+      <tr><td>0819放射線棟2階d1</td><td>20260819_1520_管理棟2階_d1</td><td>場所の誤記。管理棟2階・d1。ポリエチレンの緩衝材なし</td></tr>
+      <tr><td>D1＿地上_0819</td><td>20260819_1530_地上_D1</td><td></td></tr>
+      <tr><td>D1_20260819_BT</td><td>20260819_1854_放射線棟BT_D1</td><td></td></tr>
+      <tr><td>0819放射線BTd2</td><td>20260819_1859_放射線棟BT_d2</td><td>d2。管理棟の D1 ではない</td></tr>
+    </tbody>
+  </table>
 
-  <h2>検出器の稼働帯</h2>
-  <p class="note">HTML/CSS のみ。上段 D1（SN 1715）、下段 d1 / d2（SN 2162）。細い帯はマウスオーバーで時刻。</p>
+  <h2>スケジュール</h2>
+  <p class="note">上段 D1（SN 1715）、下段 d1 / d2（SN 2162）。細い帯はマウスオーバーで時刻。</p>
   <div class="gantt-row">
     <div class="gantt-label">D1（SN 1715）</div>
     <div class="gantt-track">
@@ -83,51 +117,5 @@
       <span style="left:100%">19時</span>
     </div>
   </div>
-
-  <h2>ファイル</h2>
-  <ul>
-    <li><a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.mca">20260818_1552_管理棟2階_D1.mca</a>
-      / <a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.csv">csv</a>
-      <span class="note">— 旧: 20260818_1552_管理棟2F</span></li>
-    <li><a href="./20260818_1730_linac_D1.mca">20260818_1730_linac_D1.mca</a>
-      / <a href="./20260818_1730_linac_D1.csv">csv</a>
-      <span class="note">— 旧: 20260818_1730_linac</span></li>
-    <li><a href="./20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.mca">20260819_0832_管理棟2階_D1.mca</a>
-      / <a href="./20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.csv">csv</a>
-      <span class="note">— 旧: 管理棟2階_0819</span></li>
-    <li><a href="./20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_D1.mca">20260819_1344_管理棟1階_D1.mca</a>
-      / <a href="./20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_D1.csv">csv</a>
-      <span class="note">— 旧: 管理棟1階_0819</span></li>
-    <li><a href="./20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_d1.mca">20260819_1520_管理棟2階_d1.mca</a>
-      / <a href="./20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_d1.csv">csv</a>
-      <span class="note">— 旧: 0819放射線棟2階d1</span></li>
-    <li><a href="./20260819_1530_%E5%9C%B0%E4%B8%8A_D1.mca">20260819_1530_地上_D1.mca</a>
-      / <a href="./20260819_1530_%E5%9C%B0%E4%B8%8A_D1.csv">csv</a>
-      <span class="note">— 旧: D1＿地上_0819</span></li>
-    <li><a href="./20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_D1.mca">20260819_1854_放射線棟BT_D1.mca</a>
-      / <a href="./20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_D1.csv">csv</a>
-      <span class="note">— 旧: D1_20260819_BT</span></li>
-    <li><a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.mca">20260819_1859_放射線棟BT_d2.mca</a>
-      / <a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.csv">csv</a>
-      <span class="note">— 旧: 0819放射線BTd2</span></li>
-  </ul>
-
-  <h2>旧名 → 現ファイル</h2>
-  <p class="note"><a href="./ファイル名対応.csv">ファイル名対応.csv</a></p>
-  <table>
-    <thead>
-      <tr><th>旧名</th><th>現ファイル</th><th>備考</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>20260818_1552_管理棟2F</td><td>20260818_1552_管理棟2階_D1</td><td></td></tr>
-      <tr><td>20260818_1730_linac</td><td>20260818_1730_linac_D1</td><td></td></tr>
-      <tr><td>管理棟2階_0819</td><td>20260819_0832_管理棟2階_D1</td><td>D1 終夜</td></tr>
-      <tr><td>管理棟1階_0819</td><td>20260819_1344_管理棟1階_D1</td><td></td></tr>
-      <tr><td>0819放射線棟2階d1</td><td>20260819_1520_管理棟2階_d1</td><td>場所の誤記。管理棟2階・d1。ポリエチレンの緩衝材なし</td></tr>
-      <tr><td>D1＿地上_0819</td><td>20260819_1530_地上_D1</td><td></td></tr>
-      <tr><td>D1_20260819_BT</td><td>20260819_1854_放射線棟BT_D1</td><td></td></tr>
-      <tr><td>0819放射線BTd2</td><td>20260819_1859_放射線棟BT_d2</td><td>d2。管理棟の D1 ではない</td></tr>
-    </tbody>
-  </table>
 </body>
 </html>
