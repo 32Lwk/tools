@@ -17,9 +17,24 @@
     table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
     th, td { border: 1px solid #ccc; padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
     th { background: #f4f4f4; }
+    .gantt-row { display: grid; grid-template-columns: 8rem 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.45rem; }
+    .gantt-label { font-size: 0.9rem; }
+    .gantt-track { position: relative; height: 2.15rem; background: #e8e8e8; border-radius: 4px; }
+    .bar {
+      position: absolute; top: 4px; bottom: 4px; border-radius: 3px;
+      font-size: 0.68rem; line-height: 1.65rem; text-align: center;
+      overflow: hidden; white-space: nowrap; padding: 0 0.3rem; box-sizing: border-box;
+    }
+    .bar.D { background: #1f77b4; color: #fff; }
+    .bar.d { background: #e6a817; color: #222; }
+    .ticks { display: grid; grid-template-columns: 8rem 1fr; }
+    .ticks-inner { position: relative; height: 2.1rem; font-size: 0.72rem; color: #666; }
+    .ticks-inner span { position: absolute; transform: translateX(-50%); }
     @media (prefers-color-scheme: dark) {
       th, pre { background: #222; }
       th, td { border-color: #444; }
+      .gantt-track { background: #2a2a2a; }
+      .ticks-inner { color: #aaa; }
     }
   </style>
 </head>
@@ -38,8 +53,36 @@
   </ul>
 
   <h2>検出器の稼働帯</h2>
-  <p class="note">上段 D1（SN 1715）、下段 d1 / d2（SN 2162）。帯の長さは開始〜終了。</p>
-  <p><img src="./11_検出器稼働帯.png" alt="D系列とd系列の稼働帯" style="width:100%;height:auto;"></p>
+  <p class="note">HTML/CSS のみ。上段 D1（SN 1715）、下段 d1 / d2（SN 2162）。細い帯はマウスオーバーで時刻。</p>
+  <div class="gantt-row">
+    <div class="gantt-label">D1（SN 1715）</div>
+    <div class="gantt-track">
+      <span class="bar D" style="left:1.79%;width:1.33%" title="管理棟2階 短　8/18 15:30–15:52"></span>
+      <span class="bar D" style="left:4.75%;width:4.18%" title="linac　8/18 16:19–17:30">linac</span>
+      <span class="bar D" style="left:10.76%;width:51.89%" title="管理棟2階 終夜　8/18 18:00–8/19 08:32">管理棟2階 終夜</span>
+      <span class="bar D" style="left:63.85%;width:17.36%" title="管理棟1階　8/19 08:52–13:44">管理棟1階</span>
+      <span class="bar D" style="left:82.80%;width:4.71%" title="地上　8/19 14:11–15:30">地上</span>
+      <span class="bar D" style="left:90.12%;width:9.52%" title="放射線棟BT D1　8/19 16:13–18:54">BT D1</span>
+    </div>
+  </div>
+  <div class="gantt-row">
+    <div class="gantt-label">d1 / d2（SN 2162）</div>
+    <div class="gantt-track">
+      <span class="bar d" style="left:10.69%;width:76.22%" title="管理棟2階 d1（PE緩衝材なし）　8/18 17:59–8/19 15:20">管理棟2階 d1（PEなし）</span>
+      <span class="bar d" style="left:90.49%;width:9.47%" title="放射線棟BT d2　8/19 16:20–18:59">BT d2</span>
+    </div>
+  </div>
+  <div class="ticks">
+    <div></div>
+    <div class="ticks-inner">
+      <span style="left:0%">8/18 15</span>
+      <span style="left:21.43%">21時</span>
+      <span style="left:42.86%">8/19 03</span>
+      <span style="left:64.29%">09時</span>
+      <span style="left:85.71%">15時</span>
+      <span style="left:100%">19時</span>
+    </div>
+  </div>
 
   <h2>ファイル</h2>
   <ul>
