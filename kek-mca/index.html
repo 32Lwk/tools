@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KEK MCA 生データ — tools.yutok.dev</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 40rem;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      line-height: 1.6;
+    }
+    h1 { font-size: 1.4rem; }
+    ul { padding-left: 1.2rem; }
+    a { color: #0969da; }
+    .note { color: #666; font-size: 0.9rem; }
+    code { font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <p class="note"><a href="../">← tools.yutok.dev</a></p>
+  <h1>KEK MCA 生データ（2026-08-18〜19）</h1>
+  <p>Amptek MCA8000D（512 ch）。<code>.mca</code> は装置出力、<code>.csv</code> は <code>channel,counts</code> の生カウントです。</p>
+  <ul>
+    <li><a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2F.mca">20260818_1552_管理棟2F.mca</a>
+      / <a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2F.csv">csv</a>
+      <span class="note">— 管理棟2F 短時間</span></li>
+    <li><a href="./20260818_1730_linac.mca">20260818_1730_linac.mca</a>
+      / <a href="./20260818_1730_linac.csv">csv</a>
+      <span class="note">— linac 建屋</span></li>
+    <li><a href="./%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_0819.mca">管理棟2階_0819.mca</a>
+      / <a href="./%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_0819.csv">csv</a>
+      <span class="note">— 管理棟2階 終夜</span></li>
+    <li><a href="./%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_0819.mca">管理棟1階_0819.mca</a>
+      / <a href="./%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_0819.csv">csv</a>
+      <span class="note">— 管理棟1階</span></li>
+  </ul>
+  <p class="note">解析表・図は含みません。置き場は <code>raw/</code> のみです。</p>
+</body>
+</html>
