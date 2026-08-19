@@ -6,44 +6,115 @@
   <title>KEK MCA 生データ — tools.yutok.dev</title>
   <style>
     :root { color-scheme: light dark; }
-    body { font-family: system-ui, sans-serif; max-width: 48rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
+    body { font-family: system-ui, sans-serif; max-width: 56rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
     h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; }
     ul { padding-left: 1.2rem; }
     a { color: #0969da; }
     .note { color: #666; font-size: 0.9rem; }
     code { font-size: 0.9em; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+    th, td { border: 1px solid #ccc; padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
+    th { background: #f4f4f4; }
+    @media (prefers-color-scheme: dark) {
+      th { background: #222; }
+      th, td { border-color: #444; }
+    }
   </style>
 </head>
 <body>
   <p class="note"><a href="../">← tools.yutok.dev</a></p>
   <h1>KEK MCA 生データ（2026-08-18〜19）</h1>
-  <p>ファイル名は <code>YYYYMMDD_HHMM_場所_Det</code>（HHMM は測定終了）。<code>D</code> と <code>d</code> は別検出器。linac は英語表記。</p>
+  <p>ファイル名は <code>YYYYMMDD_HHMM_場所_Det</code>（HHMM は測定<strong>終了</strong>）。<code>D</code> と <code>d</code> は別検出器。linac は英語表記。</p>
   <ul>
     <li><a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.mca">20260818_1552_管理棟2階_D1.mca</a>
       / <a href="./20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.csv">csv</a>
-      <span class="note">— 管理棟2階 短時間・D1</span></li>
+      <span class="note">— 旧: 20260818_1552_管理棟2F</span></li>
     <li><a href="./20260818_1730_linac_D1.mca">20260818_1730_linac_D1.mca</a>
       / <a href="./20260818_1730_linac_D1.csv">csv</a>
-      <span class="note">— linac・D1</span></li>
+      <span class="note">— 旧: 20260818_1730_linac</span></li>
     <li><a href="./20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.mca">20260819_0832_管理棟2階_D1.mca</a>
       / <a href="./20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_D1.csv">csv</a>
-      <span class="note">— 管理棟2階 終夜・D1</span></li>
+      <span class="note">— 旧: 管理棟2階_0819</span></li>
     <li><a href="./20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_D1.mca">20260819_1344_管理棟1階_D1.mca</a>
       / <a href="./20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E_D1.csv">csv</a>
-      <span class="note">— 管理棟1階・D1</span></li>
+      <span class="note">— 旧: 管理棟1階_0819</span></li>
     <li><a href="./20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_d1.mca">20260819_1520_管理棟2階_d1.mca</a>
       / <a href="./20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E_d1.csv">csv</a>
-      <span class="note">— 管理棟2階 約21h・d1</span></li>
+      <span class="note">— 旧: 0819放射線棟2階d1（誤記。管理棟2階・d1）</span></li>
     <li><a href="./20260819_1530_%E5%9C%B0%E4%B8%8A_D1.mca">20260819_1530_地上_D1.mca</a>
       / <a href="./20260819_1530_%E5%9C%B0%E4%B8%8A_D1.csv">csv</a>
-      <span class="note">— 地上・D1</span></li>
+      <span class="note">— 旧: D1＿地上_0819</span></li>
     <li><a href="./20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_D1.mca">20260819_1854_放射線棟BT_D1.mca</a>
       / <a href="./20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_D1.csv">csv</a>
-      <span class="note">— 放射線棟 BT・D1</span></li>
+      <span class="note">— 旧: D1_20260819_BT</span></li>
     <li><a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.mca">20260819_1859_放射線棟BT_d2.mca</a>
       / <a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.csv">csv</a>
-      <span class="note">— 放射線棟 BT・d2</span></li>
+      <span class="note">— 旧: 0819放射線BTd2</span></li>
   </ul>
+
+  <h2>過去の名前との対応</h2>
+  <p class="note">CSV: <a href="./ファイル名対応.csv">ファイル名対応.csv</a>（UTF-8）</p>
+  <table>
+    <thead>
+      <tr>
+        <th>現ファイル</th>
+        <th>装置メモ名（最初）</th>
+        <th>開始時刻リネーム（途中）</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>20260818_1552_管理棟2階_D1</td>
+        <td>20260818_1552_管理棟2F</td>
+        <td>20260818_1530_管理棟2階_D1</td>
+        <td>終了 1552 が最初の保存名と一致</td>
+      </tr>
+      <tr>
+        <td>20260818_1730_linac_D1</td>
+        <td>20260818_1730_linac</td>
+        <td>20260818_1619_ライナック_D1</td>
+        <td>place は英語 linac。途中だけカタカナ</td>
+      </tr>
+      <tr>
+        <td>20260819_0832_管理棟2階_D1</td>
+        <td>管理棟2階_0819</td>
+        <td>20260818_1800_管理棟2階_D1</td>
+        <td>D1 終夜</td>
+      </tr>
+      <tr>
+        <td>20260819_1344_管理棟1階_D1</td>
+        <td>管理棟1階_0819</td>
+        <td>20260819_0852_管理棟1階_D1</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>20260819_1520_管理棟2階_d1</td>
+        <td>0819放射線棟2階d1</td>
+        <td>20260818_1759_放射線棟2階_d1</td>
+        <td>放射線棟に2階はない。管理棟2階・d1</td>
+      </tr>
+      <tr>
+        <td>20260819_1530_地上_D1</td>
+        <td>D1＿地上_0819</td>
+        <td>20260819_1411_地上_D1</td>
+        <td>全角アンダースコアを廃止</td>
+      </tr>
+      <tr>
+        <td>20260819_1854_放射線棟BT_D1</td>
+        <td>D1_20260819_BT</td>
+        <td>20260819_1613_放射線棟BT_D1</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>20260819_1859_放射線棟BT_d2</td>
+        <td>0819放射線BTd2</td>
+        <td>20260819_1620_放射線棟BT_d2</td>
+        <td>d2。管理棟 D1 ではない</td>
+      </tr>
+    </tbody>
+  </table>
   <p class="note">解析表・図は含みません。置き場は raw のみです。</p>
 </body>
 </html>
