@@ -39,7 +39,7 @@
 </head>
 <body>
   <p class="note"><a href="../">← tools.yutok.dev</a></p>
-  <h1>KEK MCA 生データ（2026-08-18〜19）</h1>
+  <h1>KEK MCA 生データ（2026-08-18〜20）</h1>
 
   <h2>ファイル</h2>
   <ul>
@@ -67,8 +67,20 @@
     <li><a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.mca">20260819_1859_放射線棟BT_d2.mca</a>
       / <a href="./20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT_d2.csv">csv</a>
       <span class="note">— 旧: 0819放射線BTd2</span></li>
+    <li><a href="./20260820_0807_PF_D1.mca">20260820_0807_PF_D1.mca</a>
+      / <a href="./20260820_0807_PF_D1.csv">csv</a>
+      <span class="note">— 旧: D1_20260820_PF</span></li>
+    <li><a href="./20260820_0807_PF_d2.mca">20260820_0807_PF_d2.mca</a>
+      / <a href="./20260820_0807_PF_d2.csv">csv</a>
+      <span class="note">— 旧: d2_20260820_PF</span></li>
+    <li><a href="./20260820_1939_KEKB_D1.mca">20260820_1939_KEKB_D1.mca</a>
+      / <a href="./20260820_1939_KEKB_D1.csv">csv</a>
+      <span class="note">— 旧: D1_20260820_KEKB</span></li>
+    <li><a href="./20260820_1939_KEKB_d2.mca">20260820_1939_KEKB_d2.mca</a>
+      / <a href="./20260820_1939_KEKB_d2.csv">csv</a>
+      <span class="note">— 旧: d2_20260820_KEKB</span></li>
   </ul>
-  <p class="note">名前は <code>終了日_終了時刻_場所_検出器</code>（例 <code>20260819_0832_管理棟2階_D1</code>）。<code>D</code> と <code>d</code> は別検出器、linac は英語。</p>
+  <p class="note">名前は <code>終了日_終了時刻_場所_検出器</code>（例 <code>20260819_0832_管理棟2階_D1</code>）。<code>D</code> と <code>d</code> は別検出器、linac / PF / KEKB は英語。</p>
   <p class="note">旧名対応: <a href="./ファイル名対応.csv">ファイル名対応.csv</a></p>
   <table>
     <thead>
@@ -83,6 +95,10 @@
       <tr><td>D1＿地上_0819</td><td>20260819_1530_地上_D1</td><td></td></tr>
       <tr><td>D1_20260819_BT</td><td>20260819_1854_放射線棟BT_D1</td><td></td></tr>
       <tr><td>0819放射線BTd2</td><td>20260819_1859_放射線棟BT_d2</td><td>d2。管理棟の D1 ではない</td></tr>
+      <tr><td>D1_20260820_PF</td><td>20260820_0807_PF_D1</td><td>PF 終夜</td></tr>
+      <tr><td>d2_20260820_PF</td><td>20260820_0807_PF_d2</td><td>PF 終夜</td></tr>
+      <tr><td>D1_20260820_KEKB</td><td>20260820_1939_KEKB_D1</td><td></td></tr>
+      <tr><td>d2_20260820_KEKB</td><td>20260820_1939_KEKB_d2</td><td></td></tr>
     </tbody>
   </table>
 
@@ -91,30 +107,34 @@
   <div class="gantt-row">
     <div class="gantt-label">D1（SN 1715）</div>
     <div class="gantt-track">
-      <span class="bar D" style="left:1.79%;width:1.33%" title="管理棟2階 短　8/18 15:30–15:52"></span>
-      <span class="bar D" style="left:4.75%;width:4.18%" title="linac　8/18 16:19–17:30">linac</span>
-      <span class="bar D" style="left:10.76%;width:51.89%" title="管理棟2階 終夜　8/18 18:00–8/19 08:32">管理棟2階 終夜</span>
-      <span class="bar D" style="left:63.85%;width:17.36%" title="管理棟1階　8/19 08:52–13:44">管理棟1階</span>
-      <span class="bar D" style="left:82.80%;width:4.71%" title="地上　8/19 14:11–15:30">地上</span>
-      <span class="bar D" style="left:90.12%;width:9.52%" title="放射線棟BT D1　8/19 16:13–18:54">BT D1</span>
+      <span class="bar D" style="left:0.95%;width:0.70%" title="管理棟2階 短　8/18 15:30–15:52"></span>
+      <span class="bar D" style="left:2.51%;width:2.21%" title="linac　8/18 16:19–17:30">linac</span>
+      <span class="bar D" style="left:5.68%;width:27.41%" title="管理棟2階 終夜　8/18 18:00–8/19 08:32">管理棟2階 終夜</span>
+      <span class="bar D" style="left:33.73%;width:9.17%" title="管理棟1階　8/19 08:52–13:44">管理棟1階</span>
+      <span class="bar D" style="left:43.74%;width:2.49%" title="地上　8/19 14:11–15:30">地上</span>
+      <span class="bar D" style="left:47.61%;width:5.03%" title="放射線棟BT D1　8/19 16:13–18:54">BT D1</span>
+      <span class="bar D" style="left:53.62%;width:23.97%" title="PF D1　8/19 19:25–8/20 08:07">PF</span>
+      <span class="bar D" style="left:78.88%;width:20.46%" title="KEKB D1　8/20 08:48–19:39">KEKB</span>
     </div>
   </div>
   <div class="gantt-row">
     <div class="gantt-label">d1 / d2（SN 2162）</div>
     <div class="gantt-track">
-      <span class="bar d" style="left:10.69%;width:76.22%" title="管理棟2階 d1（PE緩衝材なし）　8/18 17:59–8/19 15:20">管理棟2階 d1（PEなし）</span>
-      <span class="bar d" style="left:90.49%;width:9.47%" title="放射線棟BT d2　8/19 16:20–18:59">BT d2</span>
+      <span class="bar d" style="left:5.65%;width:40.27%" title="管理棟2階 d1（PE緩衝材なし）　8/18 17:59–8/19 15:20">管理棟2階 d1（PEなし）</span>
+      <span class="bar d" style="left:47.81%;width:5.00%" title="放射線棟BT d2　8/19 16:20–18:59">BT d2</span>
+      <span class="bar d" style="left:53.61%;width:23.98%" title="PF d2　8/19 19:24–8/20 08:07">PF</span>
+      <span class="bar d" style="left:78.88%;width:20.46%" title="KEKB d2　8/20 08:48–19:39">KEKB</span>
     </div>
   </div>
   <div class="ticks">
     <div></div>
     <div class="ticks-inner">
       <span style="left:0%">8/18 15</span>
-      <span style="left:21.43%">21時</span>
-      <span style="left:42.86%">8/19 03</span>
-      <span style="left:64.29%">09時</span>
-      <span style="left:85.71%">15時</span>
-      <span style="left:100%">19時</span>
+      <span style="left:22.64%">8/19 03</span>
+      <span style="left:45.28%">15時</span>
+      <span style="left:67.92%">8/20 03</span>
+      <span style="left:90.57%">15時</span>
+      <span style="left:100%">20時</span>
     </div>
   </div>
 </body>
