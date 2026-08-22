@@ -13,11 +13,17 @@
 
 | ID | 内容 | 根拠 |
 |----|------|------|
-| `tsukuba`（既定） | ローム 3.5 m → 常総 2.0 m → 下総 | 筑波台地の自然地盤。組成傾向は [J-Stage 地質調査所月報 52(8)](https://www.jstage.jst.go.jp/article/bullgsj/52/8/52_347/_pdf/-char/ja) |
-| `asahi` | 舗装・埋土が厚い造成地 | [KuniJiban](https://www.kunijiban.pwri.go.jp/viewer/) つくば市旭 B1 相当 |
+| `tsukuba`（既定） | ローム 3.5 m → 常総 2.0 m → 下総 | 筑波台地自然地盤。層序は宇野沢ほか1988・坂田ほか2018/2024 |
+| `asahi` | 舗装 0.35 m + 埋土 5.2 m + 常総 2.15 m | [KuniJiban](https://www.kunijiban.pwri.go.jp/viewer/) 旭 B1（層厚・ρ） |
 | `textbook` | ローム ≤4 m / 以深は常総 | 夏の学校教材の単純モデル |
 
 ## ファイル
 
 - `index.html` — UI
 - `app.js` — 計算ロジック
+
+## 組成分離（2026-08-22）
+
+- 常総粘土: Al/Fe↑ Si↓（ロームと別組成）
+- 下総: 砂質（Si↑）
+- 埋土: 旭 B1 浅部向け

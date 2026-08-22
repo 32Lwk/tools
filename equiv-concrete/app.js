@@ -78,16 +78,20 @@ const PRESETS = {
 
 const SOIL_COMP = {
   kanto_loam: {
-    O: 0.52,
-    Si: 0.22,
-    Al: 0.12,
-    Fe: 0.07,
-    H: 0.014,
-    Ca: 0.008,
-    Mg: 0.01,
-    Na: 0.006,
-    K: 0.007,
-    Ti: 0.006,
+    O: 0.52, Si: 0.22, Al: 0.12, Fe: 0.07, H: 0.014,
+    Ca: 0.008, Mg: 0.01, Na: 0.006, K: 0.007, Ti: 0.006,
+  },
+  joso_clay: {
+    O: 0.50, Si: 0.18, Al: 0.14, Fe: 0.08, H: 0.015,
+    Ca: 0.006, Mg: 0.012, Na: 0.005, K: 0.008, Ti: 0.006,
+  },
+  shimosa_sand: {
+    O: 0.48, Si: 0.32, Al: 0.06, Fe: 0.05, H: 0.012,
+    Ca: 0.008, Mg: 0.008, Na: 0.004, K: 0.005, Ti: 0.004,
+  },
+  fill_soil: {
+    O: 0.50, Si: 0.25, Al: 0.09, Fe: 0.05, H: 0.018,
+    Ca: 0.008, Mg: 0.008, Na: 0.005, K: 0.006, Ti: 0.004,
   },
   soil_slide: { O: 0.5, Si: 0.27, Al: 0.07, Fe: 0.04, H: 0.02 },
   concrete_slide: { O: 0.53, Si: 0.34, Ca: 0.04, Al: 0.03, H: 0.01 },
@@ -124,15 +128,15 @@ const PROFILES = {
     id: "tsukuba",
     label: "筑波台地・自然地盤（推奨）",
     note:
-      "表層〜中部は関東ローム、その下に常総粘土相当、以深は下総層群。KEK 大穂キャンパス向き。",
+      "筑波台地・自然地盤（KEK 向け推奨）: ローム 3.5 m → 常総 2.0 m → 下総。層厚は区域代表。",
     sources: [
       {
-        text: "地質調査所月報 52巻8号（寺島ほか, 2001）— 関東の土壌組成傾向",
-        href: "https://www.jstage.jst.go.jp/article/bullgsj/52/8/52_347/_pdf/-char/ja",
+        text: "筑波台地層序（宇野沢ほか1988、坂田ほか2018/2024）",
+        href: "",
       },
       {
-        text: "KuniJiban（国総研）— 筑波台地の層序・密度の参照",
-        href: "https://www.kunijiban.pwri.go.jp/viewer/",
+        text: "地質調査所月報 52(8) — 沖積土の元素傾向（参考。ローム直接値ではない）",
+        href: "https://www.jstage.jst.go.jp/article/bullgsj/52/8/52_347/_pdf/-char/ja",
       },
     ],
     layers: [
@@ -145,10 +149,10 @@ const PROFILES = {
     id: "asahi",
     label: "つくば市旭 B1（KuniJiban）",
     note:
-      "国総研ボーリング: 舗装〜埋土が厚い造成地モデル。自然地盤の KEK 敷地には過大評価になり得る。",
+      "国総研・つくば市旭 B1（2021）: 舗装 0.35 m + 埋土 5.20 m + 凝灰質粘土 2.15 m → 下総。造成地モデル。",
     sources: [
       {
-        text: "KuniJiban ビューア（つくば市旭など）",
+        text: "KuniJiban — 層序・密度（組成ではない）",
         href: "https://www.kunijiban.pwri.go.jp/viewer/",
       },
     ],
