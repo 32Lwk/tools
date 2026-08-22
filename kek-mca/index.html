@@ -97,6 +97,12 @@
     <li><a href="./20260822_115232_PF_d2.mca">20260822_115232_PF_d2.mca</a>
       / <a href="./20260822_115232_PF_d2.csv">csv</a>
       <span class="note">— 旧: smalld2_20260822_PF</span></li>
+    <li><a href="./D2_20260822_%E5%9C%B0%E4%B8%8A.mca">D2_20260822_地上.mca</a>
+      / <a href="./D2_20260822_%E5%9C%B0%E4%B8%8A.csv">csv</a>
+      <span class="note">— 8/22 地上・D2</span></li>
+    <li><a href="./smalld2_20260822%EF%BC%BF%E5%9C%B0%E4%B8%8A.mca">smalld2_20260822＿地上.mca</a>
+      / <a href="./smalld2_20260822%EF%BC%BF%E5%9C%B0%E4%B8%8A.csv">csv</a>
+      <span class="note">— 旧名 smalld2。8/22 地上・d2</span></li>
   </ul>
   <p class="note">名前は <code>終了日_終了時刻_場所_検出器</code>（例 <code>20260819_0832_管理棟2階_D1</code>）。
   <code>D</code> と <code>d</code> は別検出器、linac / PF / KEKB / linacIRON は英語。
@@ -240,6 +246,20 @@
         <td>61368.5 s（17.05 h）</td>
         <td>旧名 smalld2。PF 終夜。D2/d2 衝突回避のため秒付き</td>
       </tr>
+      <tr>
+        <td>D2_20260822_地上</td>
+        <td>D2_20260822_地上</td>
+        <td>2026-08-22 12:25:33</td>
+        <td>12302.0 s（3.42 h）</td>
+        <td>8/22 地上。D2。終了 15:50</td>
+      </tr>
+      <tr>
+        <td>smalld2_20260822＿地上</td>
+        <td>smalld2_20260822＿地上</td>
+        <td>2026-08-22 12:25:32</td>
+        <td>12104.8 s（3.36 h）</td>
+        <td>旧名 smalld2。d2。終了 15:47</td>
+      </tr>
     </tbody>
   </table>
 
@@ -248,44 +268,135 @@
   <div class="gantt-row">
     <div class="gantt-label">D1 / D2</div>
     <div class="gantt-track">
-      <span class="bar D" style="left:0.54%;width:0.40%" title="管理棟2階 短　8/18 15:30–15:52"></span>
-      <span class="bar D" style="left:1.43%;width:1.26%" title="linac　8/18 16:19–17:29"></span>
-      <span class="bar D" style="left:3.24%;width:15.62%" title="管理棟2階 終夜　8/18 18:00–8/19 08:32">管理棟2階 終夜</span>
-      <span class="bar D" style="left:19.22%;width:5.23%" title="管理棟1階　8/19 08:52–13:44">管理棟1階</span>
-      <span class="bar D" style="left:24.93%;width:1.42%" title="地上　8/19 14:11–15:30"></span>
-      <span class="bar D" style="left:27.13%;width:2.87%" title="BT D1　8/19 16:13–18:53">BT D1</span>
-      <span class="bar D" style="left:30.56%;width:13.66%" title="PF　8/19 19:25–8/20 08:07">PF</span>
-      <span class="bar D" style="left:44.95%;width:11.66%" title="KEKB　8/20 08:48–19:39">KEKB</span>
-      <span class="bar D" style="left:57.29%;width:12.74%" title="linac D2　8/20 20:16–8/21 08:07">linac D2</span>
-      <span class="bar D" style="left:70.38%;width:9.23%" title="linacIRON D2　8/21 08:27–17:02">linacIRON D2</span>
-      <span class="bar D" style="left:81.07%;width:18.80%" title="PF D2　8/21 18:23–8/22 11:52">PF D2</span>
+      <span class="bar D" style="left:0.52%;width:0.38%" title="管理棟2階 短　8/18 15:30–15:52"></span>
+      <span class="bar D" style="left:1.37%;width:1.21%" title="linac　8/18 16:19–17:29"></span>
+      <span class="bar D" style="left:3.11%;width:14.96%" title="管理棟2階 終夜　8/18 18:00–8/19 08:32">管理棟2階 終夜</span>
+      <span class="bar D" style="left:18.43%;width:5.01%" title="管理棟1階　8/19 08:52–13:44">管理棟1階</span>
+      <span class="bar D" style="left:23.90%;width:1.36%" title="地上　8/19 14:11–15:30"></span>
+      <span class="bar D" style="left:26.01%;width:2.74%" title="BT D1　8/19 16:13–18:53">BT D1</span>
+      <span class="bar D" style="left:29.30%;width:13.09%" title="PF　8/19 19:25–8/20 08:07">PF</span>
+      <span class="bar D" style="left:43.10%;width:11.17%" title="KEKB　8/20 08:48–19:39">KEKB</span>
+      <span class="bar D" style="left:54.93%;width:12.19%" title="linac D2　8/20 20:16–8/21 08:07">linac D2</span>
+      <span class="bar D" style="left:67.48%;width:8.84%" title="linacIRON D2　8/21 08:27–17:02">linacIRON D2</span>
+      <span class="bar D" style="left:77.73%;width:18.00%" title="PF D2　8/21 18:23–8/22 11:52">PF D2</span>
+      <span class="bar D" style="left:96.32%;width:3.52%" title="地上 D2　8/22 12:25–15:50">地上 D2</span>
     </div>
   </div>
   <div class="gantt-row">
     <div class="gantt-label">d1 / d2</div>
     <div class="gantt-track">
-      <span class="bar d" style="left:3.22%;width:22.95%" title="管理棟2階 d1（PE緩衝材なし）　8/18 17:59–8/19 15:20">管理棟2階 d1（PEなし）</span>
-      <span class="bar d" style="left:27.24%;width:2.85%" title="BT d2　8/19 16:20–18:59">BT d2</span>
-      <span class="bar d" style="left:30.55%;width:13.67%" title="PF d2　8/19 19:24–8/20 08:07">PF d2</span>
-      <span class="bar d" style="left:44.95%;width:11.66%" title="KEKB　8/20 08:48–19:39">KEKB</span>
-      <span class="bar d" style="left:57.29%;width:12.73%" title="linac d2　8/20 20:16–8/21 08:07">linac d2</span>
-      <span class="bar d" style="left:70.38%;width:9.23%" title="linacIRON d2　8/21 08:27–17:02">linacIRON d2</span>
-      <span class="bar d" style="left:81.06%;width:18.80%" title="PF d2　8/21 18:23–8/22 11:52">PF d2</span>
+      <span class="bar d" style="left:3.09%;width:22.00%" title="管理棟2階 d1（PE緩衝材なし）　8/18 17:59–8/19 15:20">管理棟2階 d1（PEなし）</span>
+      <span class="bar d" style="left:26.12%;width:2.73%" title="BT d2　8/19 16:20–18:59">BT d2</span>
+      <span class="bar d" style="left:29.29%;width:13.10%" title="PF d2　8/19 19:24–8/20 08:07">PF d2</span>
+      <span class="bar d" style="left:43.10%;width:11.18%" title="KEKB　8/20 08:48–19:39">KEKB</span>
+      <span class="bar d" style="left:54.93%;width:12.00%" title="linac d2　8/20 20:16–8/21 08:07">linac d2</span>
+      <span class="bar d" style="left:67.48%;width:8.62%" title="linacIRON d2　8/21 08:27–17:02">linacIRON d2</span>
+      <span class="bar d" style="left:77.72%;width:17.57%" title="PF d2　8/21 18:23–8/22 11:52">PF d2</span>
+      <span class="bar d" style="left:96.32%;width:3.47%" title="地上 d2　8/22 12:25–15:47">地上 d2</span>
     </div>
   </div>
   <div class="ticks">
     <div></div>
     <div class="ticks-inner">
       <span style="left:0.00%">8/18 15</span>
-      <span style="left:12.90%">8/19 03</span>
-      <span style="left:25.81%">15時</span>
-      <span style="left:38.71%">8/20 03</span>
-      <span style="left:51.61%">15時</span>
-      <span style="left:64.52%">8/21 03</span>
-      <span style="left:77.42%">15時</span>
-      <span style="left:90.32%">8/22 03</span>
-      <span style="left:100.00%">8/22 12時</span>
+      <span style="left:12.50%">8/19 03</span>
+      <span style="left:25.00%">15時</span>
+      <span style="left:37.50%">8/20 03</span>
+      <span style="left:50.00%">15時</span>
+      <span style="left:62.50%">8/21 03</span>
+      <span style="left:75.00%">15時</span>
+      <span style="left:87.50%">8/22 03</span>
+      <span style="left:100.00%">8/22 16時</span>
     </div>
   </div>
+
+  <h2>熱中性子管理棟（2026-08-22）</h2>
+  <p class="note">地下施設キャンペーンとは別セッション。短時間テスト（距離・Gain 変更など）。ファイル名は USB 上の旧名のまま。</p>
+  <ul>
+    <li><a href="./D1_20260822%EF%BC%BF1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">D1_20260822＿1633_熱中性子管理棟-30cm.mca</a>
+      / <a href="./D1_20260822%EF%BC%BF1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.csv">csv</a></li>
+    <li><a href="./D1_20260822%EF%BC%BF1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.mca">D1_20260822＿1644_熱中性子管理棟2-80cm.mca</a>
+      / <a href="./D1_20260822%EF%BC%BF1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.csv">csv</a></li>
+    <li><a href="./D1_20260822%EF%BC%BF1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.mca">D1_20260822＿1650_熱中性子管理棟-gain500.mca</a>
+      / <a href="./D1_20260822%EF%BC%BF1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.csv">csv</a></li>
+    <li><a href="./D1_20260822%EF%BC%BF1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750%20corse%20gain%E3%82%92200%E3%81%8B%E3%82%891%EF%BC%90%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1_20260822＿1653_熱中性子管理棟-gain750 corse gainを200から１００に変更.mca</a>
+      / <a href="./D1_20260822%EF%BC%BF1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750%20corse%20gain%E3%82%92200%E3%81%8B%E3%82%891%EF%BC%90%E3%81%AB%E5%A4%89%E6%9B%B4.csv">csv</a></li>
+    <li><a href="./D1_20260822%EF%BC%BF1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse%20gain100%20Gain%20750.mca">D1_20260822＿1653_熱中性子管理棟-corse gain100 Gain 750.mca</a>
+      / <a href="./D1_20260822%EF%BC%BF1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse%20gain100%20Gain%20750.csv">csv</a></li>
+    <li><a href="./d1_20260822%EF%BC%BF1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1_20260822＿1702_熱中性子管理棟-80cm.mca</a>
+      / <a href="./d1_20260822%EF%BC%BF1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.csv">csv</a></li>
+    <li><a href="./d1_20260822%EF%BC%BF1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">d1_20260822＿1705_熱中性子管理棟-30cm.mca</a>
+      / <a href="./d1_20260822%EF%BC%BF1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.csv">csv</a></li>
+    <li><a href="./D2_20260822%EF%BC%BF1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">D2_20260822＿1720_熱中性子管理棟.mca</a>
+      / <a href="./D2_20260822%EF%BC%BF1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a></li>
+    <li><a href="./d2_20260822%EF%BC%BF1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2_20260822＿1729_熱中性子管理棟.mca</a>
+      / <a href="./d2_20260822%EF%BC%BF1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a></li>
+  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>ファイル</th>
+        <th>開始時刻</th>
+        <th>計測時間</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>D1_20260822＿1633_熱中性子管理棟-30cm</td>
+        <td>2026-08-22 16:31:50</td>
+        <td>28.1 s（0.5 min）</td>
+        <td>D1。検出器から面源 30 cm</td>
+      </tr>
+      <tr>
+        <td>D1_20260822＿1644_熱中性子管理棟2-80cm</td>
+        <td>2026-08-22 16:43:18</td>
+        <td>50.4 s（0.8 min）</td>
+        <td>D1。2 台目・80 cm</td>
+      </tr>
+      <tr>
+        <td>D1_20260822＿1650_熱中性子管理棟-gain500</td>
+        <td>2026-08-22 16:49:12</td>
+        <td>61.6 s（1.0 min）</td>
+        <td>D1。Gain 500</td>
+      </tr>
+      <tr>
+        <td>D1_20260822＿1653_熱中性子管理棟-gain750 corse gainを200から１００に変更</td>
+        <td>2026-08-22 16:51:54</td>
+        <td>59.9 s（1.0 min）</td>
+        <td>D1。Gain 750、Coarse Gain 100</td>
+      </tr>
+      <tr>
+        <td>D1_20260822＿1653_熱中性子管理棟-corse gain100 Gain 750</td>
+        <td>2026-08-22 16:54:44</td>
+        <td>32.9 s（0.5 min）</td>
+        <td>D1。Gain 750、Coarse Gain 100（別 run）</td>
+      </tr>
+      <tr>
+        <td>d1_20260822＿1702_熱中性子管理棟-80cm</td>
+        <td>2026-08-22 17:01:32</td>
+        <td>62.9 s（1.0 min）</td>
+        <td>d1。80 cm</td>
+      </tr>
+      <tr>
+        <td>d1_20260822＿1705_熱中性子管理棟-30cm</td>
+        <td>2026-08-22 17:03:48</td>
+        <td>67.5 s（1.1 min）</td>
+        <td>d1。30 cm</td>
+      </tr>
+      <tr>
+        <td>D2_20260822＿1720_熱中性子管理棟</td>
+        <td>2026-08-22 17:18:00</td>
+        <td>150.9 s（2.5 min）</td>
+        <td>D2。終了 17:20</td>
+      </tr>
+      <tr>
+        <td>d2_20260822＿1729_熱中性子管理棟</td>
+        <td>2026-08-22 17:26:07</td>
+        <td>194.3 s（3.2 min）</td>
+        <td>d2。終了 17:29</td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 </html>
