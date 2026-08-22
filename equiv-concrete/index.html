@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>等価コンクリート換算 — tools.yutok.dev</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 56rem;
+      margin: 2rem auto;
+      padding: 0 1rem 3rem;
+      line-height: 1.55;
+    }
+    h1 { font-size: 1.35rem; margin-bottom: 0.35rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 0.25rem; }
+    h3 { font-size: 1rem; margin-top: 1.25rem; }
+    a { color: #0969da; }
+    .note { color: #666; font-size: 0.9rem; }
+    .lead { margin: 0.4rem 0 1rem; }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 720px) {
+      .grid.two { grid-template-columns: 1fr 1fr; }
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+    }
+    label.field {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.65rem;
+    }
+    label.field span { display: block; margin-bottom: 0.2rem; }
+    input[type="number"], select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.4rem 0.5rem;
+      font: inherit;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: transparent;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.82rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.35rem 0.45rem;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th { background: #f4f4f4; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    td input[type="number"] {
+      width: 5.5rem;
+      padding: 0.25rem 0.35rem;
+    }
+    .muted { color: #888; }
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+      gap: 0.6rem;
+    }
+    .kpi .item {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 0.55rem 0.7rem;
+    }
+    .kpi .item .k { font-size: 0.78rem; color: #666; }
+    .kpi .item .v { font-size: 1.15rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .kpi .item .u { font-size: 0.78rem; color: #666; }
+    #error {
+      background: #ffe8e8;
+      color: #8b0000;
+      border: 1px solid #f0b0b0;
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      margin: 0.8rem 0;
+    }
+    #chart {
+      width: 100%;
+      height: 280px;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: transparent;
+    }
+    ul.compact { margin: 0.4rem 0; padding-left: 1.2rem; }
+    code { font-size: 0.9em; }
+    .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      background: #f6f8fa;
+      border-radius: 6px;
+      padding: 0.7rem 0.85rem;
+      overflow-x: auto;
+    }
+    @media (prefers-color-scheme: dark) {
+      th { background: #222; }
+      th, td, .card, .kpi .item, #chart { border-color: #444; }
+      .formula { background: #1a1a1a; }
+      .note, .kpi .item .k, .kpi .item .u, .muted { color: #aaa; }
+      h2 { border-color: #444; }
+      #error { background: #3a1515; color: #ffb4b4; border-color: #6a3030; }
+      input[type="number"], select { border-color: #555; }
+    }
+  </style>
+</head>
+<body>
+  <p class="note"><a href="../">← tools.yutok.dev</a></p>
+  <h1>等価コンクリート換算</h1>
+  <p class="lead">
+    コンクリート組成から高エネルギー中性子の平均自由行程 λ を計算し、
+    KEK（筑波）土壌プロファイルと土厚・コンクリート厚から等価コンクリート厚を求めます。
+  </p>
+
+  <div id="error" hidden></div>
+
+  <h2>1. コンクリート組成 → 平均自由行程</h2>
+  <p class="note">
+    教材の混合則: Λ<sub>i</sub> = 37·A<sup>0.3</sup> [g/cm²]、1/Λ = Σ w<sub>i</sub>/Λ<sub>i</sub>、λ = Λ/ρ [cm]。
+    質量分率は自動で正規化します。
+  </p>
+
+  <div class="grid two">
+    <div class="card">
+      <label class="field">
+        <span>プリセット</span>
+        <select id="preset">
+          <option value="slide">教材スライド（O53/Si34/Ca4/Al3/H1）</option>
+          <option value="kek">KEK 標準（教材組成・ρ=2.35）</option>
+          <option value="nist">NIST Ordinary Concrete</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>密度 ρ [g/cm³]</span>
+        <input id="rho" type="number" min="0.1" step="0.01" value="2.3">
+      </label>
+      <div class="formula">
+        σ ≈ 45·A<sup>0.7</sup> mb<br>
+        Λ<sub>i</sub> = 37·A<sup>0.3</sup> g/cm²<br>
+        1/Λ = Σ (w<sub>i</sub>/Λ<sub>i</sub>)　→　λ = Λ/ρ
+      </div>
+    </div>
+    <div class="card">
+      <div class="kpi">
+        <div class="item">
+          <div class="k">減衰長 Λ</div>
+          <div class="v"><span id="out-lambda-g">—</span></div>
+          <div class="u">g/cm²</div>
+        </div>
+        <div class="item">
+          <div class="k">平均自由行程 λ</div>
+          <div class="v"><span id="out-lambda-cm">—</span></div>
+          <div class="u">cm（推奨値 ≈ 39 cm）</div>
+        </div>
+        <div class="item">
+          <div class="k">λ</div>
+          <div class="v"><span id="out-lambda-m">—</span></div>
+          <div class="u">m（旧 0.77 m は誤り）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>元素組成（質量分率・任意単位可）</h3>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>元素</th>
+          <th class="num">A</th>
+          <th class="num">σ [mb]</th>
+          <th class="num">Λ<sub>i</sub></th>
+          <th>質量（入力）</th>
+          <th class="num">正規化 %</th>
+          <th class="num">w/Λ</th>
+        </tr>
+      </thead>
+      <tbody id="comp-body"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4">入力合計（正規化前）</td>
+          <td class="num" id="sum-raw">—</td>
+          <td colspan="2" class="muted">→ 100% に正規化して混合</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h2>2. 土厚・コンクリート厚 → 等価コンクリート</h2>
+  <p class="note">
+    t<sub>eq</sub> = (X<sub>c</sub>/Λ<sub>c</sub> + τ<sub>soil</sub>) · Λ<sub>c</sub> / ρ<sub>c</sub>。
+    土は深さ方向に層を積み、層ごとに ρ と Λ を変えます。
+  </p>
+
+  <div class="grid two">
+    <div class="card">
+      <label class="field">
+        <span>土壌プロファイル</span>
+        <select id="profile"></select>
+      </label>
+      <p class="note" id="profile-note"></p>
+      <h3>層構成</h3>
+      <ul class="compact" id="profile-layers"></ul>
+      <h3>データ源</h3>
+      <ul class="compact" id="profile-sources"></ul>
+      <label class="field">
+        <span>コンクリート厚 [cm]</span>
+        <input id="concrete-cm" type="number" min="0" step="any" value="80">
+      </label>
+      <label class="field">
+        <span>土の厚さ [cm]</span>
+        <input id="soil-cm" type="number" min="0" step="any" value="670">
+      </label>
+    </div>
+    <div class="card">
+      <div class="kpi">
+        <div class="item">
+          <div class="k">X<sub>c</sub>（コンクリート）</div>
+          <div class="v"><span id="out-xc">—</span></div>
+          <div class="u">g/cm²</div>
+        </div>
+        <div class="item">
+          <div class="k">X<sub>s</sub>（土）</div>
+          <div class="v"><span id="out-xs">—</span></div>
+          <div class="u">g/cm²</div>
+        </div>
+        <div class="item">
+          <div class="k">光学厚さ τ</div>
+          <div class="v"><span id="out-tau">—</span></div>
+          <div class="u">無次元</div>
+        </div>
+        <div class="item">
+          <div class="k">等価コンクリート</div>
+          <div class="v"><span id="out-teq">—</span></div>
+          <div class="u">cm（= <span id="out-teq-m">—</span> m）</div>
+        </div>
+        <div class="item">
+          <div class="k">密度のみ換算</div>
+          <div class="v"><span id="out-teq-dens">—</span></div>
+          <div class="u">cm（参考）</div>
+        </div>
+        <div class="item">
+          <div class="k">理論残存 e<sup>−τ</sup></div>
+          <div class="v"><span id="out-att">—</span></div>
+          <div class="u">地上=1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>深さ依存（現在のコンクリート厚・組成を固定）</h3>
+  <canvas id="chart" width="640" height="280" aria-label="深さ対等価コンクリートのグラフ"></canvas>
+  <div style="overflow-x:auto; margin-top:0.8rem">
+    <table>
+      <thead>
+        <tr>
+          <th class="num">深さ [m]</th>
+          <th class="num">X<sub>土</sub></th>
+          <th class="num">t<sub>eq</sub> [cm]</th>
+          <th class="num">t<sub>eq</sub> [m]</th>
+          <th class="num">残存</th>
+        </tr>
+      </thead>
+      <tbody id="depth-body"></tbody>
+    </table>
+  </div>
+
+  <h2>補足・出典</h2>
+  <ul class="compact">
+    <li>
+      土壌組成の傾向:
+      <a href="https://www.jstage.jst.go.jp/article/bullgsj/52/8/52_347/_pdf/-char/ja" target="_blank" rel="noopener">地質調査所月報 52巻8号（寺島ほか, 2001）</a>
+      — 沖積層の記載が中心。KEK は筑波台地の火山灰質土（関東ローム系）なので、表層はローム寄り組成を採用。
+    </li>
+    <li>
+      ボーリング・層序・密度:
+      <a href="https://www.kunijiban.pwri.go.jp/viewer/" target="_blank" rel="noopener">KuniJiban（国総研）</a>
+      — つくば市旭 B1 などを参照した造成地プロファイル（asahi）と、自然地盤向け tsukuba を用意。
+    </li>
+    <li>
+      コンクリート密度は KEK 申請・教材の ρ≈2.3–2.35 を想定。旧解析の λ=77 cm（0.77 m）は単位取り違えで、本ツールの詳細計算では ≈39 cm。
+    </li>
+  </ul>
+  <p class="note">
+    計算はブラウザ内のみ。ソース:
+    <a href="https://github.com/32Lwk/tools/tree/main/equiv-concrete">github.com/32Lwk/tools/equiv-concrete</a>
+  </p>
+
+  <script src="./app.js"></script>
+</body>
+</html>

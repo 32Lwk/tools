@@ -11,6 +11,7 @@
 |------|------|----------------|
 | [`/laue/`](./laue/) | X-ray Laue simulator（円筒 IP / Cylindrical） | [32Lwk/xray-laue-backscattering-simulator](https://github.com/32Lwk/xray-laue-backscattering-simulator) |
 | [`/kek-mca/`](./kek-mca/) | KEK MCA 生データ（.mca / .csv、raw のみ） | — |
+| [`/equiv-concrete/`](./equiv-concrete/) | コンクリート組成→λ、KEK土壌→等価コンクリート厚 | — |
 
 ## `laue/` の更新
 
