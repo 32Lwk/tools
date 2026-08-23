@@ -3,242 +3,388 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>熱中性子管理棟データまとめ — KEK MCA</title>
+  <title>熱中性子管理棟 — データまとめ — KEK MCA</title>
   <script src="../../theme-boot.js"></script>
   <link rel="stylesheet" href="../../theme.css">
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 56rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.55; }
-    h1 { font-size: 1.35rem; }
-    h2 { font-size: 1.1rem; margin-top: 2rem; }
-    h3 { font-size: 1rem; margin-top: 1.35rem; }
-    .note { font-size: 0.9rem; color: var(--muted, #666); }
-    .callout {
-      margin: 1rem 0 1.5rem;
-      padding: 0.85rem 1rem;
-      border: 1px solid var(--border, #ccc);
-      border-radius: 6px;
-      background: var(--surface-2, #f6f8fa);
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 52rem;
+      margin: 2rem auto;
+      padding: 0 1rem 3rem;
+      line-height: 1.55;
+      color: var(--fg);
+      background: var(--bg);
     }
-    code { font-size: 0.9em; }
-    table { border-collapse: collapse; width: 100%; font-size: 0.85rem; margin: 0.75rem 0 1.25rem; }
-    th, td { border: 1px solid var(--border, #ccc); padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
-    th { background: var(--surface-2, #f4f4f4); }
-    td.num { text-align: right; font-variant-numeric: tabular-nums; }
-    .warn { color: #a40; }
-    .ok { color: #0a6; }
-    ul.files { padding-left: 1.2rem; }
-    .formula { font-family: ui-serif, Georgia, serif; }
+    h1 { font-size: 1.4rem; font-weight: 650; margin: 0.5rem 0 0.75rem; letter-spacing: -0.02em; }
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 650;
+      margin: 2.25rem 0 0.75rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 0.95rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+    p { margin: 0.5rem 0 0.85rem; }
+    .crumb { font-size: 0.9rem; color: var(--muted); margin: 0 0 1rem; }
+    .crumb a { color: var(--link); }
+    .lede { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.25rem; }
+    .page-nav {
+      display: flex; flex-wrap: wrap; gap: 0.45rem 1rem;
+      margin: 0 0 1.5rem; padding: 0; list-style: none; font-size: 0.9rem;
+    }
+    .page-nav li { margin: 0; }
+    .page-nav a { color: var(--link); text-decoration: none; }
+    .page-nav a:hover { text-decoration: underline; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+      gap: 0.65rem;
+      margin: 0 0 1.5rem;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 0.85rem;
+      background: var(--surface);
+    }
+    .card .label { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.25rem; }
+    .card .value { font-size: 1.05rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .card .sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+    ol.steps { margin: 0.5rem 0 1rem; padding-left: 1.25rem; }
+    ol.steps li { margin: 0.35rem 0; }
+    .formula {
+      display: block;
+      margin: 0.45rem 0;
+      padding: 0.55rem 0.75rem;
+      border-radius: 6px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 0.95rem;
+      overflow-x: auto;
+    }
+    .note { font-size: 0.88rem; color: var(--muted); }
+    .table-wrap { overflow-x: auto; margin: 0.6rem 0 1.25rem; -webkit-overflow-scrolling: touch; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 36rem;
+      font-size: 0.84rem;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 0.55rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--surface);
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr:hover td { background: var(--surface); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    td.det { font-weight: 600; white-space: nowrap; }
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1.2;
+      padding: 0.18rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .tag-ok { color: #1a7f37; background: color-mix(in srgb, #1a7f37 12%, transparent); border-color: color-mix(in srgb, #1a7f37 35%, var(--border)); }
+    .tag-warn { color: #9a6700; background: color-mix(in srgb, #9a6700 12%, transparent); border-color: color-mix(in srgb, #9a6700 35%, var(--border)); }
+    .tag-na { color: var(--muted); background: var(--surface); }
+    .why {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      background: var(--surface);
+      margin: 0.75rem 0 1.25rem;
+    }
+    .why ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+    .why li { margin: 0.35rem 0; }
+    ul.files { padding-left: 1.2rem; margin: 0.5rem 0 1rem; }
+    ul.files li { margin: 0.25rem 0; }
+    a { color: var(--link); }
+    code { font-size: 0.88em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+    @media (prefers-color-scheme: dark) {
+      .tag-ok { color: #3fb950; }
+      .tag-warn { color: #d29922; }
+    }
+    :root[data-theme="dark"] .tag-ok { color: #3fb950; }
+    :root[data-theme="dark"] .tag-warn { color: #d29922; }
   </style>
 </head>
 <body>
-  <p class="note"><a href="../">← KEK MCA 生データ</a> · <a href="../../">tools.yutok.dev</a></p>
-  <h1>熱中性子管理棟（校正）— データまとめ</h1>
-  <p>2026-08-22 午後に実施した黒鉛パイル校正・Gain 試験・PE 効果確認の結果です。地下施設キャンペーン（等価コンクリート図 11/12）とは別セッションです。</p>
+  <p class="crumb"><a href="../">← KEK MCA 生データ</a> · <a href="../../">tools.yutok.dev</a></p>
+  <h1>熱中性子管理棟（校正）</h1>
+  <p class="lede">2026-08-22 午後の黒鉛パイル校正・Gain 試験・PE 効果確認。地下施設キャンペーン（等価コンクリート図 11/12）とは別セッション。</p>
 
-  <div class="callout">
-    <strong>要点</strong>
-    <ul>
-      <li>絶対効率が取れたのは <strong>d1（小径・SN 2162）</strong> のみ：ε×S<sub>total</sub> ≈ 89.4 cm²、ε×S<sub>ROI</sub> ≈ <strong>50.2 cm²</strong></li>
-      <li>絶対フラックス φ = CPS<sub>ROI,net</sub> / (ε×S<sub>ROI</sub>) は <strong>d1 のみ</strong>。現場の絶対 φ も d1 基準</li>
-      <li>D1（30/80 cm）は計数率が高く <span class="warn">飽和</span> → 絶対較正不可</li>
-      <li>D2/d2 @ 約 400 cm は <span class="warn">黒鉛なし・PE 効果確認</span> → 熱中性子 φ(d) 公式は使わない</li>
-    </ul>
+  <ul class="page-nav">
+    <li><a href="#why-d1">なぜ d1 のみ</a></li>
+    <li><a href="#method">求め方</a></li>
+    <li><a href="#efficiency">効率</a></li>
+    <li><a href="#rates">計数率</a></li>
+    <li><a href="#pe">PE 確認</a></li>
+    <li><a href="#field">現場適用</a></li>
+    <li><a href="#files">生データ</a></li>
+  </ul>
+
+  <div class="summary">
+    <div class="card">
+      <div class="label">絶対効率あり</div>
+      <div class="value">d1 のみ</div>
+      <div class="sub">小径 · SN 2162</div>
+    </div>
+    <div class="card">
+      <div class="label">ε×S<sub>ROI</sub></div>
+      <div class="value">50.22 cm²</div>
+      <div class="sub">total 89.44 ± 4.07</div>
+    </div>
+    <div class="card">
+      <div class="label">校正場 φ（d1）</div>
+      <div class="value">20.3 / 10.2</div>
+      <div class="sub">30 cm / 80 cm · n/cm²/s</div>
+    </div>
+    <div class="card">
+      <div class="label">D1 · D2/d2</div>
+      <div class="value">相対のみ</div>
+      <div class="sub">飽和 / 黒鉛なし</div>
+    </div>
   </div>
 
-  <h2 id="method">1. フラックスの求め方</h2>
-  <ol>
-    <li>校正場で ROI NET 計数率 CPS を測る（側帯引き後）</li>
-    <li>文献（米内ほか, 保健物理 37(2) 118–127, 2002）の熱中性子束 φ を用いる<br>
-      <span class="formula">Q = 2.26×10<sup>6</sup> n/s、φ/Q = 9.44×10<sup>−6</sup> n/(s·cm²·Q)（基準距離）、R<sub>half</sub> = 95 cm</span></li>
-    <li>効率×面積 <span class="formula">ε×S = CPS<sub>校正</sub> / φ<sub>校正</sub></span>（単位 cm²）</li>
-    <li>現場では <span class="formula">φ = CPS<sub>現場</sub> / (ε×S)</span>（単位 n/cm²/s）</li>
-  </ol>
-  <p class="note">同一検出器の地点比較なら相対 φ ≈ 相対 CPS。D1/D2/d2 は絶対 ε×S 未確定のため相対比較のみ。</p>
+  <h2 id="why-d1">なぜ d1 だけ検出効率が出ているか</h2>
+  <div class="why">
+    <p style="margin-top:0">絶対効率 <span class="formula" style="display:inline;padding:0.15rem 0.4rem;margin:0">ε×S = CPS / φ<sub>既知</sub></span> には、「文献の熱中性子束 φ が使える条件」と「検出器が線形応答していること」の両方が必要です。</p>
+    <ul>
+      <li><strong>d1（30・80 cm）</strong> … 黒鉛パイル表面から水平距離で測定。文献の熱 φ(d) 公式が使え、計数率も非飽和。<span class="tag tag-ok">絶対較正 OK</span></li>
+      <li><strong>D1（30・80 cm）</strong> … 同じ幾何だが大径のため CPS が非常に高く（〜10²–10³ /s）、デッドタイム・ch0 溢れで<strong>飽和</strong>。CPS が φ に比例しないので ε×S を出せない。<span class="tag tag-warn">不可</span></li>
+      <li><strong>D2 / d2（≈400 cm）</strong> … 黒鉛なし・Am-Be+PE の見通し距離。熱中性子場の公式が前提と違うため、φ<sub>既知</sub> を置けない（PE 効果の相対比較用）。<span class="tag tag-warn">不可</span></li>
+    </ul>
+    <p class="note" style="margin-bottom:0">D 系の再較正予定がないため、現場の<strong>絶対フラックスは d1 のみ</strong>。他検出器は地点間の相対 CPS（= 相対 φ）で比較します。</p>
+  </div>
 
-  <h2 id="efficiency">2. 検出器効率（d1 絶対較正）</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>検出器</th>
-        <th>ε×S<sub>total</sub> [cm²]</th>
-        <th>ε×S<sub>ROI</sub> [cm²]</th>
-        <th>備考</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>d1（小径・SN 2162）</td>
-        <td class="num">89.44 ± 4.07</td>
-        <td class="num"><strong>50.22</strong></td>
-        <td class="ok">30 &amp; 80 cm・黒鉛あり・水平・非飽和</td>
-      </tr>
-      <tr>
-        <td>D1（大径・SN 1715）</td>
-        <td class="num">—</td>
-        <td class="num">—</td>
-        <td class="warn">30/80 cm で飽和。絶対較正なし</td>
-      </tr>
-      <tr>
-        <td>D2 / d2</td>
-        <td class="num">—</td>
-        <td class="num">—</td>
-        <td class="warn">400 cm・黒鉛なし（PE 確認）。熱 φ 公式不可</td>
-      </tr>
-    </tbody>
-  </table>
+  <h2 id="method">フラックスの求め方</h2>
+  <ol class="steps">
+    <li>校正場で ROI NET 計数率 CPS を測る（側帯引き後）</li>
+    <li>文献の熱中性子束 φ を用いる（米内ほか, 保健物理 37(2) 118–127, 2002）
+      <span class="formula">Q = 2.26×10<sup>6</sup> n/s　·　φ/Q = 9.44×10<sup>−6</sup> n/(s·cm²·Q)　·　R<sub>half</sub> = 95 cm</span>
+    </li>
+    <li>効率×面積を求める
+      <span class="formula">ε×S = CPS<sub>校正</sub> / φ<sub>校正</sub>　[cm²]</span>
+    </li>
+    <li>現場フラックスへ換算
+      <span class="formula">φ = CPS<sub>現場</sub> / (ε×S)　[n/cm²/s]</span>
+    </li>
+  </ol>
+  <p class="note">同一検出器の地点比較なら相対 φ ≈ 相対 CPS。</p>
+
+  <h2 id="efficiency">検出器効率</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>検出器</th>
+          <th>ε×S<sub>total</sub></th>
+          <th>ε×S<sub>ROI</sub></th>
+          <th>状態</th>
+          <th>条件</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="det">d1 <span class="note">小径 · 2162</span></td>
+          <td class="num">89.44 ± 4.07 cm²</td>
+          <td class="num"><strong>50.22 cm²</strong></td>
+          <td><span class="tag tag-ok">絶対較正</span></td>
+          <td>30 &amp; 80 cm · 黒鉛あり · 水平 · 非飽和</td>
+        </tr>
+        <tr>
+          <td class="det">D1 <span class="note">大径 · 1715</span></td>
+          <td class="num">—</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-warn">飽和</span></td>
+          <td>30 / 80 cm で高計数。絶対較正なし</td>
+        </tr>
+        <tr>
+          <td class="det">D2 / d2</td>
+          <td class="num">—</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-na">相対のみ</span></td>
+          <td>≈400 cm · 黒鉛なし（PE 確認）。熱 φ 公式不可</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <p class="note">幾何面積の目安: 小径 d 端面 ≈ 20.3 cm²・側面 ≈ 495 cm² / 大径 D 端面 ≈ 72 cm²・側面 ≈ 1690 cm²（側面比 ≈ 3.4）。</p>
 
-  <h2 id="rates">3. 計数率・フラックス一覧（2026-08-22）</h2>
-  <p class="note">CPS は ROI NET（側帯引き後）[1/s]。φ は ε×S<sub>ROI</sub>=50.22 cm² が使える d1 のみ算出。</p>
-  <table>
-    <thead>
-      <tr>
-        <th>ファイル</th>
-        <th>検出器</th>
-        <th>条件</th>
-        <th>live [s]</th>
-        <th>ROI NET CPS</th>
-        <th>φ [n/cm²/s]</th>
-        <th>メモ</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a href="./D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">D1 …-30cm</a></td>
-        <td>D1</td>
-        <td>黒鉛あり・30 cm・水平</td>
-        <td class="num">28.1</td>
-        <td class="num">1661 ± 17</td>
-        <td class="num">—</td>
-        <td class="warn">飽和疑い（絶対較正不可）</td>
-      </tr>
-      <tr>
-        <td><a href="./D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.mca">D1 …2-80cm</a></td>
-        <td>D1</td>
-        <td>黒鉛あり・80 cm・水平</td>
-        <td class="num">50.4</td>
-        <td class="num">682.0 ± 6.7</td>
-        <td class="num">—</td>
-        <td class="warn">飽和疑い</td>
-      </tr>
-      <tr>
-        <td><a href="./D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.mca">D1 …-gain500</a></td>
-        <td>D1</td>
-        <td>Gain 試験</td>
-        <td class="num">61.6</td>
-        <td class="num">1455 ± 7</td>
-        <td class="num">—</td>
-        <td>Gain 調整用</td>
-      </tr>
-      <tr>
-        <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1 …gain750 変更中</a></td>
-        <td>D1</td>
-        <td>Corse gain 変更中</td>
-        <td class="num">59.9</td>
-        <td class="num">−4.93 ± 0.43</td>
-        <td class="num">—</td>
-        <td class="warn">NET≤0（無効）</td>
-      </tr>
-      <tr>
-        <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.mca">D1 …corse100 Gain750</a></td>
-        <td>D1</td>
-        <td>Gain 確定後</td>
-        <td class="num">32.9</td>
-        <td class="num">10.51 ± 2.28</td>
-        <td class="num">—</td>
-        <td>Gain 調整用</td>
-      </tr>
-      <tr>
-        <td><a href="./d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1 …-80cm</a></td>
-        <td>d1</td>
-        <td>黒鉛あり・80 cm・水平</td>
-        <td class="num">62.9</td>
-        <td class="num"><strong>513.4 ± 3.2</strong></td>
-        <td class="num"><strong>10.22 ± 0.06</strong></td>
-        <td class="ok">絶対較正点</td>
-      </tr>
-      <tr>
-        <td><a href="./d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">d1 …-30cm</a></td>
-        <td>d1</td>
-        <td>黒鉛あり・30 cm・水平</td>
-        <td class="num">67.5</td>
-        <td class="num"><strong>1020 ± 4</strong></td>
-        <td class="num"><strong>20.32 ± 0.09</strong></td>
-        <td class="ok">絶対較正点</td>
-      </tr>
-      <tr>
-        <td><a href="./D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">D2 …管理棟</a></td>
-        <td>D2</td>
-        <td>≈400 cm・黒鉛なし・鉛直</td>
-        <td class="num">150.9</td>
-        <td class="num">246.1 ± 1.5</td>
-        <td class="num">—</td>
-        <td>PE 効果確認。ch0≈41%</td>
-      </tr>
-      <tr>
-        <td><a href="./d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2 …管理棟</a></td>
-        <td>d2</td>
-        <td>≈400 cm・黒鉛なし・鉛直</td>
-        <td class="num">194.3</td>
-        <td class="num">63.68 ± 0.64</td>
-        <td class="num">—</td>
-        <td>PE 効果確認。ch0 クリーン</td>
-      </tr>
-    </tbody>
-  </table>
+  <h2 id="rates">計数率・フラックス（2026-08-22）</h2>
+  <p class="note">CPS は ROI NET（側帯引き後）。φ は ε×S<sub>ROI</sub> = 50.22 cm² を使える d1 のみ。</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>測定</th>
+          <th>検出器</th>
+          <th>条件</th>
+          <th>live</th>
+          <th>ROI NET CPS</th>
+          <th>φ</th>
+          <th>状態</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="./D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">D1 · 30 cm</a></td>
+          <td class="det">D1</td>
+          <td>黒鉛 · 水平</td>
+          <td class="num">28.1 s</td>
+          <td class="num">1661 ± 17</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-warn">飽和疑い</span></td>
+        </tr>
+        <tr>
+          <td><a href="./D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.mca">D1 · 80 cm</a></td>
+          <td class="det">D1</td>
+          <td>黒鉛 · 水平</td>
+          <td class="num">50.4 s</td>
+          <td class="num">682.0 ± 6.7</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-warn">飽和疑い</span></td>
+        </tr>
+        <tr>
+          <td><a href="./D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.mca">D1 · gain500</a></td>
+          <td class="det">D1</td>
+          <td>Gain 試験</td>
+          <td class="num">61.6 s</td>
+          <td class="num">1455 ± 7</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-na">調整用</span></td>
+        </tr>
+        <tr>
+          <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1 · gain 変更中</a></td>
+          <td class="det">D1</td>
+          <td>Corse 変更中</td>
+          <td class="num">59.9 s</td>
+          <td class="num">−4.93 ± 0.43</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-warn">無効</span></td>
+        </tr>
+        <tr>
+          <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.mca">D1 · Gain750</a></td>
+          <td class="det">D1</td>
+          <td>Gain 確定後</td>
+          <td class="num">32.9 s</td>
+          <td class="num">10.51 ± 2.28</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-na">調整用</span></td>
+        </tr>
+        <tr>
+          <td><a href="./d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1 · 80 cm</a></td>
+          <td class="det">d1</td>
+          <td>黒鉛 · 水平</td>
+          <td class="num">62.9 s</td>
+          <td class="num"><strong>513.4 ± 3.2</strong></td>
+          <td class="num"><strong>10.22 ± 0.06</strong></td>
+          <td><span class="tag tag-ok">絶対較正</span></td>
+        </tr>
+        <tr>
+          <td><a href="./d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">d1 · 30 cm</a></td>
+          <td class="det">d1</td>
+          <td>黒鉛 · 水平</td>
+          <td class="num">67.5 s</td>
+          <td class="num"><strong>1020 ± 4</strong></td>
+          <td class="num"><strong>20.32 ± 0.09</strong></td>
+          <td><span class="tag tag-ok">絶対較正</span></td>
+        </tr>
+        <tr>
+          <td><a href="./D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">D2 · 400 cm</a></td>
+          <td class="det">D2</td>
+          <td>黒鉛なし · 鉛直</td>
+          <td class="num">150.9 s</td>
+          <td class="num">246.1 ± 1.5</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-na">PE 確認</span></td>
+        </tr>
+        <tr>
+          <td><a href="./d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2 · 400 cm</a></td>
+          <td class="det">d2</td>
+          <td>黒鉛なし · 鉛直</td>
+          <td class="num">194.3 s</td>
+          <td class="num">63.68 ± 0.64</td>
+          <td class="num">—</td>
+          <td><span class="tag tag-na">PE 確認</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <h2 id="pe">4. D2 / d2 @ 400 cm（PE 効果・相対）</h2>
-  <p>黒鉛なし・線源〜検出器の見通し距離 ≈ 400 cm。絶対 φ は算出しません。</p>
-  <table>
-    <thead>
-      <tr>
-        <th>検出器</th>
-        <th>ROI NET CPS</th>
-        <th>全体 CPS（参考）</th>
-        <th>ch0 割合</th>
-        <th>比</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>D2</td>
-        <td class="num">246.1</td>
-        <td class="num">≈532（ch1+）</td>
-        <td class="num">≈40.7%</td>
-        <td rowspan="2">D2/d2（ROI）≈ <strong>3.86</strong><br>（幾何側面比 ≈ 3.4 と比較用）</td>
-      </tr>
-      <tr>
-        <td>d2</td>
-        <td class="num">63.68</td>
-        <td class="num">≈117</td>
-        <td class="num">≈0%</td>
-      </tr>
-    </tbody>
-  </table>
+  <h2 id="pe">D2 / d2 @ 400 cm（PE 効果・相対）</h2>
+  <p class="note">黒鉛なし・見通し距離 ≈ 400 cm。絶対 φ は算出しません。</p>
+  <div class="table-wrap">
+    <table style="min-width: 28rem;">
+      <thead>
+        <tr>
+          <th>検出器</th>
+          <th>ROI NET CPS</th>
+          <th>全体 CPS（参考）</th>
+          <th>ch0</th>
+          <th>D2 / d2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="det">D2</td>
+          <td class="num">246.1</td>
+          <td class="num">≈532（ch1+）</td>
+          <td class="num">≈40.7%</td>
+          <td class="num" rowspan="2"><strong>≈ 3.86</strong><br><span class="note">幾何側面比 ≈ 3.4</span></td>
+        </tr>
+        <tr>
+          <td class="det">d2</td>
+          <td class="num">63.68</td>
+          <td class="num">≈117</td>
+          <td class="num">≈0%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <h2 id="field">5. 現場への適用（参考）</h2>
-  <p>d1 の ε×S<sub>ROI</sub> = 50.22 cm² を用いた現場例:</p>
-  <table>
-    <thead>
-      <tr>
-        <th>地点</th>
-        <th>検出器</th>
-        <th>ROI NET CPS</th>
-        <th>絶対 φ [n/cm²/s]</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>管理棟2階</td>
-        <td>d1</td>
-        <td class="num">0.1271</td>
-        <td class="num">≈ 2.53×10<sup>−3</sup></td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="note">D1/D2/d2 の施設測定は地上基準の相対 CPS（= 相対 φ）で比較。図 11/12 を参照。</p>
+  <h2 id="field">現場への適用（参考）</h2>
+  <p class="note">d1 の ε×S<sub>ROI</sub> = 50.22 cm² を用いた例。</p>
+  <div class="table-wrap">
+    <table style="min-width: 24rem;">
+      <thead>
+        <tr>
+          <th>地点</th>
+          <th>検出器</th>
+          <th>ROI NET CPS</th>
+          <th>絶対 φ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>管理棟2階</td>
+          <td class="det">d1</td>
+          <td class="num">0.1271</td>
+          <td class="num">≈ 2.53×10<sup>−3</sup> n/cm²/s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">D1 / D2 / d2 の施設測定は地上基準の相対 CPS（= 相対 φ）で比較。図 11/12 を参照。</p>
 
-  <h2 id="files">6. 生データ一覧</h2>
+  <h2 id="files">生データ</h2>
   <ul class="files">
     <li><a href="./D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">D1_20260822_1633_熱中性子管理棟-30cm.mca</a> / <a href="./D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.csv">csv</a></li>
     <li><a href="./D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.mca">D1_20260822_1644_熱中性子管理棟2-80cm.mca</a> / <a href="./D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.csv">csv</a></li>
@@ -251,7 +397,7 @@
     <li><a href="./d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2_20260822_1729_熱中性子管理棟.mca</a> / <a href="./d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a></li>
   </ul>
 
-  <p class="note">数値の出典: <code>03_今年度用/測定_20260818/tables/</code> の ROI_NET_CPS・フラックス_熱中性子校正版・検出器効率_熱中性子校正版・PE効果確認 CSV。</p>
+  <p class="note">数値出典: <code>測定_20260818/tables/</code> の ROI_NET_CPS・フラックス_熱中性子校正版・検出器効率・PE効果確認 CSV。</p>
   <script src="../../theme.js"></script>
 </body>
 </html>
