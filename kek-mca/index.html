@@ -36,27 +36,6 @@
     .ticks { display: grid; grid-template-columns: 8rem 1fr; }
     .ticks-inner { position: relative; height: 2.1rem; font-size: 0.72rem; color: var(--muted); }
     .ticks-inner span { position: absolute; transform: translateX(-50%); }
-    .nav-cards {
-      display: grid;
-      gap: 0.75rem;
-      grid-template-columns: 1fr;
-      margin: 1rem 0 1.5rem;
-    }
-    @media (min-width: 640px) {
-      .nav-cards { grid-template-columns: 1fr 1fr; }
-    }
-    .nav-card {
-      display: block;
-      padding: 0.85rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      text-decoration: none;
-      color: var(--fg);
-      background: var(--surface);
-    }
-    .nav-card:hover { border-color: var(--link); }
-    .nav-card strong { display: block; color: var(--link); margin-bottom: 0.25rem; }
-    .nav-card span { font-size: 0.9rem; color: var(--muted); }
     .page-nav {
       display: flex;
       flex-wrap: wrap;
@@ -66,6 +45,7 @@
       list-style: none;
       font-size: 0.95rem;
     }
+    .page-nav a { color: var(--link); }
   </style>
 </head>
 <body>
@@ -79,17 +59,6 @@
     <li><a href="#figures">図ギャラリー</a></li>
     <li><a href="#schedule">スケジュール</a></li>
   </ul>
-
-  <div class="nav-cards">
-    <a class="nav-card" href="./figures/">
-      <strong>図ギャラリー（/figures/）</strong>
-      <span>地点別スペクトルと等価コンクリート厚さグラフを一覧表示</span>
-    </a>
-    <a class="nav-card" href="./%E6%A4%9C%E5%87%BA%E5%99%A8%E7%A8%BC%E5%83%8D%E5%B8%AF.html">
-      <strong>検出器稼働帯</strong>
-      <span>測定スケジュールのガントチャート単体ページ</span>
-    </a>
-  </div>
 
 
   <h2 id="files">ファイル</h2>
