@@ -36,13 +36,63 @@
     .ticks { display: grid; grid-template-columns: 8rem 1fr; }
     .ticks-inner { position: relative; height: 2.1rem; font-size: 0.72rem; color: var(--muted); }
     .ticks-inner span { position: absolute; transform: translateX(-50%); }
+    .nav-cards {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: 1fr;
+      margin: 1rem 0 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .nav-cards { grid-template-columns: 1fr 1fr; }
+    }
+    .nav-card {
+      display: block;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--fg);
+      background: var(--surface);
+    }
+    .nav-card:hover { border-color: var(--link); }
+    .nav-card strong { display: block; color: var(--link); margin-bottom: 0.25rem; }
+    .nav-card span { font-size: 0.9rem; color: var(--muted); }
+    .page-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin: 0.75rem 0 1.25rem;
+      padding: 0;
+      list-style: none;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
   <p class="note"><a href="../">← tools.yutok.dev</a></p>
   <h1>KEK MCA 生データ（2026-08-18〜22）</h1>
+  <ul class="page-nav">
+    <li><a href="#files">ファイル</a></li>
+    <li><a href="#thermal">熱中性子管理棟</a></li>
+    <li><a href="#names">命名規則</a></li>
+    <li><a href="#oldnames">旧名対応表</a></li>
+    <li><a href="#figures">図ギャラリー</a></li>
+    <li><a href="#schedule">スケジュール</a></li>
+  </ul>
 
-  <h2>ファイル</h2>
+  <div class="nav-cards">
+    <a class="nav-card" href="./figures/">
+      <strong>図ギャラリー（/figures/）</strong>
+      <span>地点別スペクトルと等価コンクリート厚さグラフを一覧表示</span>
+    </a>
+    <a class="nav-card" href="./%E6%A4%9C%E5%87%BA%E5%99%A8%E7%A8%BC%E5%83%8D%E5%B8%AF.html">
+      <strong>検出器稼働帯</strong>
+      <span>測定スケジュールのガントチャート単体ページ</span>
+    </a>
+  </div>
+
+
+  <h2 id="files">ファイル</h2>
   <ul>
     <li><a href="./D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.mca">D1_20260818_1552_管理棟2階.mca</a>
       / <a href="./D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: 20260818_1552_管理棟2F</span></li>
@@ -86,7 +136,7 @@
       / <a href="./d2_20260822_155046_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: smalld2_20260822＿地上</span></li>
   </ul>
 
-  <h2>熱中性子管理棟（校正）</h2>
+  <h2 id="thermal">熱中性子管理棟（校正）</h2>
   <p class="note">地下施設キャンペーンとは別セッション。短時間テスト（距離・Gain 変更など）。<a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/">計測記録</a></p>
   <ul>
     <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">D1_20260822_1633_熱中性子管理棟-30cm.mca</a>
@@ -109,11 +159,13 @@
       / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a></li>
   </ul>
 
+  <h2 id="names">命名規則</h2>
   <p class="note">名前は <code>検出器_終了日_終了時刻_場所</code>（例 <code>D1_20260819_0832_管理棟2階</code>）。
   <code>D</code> と <code>d</code> は別検出器、linac / PF / KEKB / linacIRON は英語。
   同じ終了分で <code>D2</code>/<code>d2</code> が衝突するときだけ秒（HHMMSS）を付ける。</p>
-  <p><a href="./%E7%AD%89%E4%BE%A1%E3%82%B3%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%88/">図付きページで確認 →</a></p>
-  <p class="note">旧名対応: <a href="./%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D%E5%AF%BE%E5%BF%9C.csv">ファイル名対応.csv</a></p>
+  <p class="note">旧名対応 CSV: <a href="./%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D%E5%AF%BE%E5%BF%9C.csv">ファイル名対応.csv</a></p>
+
+  <h2 id="oldnames">旧名対応表</h2>
 
   <table>
     <thead>
@@ -269,11 +321,11 @@
     </tbody>
   </table>
 
-  <h2>等価コンクリート厚さグラフ</h2>
-  <p><a href="./%E7%AD%89%E4%BE%A1%E3%82%B3%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%88/">図付きページで確認 →</a></p>
-  <p class="note">相対 CPS / 実測 CPS、誤差棒付き・検出器比較を含む 26 枚。</p>
+  <h2 id="figures">図ギャラリー</h2>
+  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、誤差棒、検出器比較）の一覧。</p>
+  <p><a href="./figures/"><strong>図ギャラリーを開く（/figures/）→</strong></a></p>
 
-  <h2>スケジュール</h2>
+  <h2 id="schedule">スケジュール</h2>
   <p class="note">上段 D1 / D2、下段 d1 / d2。細い帯はマウスオーバーで時刻。</p>
   <div class="gantt-row">
     <div class="gantt-label">D1 / D2</div>
