@@ -1,0 +1,144 @@
+/* Shared light/dark theme for tools.yutok.dev */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #656d76;
+  --link: #0969da;
+  --border: #d0d7de;
+  --surface: #f6f8fa;
+  --surface-2: #f4f4f4;
+  --track: #e8e8e8;
+  --code-bg: #f6f8fa;
+  --error-bg: #ffe8e8;
+  --error-fg: #8b0000;
+  --error-border: #f0b0b0;
+  --input-bg: #ffffff;
+  --input-border: #bbbbbb;
+  --toggle-bg: #f6f8fa;
+  --toggle-border: #d0d7de;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d1117;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --link: #58a6ff;
+    --border: #30363d;
+    --surface: #161b22;
+    --surface-2: #21262d;
+    --track: #2a2a2a;
+    --code-bg: #161b22;
+    --error-bg: #3a1515;
+    --error-fg: #ffb4b4;
+    --error-border: #6a3030;
+    --input-bg: #0d1117;
+    --input-border: #555555;
+    --toggle-bg: #21262d;
+    --toggle-border: #30363d;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --fg: #e6edf3;
+  --muted: #8b949e;
+  --link: #58a6ff;
+  --border: #30363d;
+  --surface: #161b22;
+  --surface-2: #21262d;
+  --track: #2a2a2a;
+  --code-bg: #161b22;
+  --error-bg: #3a1515;
+  --error-fg: #ffb4b4;
+  --error-border: #6a3030;
+  --input-bg: #0d1117;
+  --input-border: #555555;
+  --toggle-bg: #21262d;
+  --toggle-border: #30363d;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #656d76;
+  --link: #0969da;
+  --border: #d0d7de;
+  --surface: #f6f8fa;
+  --surface-2: #f4f4f4;
+  --track: #e8e8e8;
+  --code-bg: #f6f8fa;
+  --error-bg: #ffe8e8;
+  --error-fg: #8b0000;
+  --error-border: #f0b0b0;
+  --input-bg: #ffffff;
+  --input-border: #bbbbbb;
+  --toggle-bg: #f6f8fa;
+  --toggle-border: #d0d7de;
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+a {
+  color: var(--link);
+}
+
+.note,
+.muted,
+.fname {
+  color: var(--muted);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.35rem 0.65rem;
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: var(--fg);
+  background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.theme-toggle:hover {
+  border-color: var(--link);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+/* Prevent UA / color-scheme from leaving light text on light surfaces */
+body, p, li, td, th, h1, h2, h3, h4, label, figcaption, summary {
+  color: var(--fg);
+}
+
+input, select, textarea, button:not(.theme-toggle) {
+  color: var(--fg);
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+}
+
+::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}

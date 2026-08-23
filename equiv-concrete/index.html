@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>等価コンクリート換算 — tools.yutok.dev</title>
+  <script src="../theme-boot.js"></script>
+  <link rel="stylesheet" href="../theme.css">
   <style>
-    :root { color-scheme: light dark; }
     body {
       font-family: system-ui, sans-serif;
       max-width: 56rem;
@@ -14,10 +15,9 @@
       line-height: 1.55;
     }
     h1 { font-size: 1.35rem; margin-bottom: 0.35rem; }
-    h2 { font-size: 1.1rem; margin-top: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 0.25rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; }
     h3 { font-size: 1rem; margin-top: 1.25rem; }
-    a { color: #0969da; }
-    .note { color: #666; font-size: 0.9rem; }
+    .note { font-size: 0.9rem; }
     .lead { margin: 0.4rem 0 1rem; }
     .grid {
       display: grid;
@@ -28,9 +28,11 @@
       .grid.two { grid-template-columns: 1fr 1fr; }
     }
     .card {
-      border: 1px solid #ccc;
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 0.9rem 1rem;
+      background: var(--bg);
+      color: var(--fg);
     }
     label.field {
       display: block;
@@ -43,45 +45,50 @@
       box-sizing: border-box;
       padding: 0.4rem 0.5rem;
       font: inherit;
-      border: 1px solid #bbb;
+      color: var(--fg);
+      border: 1px solid var(--input-border);
       border-radius: 4px;
-      background: transparent;
+      background: var(--input-bg);
     }
     table {
       border-collapse: collapse;
       width: 100%;
       font-size: 0.82rem;
+      color: var(--fg);
     }
     th, td {
-      border: 1px solid #ccc;
+      border: 1px solid var(--border);
       padding: 0.35rem 0.45rem;
       text-align: left;
       vertical-align: middle;
+      color: var(--fg);
     }
-    th { background: #f4f4f4; }
+    th { background: var(--surface-2); }
     td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
     td input[type="number"] {
       width: 5.5rem;
       padding: 0.25rem 0.35rem;
     }
-    .muted { color: #888; }
+    .muted { color: var(--muted); }
     .kpi {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
       gap: 0.6rem;
     }
     .kpi .item {
-      border: 1px solid #ccc;
+      border: 1px solid var(--border);
       border-radius: 6px;
       padding: 0.55rem 0.7rem;
+      background: var(--bg);
+      color: var(--fg);
     }
-    .kpi .item .k { font-size: 0.78rem; color: #666; }
-    .kpi .item .v { font-size: 1.15rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-    .kpi .item .u { font-size: 0.78rem; color: #666; }
+    .kpi .item .k { font-size: 0.78rem; color: var(--muted); }
+    .kpi .item .v { font-size: 1.15rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--fg); }
+    .kpi .item .u { font-size: 0.78rem; color: var(--muted); }
     #error {
-      background: #ffe8e8;
-      color: #8b0000;
-      border: 1px solid #f0b0b0;
+      background: var(--error-bg);
+      color: var(--error-fg);
+      border: 1px solid var(--error-border);
       border-radius: 6px;
       padding: 0.6rem 0.8rem;
       margin: 0.8rem 0;
@@ -90,28 +97,20 @@
       width: 100%;
       height: 280px;
       display: block;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border);
       border-radius: 6px;
-      background: transparent;
+      background: var(--bg);
     }
     ul.compact { margin: 0.4rem 0; padding-left: 1.2rem; }
     code { font-size: 0.9em; }
     .formula {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.85rem;
-      background: #f6f8fa;
+      background: var(--code-bg);
+      color: var(--fg);
       border-radius: 6px;
       padding: 0.7rem 0.85rem;
       overflow-x: auto;
-    }
-    @media (prefers-color-scheme: dark) {
-      th { background: #222; }
-      th, td, .card, .kpi .item, #chart { border-color: #444; }
-      .formula { background: #1a1a1a; }
-      .note, .kpi .item .k, .kpi .item .u, .muted { color: #aaa; }
-      h2 { border-color: #444; }
-      #error { background: #3a1515; color: #ffb4b4; border-color: #6a3030; }
-      input[type="number"], select { border-color: #555; }
     }
   </style>
 </head>
@@ -302,5 +301,6 @@
   </p>
 
   <script src="./app.js"></script>
+  <script src="../theme.js"></script>
 </body>
 </html>
