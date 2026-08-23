@@ -1,6 +1,6 @@
-/* Shared light/dark theme for tools.yutok.dev */
+/* Follows OS / browser color scheme unless data-theme is set. */
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   --bg: #ffffff;
   --fg: #1f2328;
   --muted: #656d76;
@@ -127,12 +127,26 @@ a {
   outline-offset: 2px;
 }
 
-/* Prevent UA / color-scheme from leaving light text on light surfaces */
-body, p, li, td, th, h1, h2, h3, h4, label, figcaption, summary {
+/* Avoid UA canvas text leaking onto light surfaces */
+body,
+p,
+li,
+td,
+th,
+h1,
+h2,
+h3,
+h4,
+label,
+figcaption,
+summary {
   color: var(--fg);
 }
 
-input, select, textarea, button:not(.theme-toggle) {
+input,
+select,
+textarea,
+button:not(.theme-toggle) {
   color: var(--fg);
   background-color: var(--input-bg);
   border-color: var(--input-border);
