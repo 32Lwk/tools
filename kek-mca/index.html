@@ -7,7 +7,7 @@
   <script src="../theme-boot.js"></script>
   <link rel="stylesheet" href="../theme.css">
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    body { font-family: system-ui, sans-serif; max-width: 72rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
     h1 { font-size: 1.4rem; }
     h2 { font-size: 1.1rem; margin-top: 2rem; }
     h3 { font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.35rem; font-weight: 600; }
@@ -23,6 +23,8 @@
     table { border-collapse: collapse; width: 100%; font-size: 0.85rem; color: var(--fg); }
     th, td { border: 1px solid var(--border); padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; color: var(--fg); }
     th { background: var(--surface-2); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .file-cell { min-width: 13rem; }
     .gantt-row { display: grid; grid-template-columns: 8rem 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.45rem; }
     .gantt-label { font-size: 0.9rem; color: var(--fg); }
     .gantt-track { position: relative; height: 2.15rem; background: var(--track); border-radius: 4px; }
@@ -83,79 +85,325 @@
 
 
   <h2 id="files">ファイル</h2>
-  <ul>
-    <li><a href="./D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.mca">D1_20260818_1552_管理棟2階.mca</a>
-      / <a href="./D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: 20260818_1552_管理棟2F</span></li>
-    <li><a href="./D1_20260818_1730_linac.mca">D1_20260818_1730_linac.mca</a>
-      / <a href="./D1_20260818_1730_linac.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1730_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: 20260818_1730_linac</span></li>
-    <li><a href="./D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.mca">D1_20260819_0832_管理棟2階.mca</a>
-      / <a href="./D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: 管理棟2階_0819</span></li>
-    <li><a href="./D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E.mca">D1_20260819_1344_管理棟1階.mca</a>
-      / <a href="./D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: 管理棟1階_0819</span></li>
-    <li><a href="./D1_20260819_1530_%E5%9C%B0%E4%B8%8A.mca">D1_20260819_1530_地上.mca</a>
-      / <a href="./D1_20260819_1530_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D1＿地上_0819</span></li>
-    <li><a href="./D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.mca">D1_20260819_1854_放射線棟BT.mca</a>
-      / <a href="./D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D1_20260819_BT</span></li>
-    <li><a href="./D1_20260820_0807_PF.mca">D1_20260820_0807_PF.mca</a>
-      / <a href="./D1_20260820_0807_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_0807_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D1_20260820_PF</span></li>
-    <li><a href="./D1_20260820_1939_KEKB.mca">D1_20260820_1939_KEKB.mca</a>
-      / <a href="./D1_20260820_1939_KEKB.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_1939_KEKB/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D1_20260820_KEKB</span></li>
-    <li><a href="./D2_20260821_080728_linac.mca">D2_20260821_080728_linac.mca</a>
-      / <a href="./D2_20260821_080728_linac.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_080728_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D2_20260821_Linac</span></li>
-    <li><a href="./D2_20260821_170217_linacIRON.mca">D2_20260821_170217_linacIRON.mca</a>
-      / <a href="./D2_20260821_170217_linacIRON.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D2_202608211703_linacIRON</span></li>
-    <li><a href="./D2_20260822_115234_PF.mca">D2_20260822_115234_PF.mca</a>
-      / <a href="./D2_20260822_115234_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_115234_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D2_20260822_PF</span></li>
-    <li><a href="./D2_20260822_155048_%E5%9C%B0%E4%B8%8A.mca">D2_20260822_155048_地上.mca</a>
-      / <a href="./D2_20260822_155048_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: D2_20260822_地上</span></li>
-    <li><a href="./d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.mca">d1_20260819_1520_管理棟2階.mca</a>
-      / <a href="./d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: 0819放射線棟2階d1</span></li>
-    <li><a href="./d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.mca">d2_20260819_1859_放射線棟BT.mca</a>
-      / <a href="./d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: 0819放射線BTd2</span></li>
-    <li><a href="./d2_20260820_0807_PF.mca">d2_20260820_0807_PF.mca</a>
-      / <a href="./d2_20260820_0807_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_0807_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: d2_20260820_PF</span></li>
-    <li><a href="./d2_20260820_1939_KEKB.mca">d2_20260820_1939_KEKB.mca</a>
-      / <a href="./d2_20260820_1939_KEKB.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_1939_KEKB/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: d2_20260820_KEKB</span></li>
-    <li><a href="./d2_20260821_080725_linac.mca">d2_20260821_080725_linac.mca</a>
-      / <a href="./d2_20260821_080725_linac.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_080725_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: d2_202608210809_linac</span></li>
-    <li><a href="./d2_20260821_170219_linacIRON.mca">d2_20260821_170219_linacIRON.mca</a>
-      / <a href="./d2_20260821_170219_linacIRON.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_170219_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_170219_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_170219_linacIRON/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: d2_202608211704_LinacIRON</span></li>
-    <li><a href="./d2_20260822_115232_PF.mca">d2_20260822_115232_PF.mca</a>
-      / <a href="./d2_20260822_115232_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: smalld2_20260822_PF</span></li>
-    <li><a href="./d2_20260822_155046_%E5%9C%B0%E4%B8%8A.mca">d2_20260822_155046_地上.mca</a>
-      / <a href="./d2_20260822_155046_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: smalld2_20260822＿地上</span></li>
-    <li><a href="./D2_20260823_0835_Linac3.mca">D2_20260823_0835_Linac3.mca</a><span class="badge new">New</span>
-      / <a href="./D2_20260823_0835_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260823_0835_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— Linac3 D2。終了 08:35。D2/d2 衝突回避のため秒付き</span></li>
-    <li><a href="./d2_20260823_0834_Linac3.mca">d2_20260823_0834_Linac3.mca</a><span class="badge new">New</span>
-      / <a href="./d2_20260823_0834_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260823_0834_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260823_0834_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260823_0834_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— Linac3 d2。終了 08:34。D2/d2 衝突回避のため秒付き</span></li>
-    <li><a href="./D1_20260823_1510_Linac3.mca">D1_20260823_1510_Linac3.mca</a><span class="badge new">New</span>
-      / <a href="./D1_20260823_1510_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260823_1510_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— Linac3 D1。終了 15:10</span></li>
-    <li><a href="./d1_20260823_1509_Linac3.mca">d1_20260823_1509_Linac3.mca</a><span class="badge new">New</span>
-      / <a href="./d1_20260823_1509_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260823_1509_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260823_1509_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260823_1509_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— Linac3 d1。終了 15:09</span></li>
-  </ul>
+  <p class="note">主窓は <sup>3</sup>He 壁効果 <strong>191–764 keV</strong>（右側帯 NET）。図の緑シェードと同じ。φ = NET / ε×S_wall。wall NET が無効な地点は φ なし。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>ファイル</th>
+        <th>LIVE [s]</th>
+        <th>NET 191–764 [/s]</th>
+        <th>GROSS 191–764 [/s]</th>
+        <th>φ [n/cm²/s]</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.mca">D1_20260818_1552_管理棟2階.mca</a>
+      / <a href="./D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">1335.4</td>
+        <td class="num">0.3771</td>
+        <td class="num">0.7713</td>
+        <td class="num">—</td>
+        <td>旧: 20260818_1552_管理棟2F</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260818_1730_linac.mca">D1_20260818_1730_linac.mca</a>
+      / <a href="./D1_20260818_1730_linac.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260818_1730_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">4208.9</td>
+        <td class="num">0.07251</td>
+        <td class="num">0.1216</td>
+        <td class="num">—</td>
+        <td>旧: 20260818_1730_linac</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.mca">D1_20260819_0832_管理棟2階.mca</a>
+      / <a href="./D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">52247.0</td>
+        <td class="num">0.3652</td>
+        <td class="num">0.8002</td>
+        <td class="num">2.713e-03</td>
+        <td>旧: 管理棟2階_0819</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E.mca">D1_20260819_1344_管理棟1階.mca</a>
+      / <a href="./D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">17482.3</td>
+        <td class="num">0.2639</td>
+        <td class="num">0.5877</td>
+        <td class="num">1.961e-03</td>
+        <td>旧: 管理棟1階_0819</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260819_1530_%E5%9C%B0%E4%B8%8A.mca">D1_20260819_1530_地上.mca</a>
+      / <a href="./D1_20260819_1530_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">4748.1</td>
+        <td class="num">0.4130</td>
+        <td class="num">0.6506</td>
+        <td class="num">3.068e-03</td>
+        <td>旧: D1＿地上_0819</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.mca">D1_20260819_1854_放射線棟BT.mca</a>
+      / <a href="./D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">9583.9</td>
+        <td class="num">—</td>
+        <td class="num">0.1482</td>
+        <td class="num">—</td>
+        <td>旧: D1_20260819_BT；NET&lt;=0（壁効果窓または右側帯背景を確認）；wall NET 無効</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260820_0807_PF.mca">D1_20260820_0807_PF.mca</a>
+      / <a href="./D1_20260820_0807_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_0807_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">45702.8</td>
+        <td class="num">0.3529</td>
+        <td class="num">0.3609</td>
+        <td class="num">2.622e-03</td>
+        <td>旧: D1_20260820_PF</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260820_1939_KEKB.mca">D1_20260820_1939_KEKB.mca</a>
+      / <a href="./D1_20260820_1939_KEKB.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260820_1939_KEKB/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">39007.5</td>
+        <td class="num">0.007055</td>
+        <td class="num">0.06706</td>
+        <td class="num">5.241e-05</td>
+        <td>旧: D1_20260820_KEKB</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D2_20260821_080728_linac.mca">D2_20260821_080728_linac.mca</a>
+      / <a href="./D2_20260821_080728_linac.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_080728_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">42577.5</td>
+        <td class="num">0.02319</td>
+        <td class="num">0.1269</td>
+        <td class="num">—</td>
+        <td>旧: D2_20260821_Linac</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D2_20260821_170217_linacIRON.mca">D2_20260821_170217_linacIRON.mca</a>
+      / <a href="./D2_20260821_170217_linacIRON.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">30863.5</td>
+        <td class="num">0.02646</td>
+        <td class="num">0.3112</td>
+        <td class="num">1.723e-04</td>
+        <td>旧: D2_202608211703_linacIRON</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D2_20260822_115234_PF.mca">D2_20260822_115234_PF.mca</a>
+      / <a href="./D2_20260822_115234_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_115234_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">62847.9</td>
+        <td class="num">0.004491</td>
+        <td class="num">0.2616</td>
+        <td class="num">2.924e-05</td>
+        <td>旧: D2_20260822_PF</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D2_20260822_155048_%E5%9C%B0%E4%B8%8A.mca">D2_20260822_155048_地上.mca</a>
+      / <a href="./D2_20260822_155048_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">12302.0</td>
+        <td class="num">—</td>
+        <td class="num">0.4209</td>
+        <td class="num">—</td>
+        <td>旧: D2_20260822_地上；NET&lt;=0（壁効果窓または右側帯背景を確認）；wall NET 無効</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.mca">d1_20260819_1520_管理棟2階.mca</a>
+      / <a href="./d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260819_1520_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">76826.2</td>
+        <td class="num">0.2014</td>
+        <td class="num">0.2025</td>
+        <td class="num">2.714e-03</td>
+        <td>旧: 0819放射線棟2階d1</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.mca">d2_20260819_1859_放射線棟BT.mca</a>
+      / <a href="./d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260819_1859_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">9540.5</td>
+        <td class="num">0.02012</td>
+        <td class="num">0.02012</td>
+        <td class="num">4.073e-04</td>
+        <td>旧: 0819放射線BTd2</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260820_0807_PF.mca">d2_20260820_0807_PF.mca</a>
+      / <a href="./d2_20260820_0807_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_0807_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_0807_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">45746.3</td>
+        <td class="num">0.02426</td>
+        <td class="num">0.02426</td>
+        <td class="num">—</td>
+        <td>旧: d2_20260820_PF；右側帯が取れず GROSS を NET として使用</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260820_1939_KEKB.mca">d2_20260820_1939_KEKB.mca</a>
+      / <a href="./d2_20260820_1939_KEKB.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260820_1939_KEKB/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">39037.9</td>
+        <td class="num">0.01225</td>
+        <td class="num">0.01278</td>
+        <td class="num">2.479e-04</td>
+        <td>旧: d2_20260820_KEKB</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260821_080725_linac.mca">d2_20260821_080725_linac.mca</a>
+      / <a href="./d2_20260821_080725_linac.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_080725_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">41897.1</td>
+        <td class="num">0.09783</td>
+        <td class="num">0.2092</td>
+        <td class="num">—</td>
+        <td>旧: d2_202608210809_linac</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260821_170219_linacIRON.mca">d2_20260821_170219_linacIRON.mca</a>
+      / <a href="./d2_20260821_170219_linacIRON.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_170219_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_170219_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260821_170219_linacIRON/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">30086.8</td>
+        <td class="num">0.07511</td>
+        <td class="num">0.07581</td>
+        <td class="num">1.520e-03</td>
+        <td>旧: d2_202608211704_LinacIRON</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260822_115232_PF.mca">d2_20260822_115232_PF.mca</a>
+      / <a href="./d2_20260822_115232_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">61368.5</td>
+        <td class="num">0.1989</td>
+        <td class="num">0.3553</td>
+        <td class="num">4.025e-03</td>
+        <td>旧: smalld2_20260822_PF</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260822_155046_%E5%9C%B0%E4%B8%8A.mca">d2_20260822_155046_地上.mca</a>
+      / <a href="./d2_20260822_155046_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">12104.8</td>
+        <td class="num">0.1516</td>
+        <td class="num">0.2826</td>
+        <td class="num">3.068e-03</td>
+        <td>旧: smalld2_20260822＿地上</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D2_20260823_0835_Linac3.mca">D2_20260823_0835_Linac3.mca</a><span class="badge new">New</span>
+      / <a href="./D2_20260823_0835_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260823_0835_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">51266.7</td>
+        <td class="num">0.03944</td>
+        <td class="num">0.09792</td>
+        <td class="num">2.568e-04</td>
+        <td>Linac3 D2。終了 08:35。D2/d2 衝突回避のため秒付き</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d2_20260823_0834_Linac3.mca">d2_20260823_0834_Linac3.mca</a><span class="badge new">New</span>
+      / <a href="./d2_20260823_0834_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260823_0834_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260823_0834_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260823_0834_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">51378.8</td>
+        <td class="num">0.02125</td>
+        <td class="num">0.02125</td>
+        <td class="num">4.302e-04</td>
+        <td>Linac3 d2。終了 08:34。D2/d2 衝突回避のため秒付き</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./D1_20260823_1510_Linac3.mca">D1_20260823_1510_Linac3.mca</a><span class="badge new">New</span>
+      / <a href="./D1_20260823_1510_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260823_1510_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">23222.7</td>
+        <td class="num">0.03456</td>
+        <td class="num">0.1365</td>
+        <td class="num">2.568e-04</td>
+        <td>Linac3 D1。終了 15:10</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./d1_20260823_1509_Linac3.mca">d1_20260823_1509_Linac3.mca</a><span class="badge new">New</span>
+      / <a href="./d1_20260823_1509_Linac3.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260823_1509_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260823_1509_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260823_1509_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">23286.3</td>
+        <td class="num">0.03405</td>
+        <td class="num">0.03405</td>
+        <td class="num">4.590e-04</td>
+        <td>Linac3 d1。終了 15:09</td>
+      </tr>
+    </tbody>
+  </table>
 
   <h2 id="thermal">熱中性子管理棟（校正）</h2>
-  <p class="note">地下施設キャンペーンとは別セッション。短時間テスト（距離・Gain 変更など）。</p>
-  <ul>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">D1_20260822_1633_熱中性子管理棟-30cm.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.mca">D1_20260822_1644_熱中性子管理棟2-80cm.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.mca">D1_20260822_1650_熱中性子管理棟-gain500.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.mca">D1_20260822_1653_熱中性子管理棟-corse_gain100_Gain_750.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1_20260822_1653_熱中性子管理棟-gain750_corse_gainを200から100に変更.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">D2_20260822_1720_熱中性子管理棟.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1_20260822_1702_熱中性子管理棟-80cm.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">d1_20260822_1705_熱中性子管理棟-30cm.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.csv">csv</a></li>
-    <li><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2_20260822_1729_熱中性子管理棟.mca</a>
-      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a></li>
-  </ul>
+  <p class="note">地下施設キャンペーンとは別セッション。短時間テスト（距離・Gain 変更など）。パイル上の D1 は飽和のため wall NET は参考にしない。絶対効率は d1 のみ。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>ファイル</th>
+        <th>LIVE [s]</th>
+        <th>NET 191–764 [/s]</th>
+        <th>GROSS 191–764 [/s]</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">D1_20260822_1633_熱中性子管理棟-30cm.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1633_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">28.1</td>
+        <td class="num">—</td>
+        <td class="num">13451.4418</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.mca">D1_20260822_1644_熱中性子管理棟2-80cm.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">50.4</td>
+        <td class="num">—</td>
+        <td class="num">4347.7149</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.mca">D1_20260822_1650_熱中性子管理棟-gain500.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">61.6</td>
+        <td class="num">3957.4894</td>
+        <td class="num">4515.6166</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.mca">D1_20260822_1653_熱中性子管理棟-corse_gain100_Gain_750.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">32.9</td>
+        <td class="num">3660.6544</td>
+        <td class="num">4090.4278</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1_20260822_1653_熱中性子管理棟-gain750_corse_gainを200から100に変更.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">59.9</td>
+        <td class="num">3804.0144</td>
+        <td class="num">3809.5437</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">D2_20260822_1720_熱中性子管理棟.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">150.9</td>
+        <td class="num">34.2381</td>
+        <td class="num">403.3846</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1_20260822_1702_熱中性子管理棟-80cm.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">62.9</td>
+        <td class="num">810.4896</td>
+        <td class="num">848.6322</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">d1_20260822_1705_熱中性子管理棟-30cm.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">67.5</td>
+        <td class="num">1577.2986</td>
+        <td class="num">1723.1214</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+      <tr>
+        <td class="file-cell"><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2_20260822_1729_熱中性子管理棟.mca</a>
+      / <a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(191–764)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span></td>
+        <td class="num">194.3</td>
+        <td class="num">102.8332</td>
+        <td class="num">103.8029</td>
+        <td>raw/ から自動検出。ROIはシリアル別共通窓。</td>
+      </tr>
+    </tbody>
+  </table>
   <p><a href="./%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F/"><strong>熱中性子管理棟データのまとめを開く →</strong></a></p>
 
   <h2 id="names">命名規則</h2>
@@ -173,6 +421,8 @@
         <th>現ファイル</th>
         <th>開始時刻</th>
         <th>計測時間</th>
+        <th>NET 191–764 [/s]</th>
+        <th>φ [n/cm²/s]</th>
         <th>備考</th>
       </tr>
     </thead>
@@ -182,6 +432,8 @@
         <td>D1_20260818_1552_管理棟2階</td>
         <td>2026-08-18 15:30:09</td>
         <td>1335.4 s（22.3 min）</td>
+        <td class="num">0.3771</td>
+        <td class="num">—</td>
         <td></td>
       </tr>
       <tr>
@@ -189,6 +441,8 @@
         <td>D1_20260818_1730_linac</td>
         <td>2026-08-18 16:19:46</td>
         <td>4208.9 s（1.17 h）</td>
+        <td class="num">0.07251</td>
+        <td class="num">—</td>
         <td></td>
       </tr>
       <tr>
@@ -196,6 +450,8 @@
         <td>D1_20260819_0832_管理棟2階</td>
         <td>2026-08-18 18:00:44</td>
         <td>52247.0 s（14.51 h）</td>
+        <td class="num">0.3652</td>
+        <td class="num">2.713e-03</td>
         <td>D1 終夜</td>
       </tr>
       <tr>
@@ -203,6 +459,8 @@
         <td>D1_20260819_1344_管理棟1階</td>
         <td>2026-08-19 08:52:40</td>
         <td>17482.3 s（4.86 h）</td>
+        <td class="num">0.2639</td>
+        <td class="num">1.961e-03</td>
         <td></td>
       </tr>
       <tr>
@@ -210,6 +468,8 @@
         <td>d1_20260819_1520_管理棟2階</td>
         <td>2026-08-18 17:59:38</td>
         <td>76826.2 s（21.34 h）</td>
+        <td class="num">0.2014</td>
+        <td class="num">2.714e-03</td>
         <td>場所の誤記。管理棟2階・d1。ポリエチレンの緩衝材なし</td>
       </tr>
       <tr>
@@ -217,6 +477,8 @@
         <td>D1_20260819_1530_地上</td>
         <td>2026-08-19 14:11:03</td>
         <td>4748.1 s（1.32 h）</td>
+        <td class="num">0.4130</td>
+        <td class="num">3.068e-03</td>
         <td></td>
       </tr>
       <tr>
@@ -224,6 +486,8 @@
         <td>D1_20260819_1854_放射線棟BT</td>
         <td>2026-08-19 16:13:59</td>
         <td>9583.9 s（2.66 h）</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
         <td></td>
       </tr>
       <tr>
@@ -231,6 +495,8 @@
         <td>d2_20260819_1859_放射線棟BT</td>
         <td>2026-08-19 16:20:15</td>
         <td>9540.5 s（2.65 h）</td>
+        <td class="num">0.02012</td>
+        <td class="num">4.073e-04</td>
         <td>d2。管理棟の D1 ではない</td>
       </tr>
       <tr>
@@ -238,6 +504,8 @@
         <td>D1_20260820_0807_PF</td>
         <td>2026-08-19 19:25:06</td>
         <td>45702.8 s（12.70 h）</td>
+        <td class="num">0.3529</td>
+        <td class="num">2.622e-03</td>
         <td>PF 終夜</td>
       </tr>
       <tr>
@@ -245,6 +513,8 @@
         <td>d2_20260820_0807_PF</td>
         <td>2026-08-19 19:24:52</td>
         <td>45746.3 s（12.71 h）</td>
+        <td class="num">0.02426</td>
+        <td class="num">—</td>
         <td>PF 終夜</td>
       </tr>
       <tr>
@@ -252,6 +522,8 @@
         <td>D1_20260820_1939_KEKB</td>
         <td>2026-08-20 08:48:21</td>
         <td>39007.5 s（10.84 h）</td>
+        <td class="num">0.007055</td>
+        <td class="num">5.241e-05</td>
         <td></td>
       </tr>
       <tr>
@@ -259,6 +531,8 @@
         <td>d2_20260820_1939_KEKB</td>
         <td>2026-08-20 08:48:23</td>
         <td>39037.9 s（10.84 h）</td>
+        <td class="num">0.01225</td>
+        <td class="num">2.479e-04</td>
         <td></td>
       </tr>
       <tr>
@@ -266,6 +540,8 @@
         <td>D2_20260821_080728_linac</td>
         <td>2026-08-20 20:16:48</td>
         <td>42577.5 s（11.83 h）</td>
+        <td class="num">0.02319</td>
+        <td class="num">—</td>
         <td>終了 08:07:28。D2/d2 衝突回避のため秒付き</td>
       </tr>
       <tr>
@@ -273,6 +549,8 @@
         <td>d2_20260821_080725_linac</td>
         <td>2026-08-20 20:16:58</td>
         <td>41897.1 s（11.64 h）</td>
+        <td class="num">0.09783</td>
+        <td class="num">—</td>
         <td>終了 08:07:25。旧名は 0809</td>
       </tr>
       <tr>
@@ -280,6 +558,8 @@
         <td>D2_20260821_170217_linacIRON</td>
         <td>2026-08-21 08:27:11</td>
         <td>30863.5 s（8.57 h）</td>
+        <td class="num">0.02646</td>
+        <td class="num">1.723e-04</td>
         <td>鉄遮蔽。D2/d2 衝突回避のため秒付き</td>
       </tr>
       <tr>
@@ -287,6 +567,8 @@
         <td>d2_20260821_170219_linacIRON</td>
         <td>2026-08-21 08:27:14</td>
         <td>30086.8 s（8.36 h）</td>
+        <td class="num">0.07511</td>
+        <td class="num">1.520e-03</td>
         <td>鉄遮蔽。D2/d2 衝突回避のため秒付き</td>
       </tr>
       <tr>
@@ -294,6 +576,8 @@
         <td>D2_20260822_115234_PF</td>
         <td>2026-08-21 18:23:36</td>
         <td>62847.9 s（17.46 h）</td>
+        <td class="num">0.004491</td>
+        <td class="num">2.924e-05</td>
         <td>PF 終夜。D2/d2 衝突回避のため秒付き</td>
       </tr>
       <tr>
@@ -301,6 +585,8 @@
         <td>d2_20260822_115232_PF</td>
         <td>2026-08-21 18:23:24</td>
         <td>61368.5 s（17.05 h）</td>
+        <td class="num">0.1989</td>
+        <td class="num">4.025e-03</td>
         <td>旧名 smalld2。PF 終夜。D2/d2 衝突回避のため秒付き</td>
       </tr>
       <tr>
@@ -308,6 +594,8 @@
         <td>D2_20260822_155048_地上</td>
         <td>2026-08-22 12:25:33</td>
         <td>12302.0 s（3.42 h）</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
         <td>8/22 地上。D2（SN 1715）。終了 15:50:48。秒付き</td>
       </tr>
       <tr>
@@ -315,7 +603,45 @@
         <td>d2_20260822_155046_地上</td>
         <td>2026-08-22 12:25:32</td>
         <td>12104.8 s（3.36 h）</td>
+        <td class="num">0.1516</td>
+        <td class="num">3.068e-03</td>
         <td>旧名 smalld2。d2。終了 15:50:46。秒付き</td>
+      </tr>
+      <tr>
+        <td>（新規）</td>
+        <td>D2_20260823_0835_Linac3</td>
+        <td>2026-08-22 18:17:36</td>
+        <td>51266.7 s（14.24 h）</td>
+        <td class="num">0.03944</td>
+        <td class="num">2.568e-04</td>
+        <td>Linac3 D2。終了 08:35。秒付き</td>
+      </tr>
+      <tr>
+        <td>（新規）</td>
+        <td>d2_20260823_0834_Linac3</td>
+        <td>2026-08-22 18:17:34</td>
+        <td>51378.8 s（14.27 h）</td>
+        <td class="num">0.02125</td>
+        <td class="num">4.302e-04</td>
+        <td>Linac3 d2。終了 08:34。秒付き</td>
+      </tr>
+      <tr>
+        <td>（新規）</td>
+        <td>D1_20260823_1510_Linac3</td>
+        <td>2026-08-23 08:40:06</td>
+        <td>23222.7 s（6.45 h）</td>
+        <td class="num">0.03456</td>
+        <td class="num">2.568e-04</td>
+        <td>Linac3 D1。終了 15:10</td>
+      </tr>
+      <tr>
+        <td>（新規）</td>
+        <td>d1_20260823_1509_Linac3</td>
+        <td>2026-08-23 08:40:04</td>
+        <td>23286.3 s（6.47 h）</td>
+        <td class="num">0.03405</td>
+        <td class="num">4.590e-04</td>
+        <td>Linac3 d1。終了 15:09</td>
       </tr>
     </tbody>
   </table>
@@ -325,7 +651,7 @@
   <p><a href="./3D/"><strong>3D 軌跡ビューアを開く（/3D/）→</strong></a></p>
 
   <h2 id="figures">図ギャラリー</h2>
-  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）の一覧。</p>
+  <p class="note">地点別スペクトル（191–764 keV）と等価コンクリート厚さ、絶対/相対フラックス（図17/18）の一覧。</p>
   <p><a href="./figures/"><strong>図ギャラリーを開く（/figures/）→</strong></a></p>
 
   <h2 id="schedule">スケジュール</h2>
