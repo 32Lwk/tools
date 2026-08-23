@@ -50,7 +50,7 @@
   <p>パイル上での D1 直接較正は不可。D1 の絶対効率は<strong>現場転送</strong>（下節）で求めた。D2 / d2 は絶対 φ なし・地点間相対比較。</p>
 
   <h2 id="windows">解析窓は 2 系統</h2>
-  <p>³He(n,p)³H の Q 値は 764 keV。壁効果によりエネルギー付与は理論上およそ 191–764 keV（本解析では <strong>196–764 keV</strong>）に連続分布する。ピーク近傍だけを切ると壁効果成分を落とす。</p>
+  <p>³He(n,p)³H の Q 値は 764 keV。壁効果によりエネルギー付与は理論上およそ 191–764 keV（本解析では <strong>191–764 keV</strong>（トリトン端））に連続分布する。ピーク近傍だけを切ると壁効果成分を落とす。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>系統</th>
@@ -67,11 +67,11 @@
       <td>210.9（転送）</td>
     </tr>
     <tr>
-      <td>wall 196–764 keV（追加）</td>
-      <td>ピーク=764 keV 線形校正 → 196–764 keV（+ピーク分解能）</td>
+      <td>wall 191–764 keV（主窓）</td>
+      <td>ピーク=764 keV 線形校正 → 191–764 keV（+ピーク分解能）</td>
       <td>右側帯のみ</td>
-      <td>74.0 ± 0.3</td>
-      <td>134.3（転送）</td>
+      <td>74.2 ± 0.3</td>
+      <td>134.6（転送）</td>
     </tr>
   </table>
   <p>両方の計数率・φ は <code>窓比較_計数率.csv</code> / <code>フラックス_窓比較.csv</code> に並記。ピーク ROI だけを「中性子全検出」とみなすのは物理的に狭すぎるため、壁効果窓を正とする解析も併記する。</p>
@@ -129,13 +129,13 @@
     <tr>
       <td>d1（小径・2162）</td>
       <td>89.44 ± 4.07</td>
-      <td>50.22 / <strong>74.0</strong></td>
-      <td>peak ROI / wall 196–764 keV（パイル 30&amp;80 cm）</td>
+      <td>50.22 / <strong>74.2</strong></td>
+      <td>peak ROI / wall 191–764 keV（パイル 30&amp;80 cm）</td>
     </tr>
     <tr>
       <td>D1（大径・1715）</td>
       <td>375.6 ± 15.6</td>
-      <td>210.9 / <strong>134.3</strong></td>
+      <td>210.9 / <strong>134.6</strong></td>
       <td>peak ROI / wall（管理棟2階転送）。パイル直接は飽和</td>
     </tr>
     <tr>

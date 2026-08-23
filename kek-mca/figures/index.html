@@ -34,7 +34,7 @@
 <body>
   <p class="note"><a href="../">← KEK MCA 生データ</a></p>
   <h1>図ギャラリー</h1>
-  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
+  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）、および絶対/相対中性子フラックス（191–764 keV）の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
   <ul class="toc">
     <li><a href="#gsites">地点別スペクトル</a></li>
     <li><a href="#g11">相対 CPS（11）</a></li>
@@ -44,10 +44,12 @@
     <li><a href="#g15">PHITS 比較（15）</a></li>
     <li><a href="#g16r">相対 CPS・誤差棒（16）</a></li>
     <li><a href="#g16a">実測 CPS・誤差棒（16）</a></li>
+    <li><a href="#g17">絶対フラックス（17）</a></li>
+    <li><a href="#g18">相対フラックス（18）</a></li>
   </ul>
 
   <h2 id="gsites">地点別スペクトル</h2>
-  <p class="note">各地点フォルダの 3 種（線形(ROI) / 線形クリップ / 対数）。線形(ROI)・対数には <sup>3</sup>He(n,p) の 764 / 573 / 191 keV 縦線（SN1715/2162×ゲイン群別較正。帯外ピークは系列基準へフォールバック）。熱中性子管理棟は掲載しない。</p>
+  <p class="note">各地点フォルダの 3 種（線形(ROI) / 線形クリップ / 対数）。緑シェードは壁効果 ROI 191–764 keV（右側帯背景）。線形(ROI)・対数には <sup>3</sup>He(n,p) の 764 / 573 / 191 keV 縦線（SN1715/2162×ゲイン群別較正。帯外ピークは系列基準へフォールバック）。熱中性子管理棟は掲載しない。</p>
   <ul class="toc toc-sites">
     <li><a href="#site-D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E">D1_20260818_1552_管理棟2階</a></li>
     <li><a href="#site-D1_20260818_1730_linac">D1_20260818_1730_linac</a></li>
@@ -93,7 +95,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>1335.4</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>343</td></tr><tr><th>自動 ROI [ch]</th><td>314–366</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ROI 総計数 N</th><td>759.00</td></tr><tr><th>NET 計数</th><td>670.67</td></tr>
+<tr><th>LIVE [s]</th><td>1335.4</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>343</td></tr><tr><th>自動 ROI [ch]</th><td>314–366</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ピーク ROI 総計数 N</th><td>759</td></tr><tr><th>ピーク NET 計数</th><td>670.67</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>85–366（282 ch）</td></tr><tr><th>wall NET CPS</th><td>0.377125</td></tr><tr><th>wall GROSS CPS</th><td>0.771324</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -116,7 +118,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>4208.9</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>341</td></tr><tr><th>自動 ROI [ch]</th><td>311–362</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ROI 総計数 N</th><td>328.00</td></tr><tr><th>NET 計数</th><td>289.13</td></tr>
+<tr><th>LIVE [s]</th><td>4208.9</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>341</td></tr><tr><th>自動 ROI [ch]</th><td>311–362</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ピーク ROI 総計数 N</th><td>328</td></tr><tr><th>ピーク NET 計数</th><td>289.13</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>85–366（282 ch）</td></tr><tr><th>wall NET CPS</th><td>0.072513</td></tr><tr><th>wall GROSS CPS</th><td>0.121647</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -139,7 +141,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>52247</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>342</td></tr><tr><th>自動 ROI [ch]</th><td>314–366</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ROI 総計数 N</th><td>31342.00</td></tr><tr><th>NET 計数</th><td>27877.57</td></tr>
+<tr><th>LIVE [s]</th><td>52247.0</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>342</td></tr><tr><th>自動 ROI [ch]</th><td>314–366</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ピーク ROI 総計数 N</th><td>31342</td></tr><tr><th>ピーク NET 計数</th><td>27877.57</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>85–366（282 ch）</td></tr><tr><th>wall NET CPS</th><td>0.365204</td></tr><tr><th>wall GROSS CPS</th><td>0.800238</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -162,7 +164,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>17482</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>339</td></tr><tr><th>自動 ROI [ch]</th><td>313–366</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ROI 総計数 N</th><td>7558.00</td></tr><tr><th>NET 計数</th><td>6695.87</td></tr>
+<tr><th>LIVE [s]</th><td>17482.3</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>339</td></tr><tr><th>自動 ROI [ch]</th><td>313–366</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ピーク ROI 総計数 N</th><td>7558</td></tr><tr><th>ピーク NET 計数</th><td>6695.87</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>84–366（283 ch）</td></tr><tr><th>wall NET CPS</th><td>0.263924</td></tr><tr><th>wall GROSS CPS</th><td>0.587679</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -185,7 +187,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>4748.1</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>340</td></tr><tr><th>自動 ROI [ch]</th><td>313–365</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ROI 総計数 N</th><td>2284.00</td></tr><tr><th>NET 計数</th><td>2056.10</td></tr>
+<tr><th>LIVE [s]</th><td>4748.1</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>314–366（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>340</td></tr><tr><th>自動 ROI [ch]</th><td>313–365</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>299–313 / 367–381</td></tr><tr><th>ピーク ROI 総計数 N</th><td>2284</td></tr><tr><th>ピーク NET 計数</th><td>2056.10</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>85–366（282 ch）</td></tr><tr><th>wall NET CPS</th><td>0.413011</td></tr><tr><th>wall GROSS CPS</th><td>0.650582</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -208,7 +210,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>9583.9</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>80–110</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ROI 総計数 N</th><td>915.00</td></tr><tr><th>NET 計数</th><td>787.80</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>9583.9</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>80–110</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ピーク ROI 総計数 N</th><td>915</td></tr><tr><th>ピーク NET 計数</th><td>787.80</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>97–404（308 ch）</td></tr><tr><th>wall NET CPS</th><td>-0.048943</td></tr><tr><th>wall GROSS CPS</th><td>0.148166</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動；NET&lt;=0（壁効果窓または右側帯背景を確認）</td></tr>
       </tbody>
     </table>
   </div>
@@ -231,7 +233,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>45703</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>216–268（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>242</td></tr><tr><th>自動 ROI [ch]</th><td>220–263</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>201–215 / 269–283</td></tr><tr><th>ROI 総計数 N</th><td>11207.00</td></tr><tr><th>NET 計数</th><td>10214.13</td></tr><tr><th>注記</th><td>peak=242 のため共通窓幅53chを 216-268 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>45702.8</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>216–268（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>242</td></tr><tr><th>自動 ROI [ch]</th><td>220–263</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>201–215 / 269–283</td></tr><tr><th>ピーク ROI 総計数 N</th><td>11207</td></tr><tr><th>ピーク NET 計数</th><td>10214.13</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>60–366（307 ch）</td></tr><tr><th>wall NET CPS</th><td>0.352880</td></tr><tr><th>wall GROSS CPS</th><td>0.360940</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=242 のため共通窓幅53chを 216-268 に中心移動</td></tr>
       </tbody>
     </table>
   </div>
@@ -254,7 +256,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>39007</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>361–413（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>387</td></tr><tr><th>自動 ROI [ch]</th><td>80–111</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>346–360 / 414–428</td></tr><tr><th>ROI 総計数 N</th><td>1534.00</td></tr><tr><th>NET 計数</th><td>1309.63</td></tr><tr><th>注記</th><td>peak=387 のため共通窓幅53chを 361-413 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>39007.5</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>361–413（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>387</td></tr><tr><th>自動 ROI [ch]</th><td>80–111</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>346–360 / 414–428</td></tr><tr><th>ピーク ROI 総計数 N</th><td>1534</td></tr><tr><th>ピーク NET 計数</th><td>1309.63</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>96–403（308 ch）</td></tr><tr><th>wall NET CPS</th><td>0.007055</td></tr><tr><th>wall GROSS CPS</th><td>0.067064</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=387 のため共通窓幅53chを 361-413 に中心移動</td></tr>
       </tbody>
     </table>
   </div>
@@ -277,7 +279,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>23223</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>359–411（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>385</td></tr><tr><th>自動 ROI [ch]</th><td>80–109</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>344–358 / 412–426</td></tr><tr><th>ROI 総計数 N</th><td>1526.00</td></tr><tr><th>NET 計数</th><td>1361.70</td></tr><tr><th>注記</th><td>peak=385 のため共通窓幅53chを 359-411 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>23222.7</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>359–411（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>385</td></tr><tr><th>自動 ROI [ch]</th><td>80–109</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>344–358 / 412–426</td></tr><tr><th>ピーク ROI 総計数 N</th><td>1526</td></tr><tr><th>ピーク NET 計数</th><td>1361.70</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>96–401（306 ch）</td></tr><tr><th>wall NET CPS</th><td>0.034561</td></tr><tr><th>wall GROSS CPS</th><td>0.136461</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=385 のため共通窓幅53chを 359-411 に中心移動</td></tr>
       </tbody>
     </table>
   </div>
@@ -300,7 +302,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>42577</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>361–413（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>387</td></tr><tr><th>自動 ROI [ch]</th><td>80–109</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>346–360 / 414–428</td></tr><tr><th>ROI 総計数 N</th><td>2368.00</td></tr><tr><th>NET 計数</th><td>1889.23</td></tr><tr><th>注記</th><td>peak=387 のため共通窓幅53chを 361-413 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>42577.5</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>361–413（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>387</td></tr><tr><th>自動 ROI [ch]</th><td>80–109</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>346–360 / 414–428</td></tr><tr><th>ピーク ROI 総計数 N</th><td>2368</td></tr><tr><th>ピーク NET 計数</th><td>1889.23</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>96–403（308 ch）</td></tr><tr><th>wall NET CPS</th><td>0.023189</td></tr><tr><th>wall GROSS CPS</th><td>0.126875</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=387 のため共通窓幅53chを 361-413 に中心移動</td></tr>
       </tbody>
     </table>
   </div>
@@ -323,7 +325,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>30863</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>80–109</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ROI 総計数 N</th><td>6783.00</td></tr><tr><th>NET 計数</th><td>5843.13</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>30863.5</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>80–109</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ピーク ROI 総計数 N</th><td>6783</td></tr><tr><th>ピーク NET 計数</th><td>5843.13</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>97–404（308 ch）</td></tr><tr><th>wall NET CPS</th><td>0.026463</td></tr><tr><th>wall GROSS CPS</th><td>0.311209</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動</td></tr>
       </tbody>
     </table>
   </div>
@@ -346,7 +348,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>62848</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>355–414</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ROI 総計数 N</th><td>9204.00</td></tr><tr><th>NET 計数</th><td>7439.10</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>62847.9</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>355–414</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ピーク ROI 総計数 N</th><td>9204</td></tr><tr><th>ピーク NET 計数</th><td>7439.10</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>97–404（308 ch）</td></tr><tr><th>wall NET CPS</th><td>0.004491</td></tr><tr><th>wall GROSS CPS</th><td>0.261616</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動</td></tr>
       </tbody>
     </table>
   </div>
@@ -369,7 +371,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>12302</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>359–411（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>385</td></tr><tr><th>自動 ROI [ch]</th><td>357–414</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>344–358 / 412–426</td></tr><tr><th>ROI 総計数 N</th><td>3582.00</td></tr><tr><th>NET 計数</th><td>3036.10</td></tr><tr><th>注記</th><td>peak=385 のため共通窓幅53chを 359-411 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>12302.0</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>359–411（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>385</td></tr><tr><th>自動 ROI [ch]</th><td>357–414</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>344–358 / 412–426</td></tr><tr><th>ピーク ROI 総計数 N</th><td>3582</td></tr><tr><th>ピーク NET 計数</th><td>3036.10</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>96–401（306 ch）</td></tr><tr><th>wall NET CPS</th><td>-0.083206</td></tr><tr><th>wall GROSS CPS</th><td>0.420909</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=385 のため共通窓幅53chを 359-411 に中心移動；NET&lt;=0（壁効果窓または右側帯背景を確認）</td></tr>
       </tbody>
     </table>
   </div>
@@ -392,7 +394,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>51267</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>80–108</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ROI 総計数 N</th><td>2376.00</td></tr><tr><th>NET 計数</th><td>2100.40</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動</td></tr>
+<tr><th>LIVE [s]</th><td>51266.7</td></tr><tr><th>シリアル</th><td>1715(D)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>362–414（53 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>388</td></tr><tr><th>自動 ROI [ch]</th><td>80–108</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>347–361 / 415–429</td></tr><tr><th>ピーク ROI 総計数 N</th><td>2376</td></tr><tr><th>ピーク NET 計数</th><td>2100.40</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>97–404（308 ch）</td></tr><tr><th>wall NET CPS</th><td>0.039443</td></tr><tr><th>wall GROSS CPS</th><td>0.097919</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=388 のため共通窓幅53chを 362-414 に中心移動</td></tr>
       </tbody>
     </table>
   </div>
@@ -415,7 +417,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>76826</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>389</td></tr><tr><th>自動 ROI [ch]</th><td>348–408</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ROI 総計数 N</th><td>10734.00</td></tr><tr><th>NET 計数</th><td>9762.47</td></tr>
+<tr><th>LIVE [s]</th><td>76826.2</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>389</td></tr><tr><th>自動 ROI [ch]</th><td>348–408</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ピーク ROI 総計数 N</th><td>10734</td></tr><tr><th>ピーク NET 計数</th><td>9762.47</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>97–408（312 ch）</td></tr><tr><th>wall NET CPS</th><td>0.201374</td></tr><tr><th>wall GROSS CPS</th><td>0.202457</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -438,7 +440,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>23286</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>394</td></tr><tr><th>自動 ROI [ch]</th><td>348–412</td></tr><tr><th>背景モード</th><td>sideband_left</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 335–349</td></tr><tr><th>ROI 総計数 N</th><td>379.00</td></tr><tr><th>NET 計数</th><td>323.93</td></tr><tr><th>注記</th><td>右側帯を使わず左側帯水平背景; peak=394 が積分窓端に近い（側帯定義を確認）</td></tr>
+<tr><th>LIVE [s]</th><td>23286.3</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>394</td></tr><tr><th>自動 ROI [ch]</th><td>348–412</td></tr><tr><th>ピーク背景モード</th><td>sideband_left</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 335–349</td></tr><tr><th>ピーク ROI 総計数 N</th><td>379</td></tr><tr><th>ピーク NET 計数</th><td>323.93</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>98–410（313 ch）</td></tr><tr><th>wall NET CPS</th><td>0.034054</td></tr><tr><th>wall GROSS CPS</th><td>0.034054</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>右側帯を使わず左側帯水平背景; peak=394 が積分窓端に近い（側帯定義を確認）</td></tr>
       </tbody>
     </table>
   </div>
@@ -461,7 +463,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>9540.5</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>384</td></tr><tr><th>自動 ROI [ch]</th><td>361–410</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ROI 総計数 N</th><td>122.00</td></tr><tr><th>NET 計数</th><td>112.17</td></tr>
+<tr><th>LIVE [s]</th><td>9540.5</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>384</td></tr><tr><th>自動 ROI [ch]</th><td>361–410</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ピーク ROI 総計数 N</th><td>122</td></tr><tr><th>ピーク NET 計数</th><td>112.17</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>96–408（313 ch）</td></tr><tr><th>wall NET CPS</th><td>0.020125</td></tr><tr><th>wall GROSS CPS</th><td>0.020125</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -484,7 +486,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>45746</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>453–511（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>503</td></tr><tr><th>自動 ROI [ch]</th><td>466–511</td></tr><tr><th>背景モード</th><td>sideband_left</td></tr><tr><th>側帯 [ch]</th><td>438–452 / 438–452</td></tr><tr><th>ROI 総計数 N</th><td>100.00</td></tr><tr><th>NET 計数</th><td>41.00</td></tr><tr><th>注記</th><td>peak=503 のため共通窓幅59chを 453-511 に中心移動; 右側帯を使わず左側帯水平背景; peak=503 が積分窓端に近い（側帯定義を確認）</td></tr>
+<tr><th>LIVE [s]</th><td>45746.3</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>453–511（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>503</td></tr><tr><th>自動 ROI [ch]</th><td>466–511</td></tr><tr><th>ピーク背景モード</th><td>sideband_left</td></tr><tr><th>ピーク側帯 [ch]</th><td>438–452 / 438–452</td></tr><tr><th>ピーク ROI 総計数 N</th><td>100</td></tr><tr><th>ピーク NET 計数</th><td>41</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>125–511（387 ch）</td></tr><tr><th>wall NET CPS</th><td>0.024264</td></tr><tr><th>wall GROSS CPS</th><td>0.024264</td></tr><tr><th>wall 背景モード</th><td>none_gross</td></tr><tr><th>注記</th><td>peak=503 のため共通窓幅59chを 453-511 に中心移動; 右側帯を使わず左側帯水平背景; peak=503 が積分窓端に近い（側帯定義を確認）；右側帯が取れず GROSS を NET として使用</td></tr>
       </tbody>
     </table>
   </div>
@@ -507,7 +509,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>39038</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>391</td></tr><tr><th>自動 ROI [ch]</th><td>351–415</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ROI 総計数 N</th><td>248.00</td></tr><tr><th>NET 計数</th><td>224.40</td></tr>
+<tr><th>LIVE [s]</th><td>39037.9</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>391</td></tr><tr><th>自動 ROI [ch]</th><td>351–415</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ピーク ROI 総計数 N</th><td>248</td></tr><tr><th>ピーク NET 計数</th><td>224.40</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>97–408（312 ch）</td></tr><tr><th>wall NET CPS</th><td>0.012250</td></tr><tr><th>wall GROSS CPS</th><td>0.012782</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -530,7 +532,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>41897</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>392</td></tr><tr><th>自動 ROI [ch]</th><td>360–421</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ROI 総計数 N</th><td>1399.00</td></tr><tr><th>NET 計数</th><td>425.50</td></tr>
+<tr><th>LIVE [s]</th><td>41897.1</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>392</td></tr><tr><th>自動 ROI [ch]</th><td>360–421</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ピーク ROI 総計数 N</th><td>1399</td></tr><tr><th>ピーク NET 計数</th><td>425.50</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>98–408（311 ch）</td></tr><tr><th>wall NET CPS</th><td>0.097835</td></tr><tr><th>wall GROSS CPS</th><td>0.209179</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -553,7 +555,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>30087</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>399</td></tr><tr><th>自動 ROI [ch]</th><td>356–417</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 416–430</td></tr><tr><th>ROI 総計数 N</th><td>1531.00</td></tr><tr><th>NET 計数</th><td>1405.28</td></tr><tr><th>注記</th><td>peak=399 が積分窓端に近い（側帯定義を確認）</td></tr>
+<tr><th>LIVE [s]</th><td>30086.8</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>399</td></tr><tr><th>自動 ROI [ch]</th><td>356–417</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 416–430</td></tr><tr><th>ピーク ROI 総計数 N</th><td>1531</td></tr><tr><th>ピーク NET 計数</th><td>1405.28</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>99–415（317 ch）</td></tr><tr><th>wall NET CPS</th><td>0.075112</td></tr><tr><th>wall GROSS CPS</th><td>0.075814</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=399 が積分窓端に近い（側帯定義を確認）</td></tr>
       </tbody>
     </table>
   </div>
@@ -576,7 +578,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>61368</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>394</td></tr><tr><th>自動 ROI [ch]</th><td>352–416</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 411–425</td></tr><tr><th>ROI 総計数 N</th><td>4075.00</td></tr><tr><th>NET 計数</th><td>1783.26</td></tr><tr><th>注記</th><td>peak=394 が積分窓端に近い（側帯定義を確認）</td></tr>
+<tr><th>LIVE [s]</th><td>61368.5</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>394</td></tr><tr><th>自動 ROI [ch]</th><td>352–416</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 411–425</td></tr><tr><th>ピーク ROI 総計数 N</th><td>4075</td></tr><tr><th>ピーク NET 計数</th><td>1783.26</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>98–410（313 ch）</td></tr><tr><th>wall NET CPS</th><td>0.198870</td></tr><tr><th>wall GROSS CPS</th><td>0.355280</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=394 が積分窓端に近い（側帯定義を確認）</td></tr>
       </tbody>
     </table>
   </div>
@@ -599,7 +601,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>12105</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>387</td></tr><tr><th>自動 ROI [ch]</th><td>345–408</td></tr><tr><th>背景モード</th><td>sideband</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ROI 総計数 N</th><td>1044.00</td></tr><tr><th>NET 計数</th><td>650.67</td></tr>
+<tr><th>LIVE [s]</th><td>12104.8</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>387</td></tr><tr><th>自動 ROI [ch]</th><td>345–408</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ピーク ROI 総計数 N</th><td>1044</td></tr><tr><th>ピーク NET 計数</th><td>650.67</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>96–408（313 ch）</td></tr><tr><th>wall NET CPS</th><td>0.151603</td></tr><tr><th>wall GROSS CPS</th><td>0.282614</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -622,7 +624,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>51379</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>台形のチャンネル数（ROI窓）</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>389</td></tr><tr><th>自動 ROI [ch]</th><td>352–410</td></tr><tr><th>背景モード</th><td>sideband_left</td></tr><tr><th>側帯 [ch]</th><td>335–349 / 335–349</td></tr><tr><th>ROI 総計数 N</th><td>445.00</td></tr><tr><th>NET 計数</th><td>350.60</td></tr><tr><th>注記</th><td>右側帯を使わず左側帯水平背景</td></tr>
+<tr><th>LIVE [s]</th><td>51378.8</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>389</td></tr><tr><th>自動 ROI [ch]</th><td>352–410</td></tr><tr><th>ピーク背景モード</th><td>sideband_left</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 335–349</td></tr><tr><th>ピーク ROI 総計数 N</th><td>445</td></tr><tr><th>ピーク NET 計数</th><td>350.60</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>97–408（312 ch）</td></tr><tr><th>wall NET CPS</th><td>0.021254</td></tr><tr><th>wall GROSS CPS</th><td>0.021254</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>右側帯を使わず左側帯水平背景</td></tr>
       </tbody>
     </table>
   </div>
@@ -800,6 +802,50 @@
   <figure class="card">
     <figcaption>片対数<span class="fname">16_全地点_等価コンクリート_実測CPS_誤差棒_片対数.png</span></figcaption>
     <a href="./16_%E5%85%A8%E5%9C%B0%E7%82%B9_%E7%AD%89%E4%BE%A1%E3%82%B3%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%88_%E5%AE%9F%E6%B8%ACCPS_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./16_%E5%85%A8%E5%9C%B0%E7%82%B9_%E7%AD%89%E4%BE%A1%E3%82%B3%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%88_%E5%AE%9F%E6%B8%ACCPS_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="16_全地点_等価コンクリート_実測CPS_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <h2 id="g17">絶対フラックス（17）</h2>
+  <p class="note">φ = NET<sub>191–764 keV</sub> / ε×S_wall。塗り = NET、中空 = GROSS（参考）。熱中性子管理棟は除く。</p>
+  <figure class="card">
+    <figcaption>D1<span class="fname">17_全地点_フラックス_絶対_D1.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1.png" alt="17_全地点_フラックス_絶対_D1.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>D1_片対数<span class="fname">17_全地点_フラックス_絶対_D1_片対数.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="17_全地点_フラックス_絶対_D1_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>D1_誤差棒<span class="fname">17_全地点_フラックス_絶対_D1_誤差棒.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" alt="17_全地点_フラックス_絶対_D1_誤差棒.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>D1_誤差棒_片対数<span class="fname">17_全地点_フラックス_絶対_D1_誤差棒_片対数.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_D1_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="17_全地点_フラックス_絶対_D1_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>d2<span class="fname">17_全地点_フラックス_絶対_d2.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2.png" alt="17_全地点_フラックス_絶対_d2.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>d2_片対数<span class="fname">17_全地点_フラックス_絶対_d2_片対数.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="17_全地点_フラックス_絶対_d2_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>d2_誤差棒<span class="fname">17_全地点_フラックス_絶対_d2_誤差棒.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" alt="17_全地点_フラックス_絶対_d2_誤差棒.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>d2_誤差棒_片対数<span class="fname">17_全地点_フラックス_絶対_d2_誤差棒_片対数.png</span></figcaption>
+    <a href="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./17_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_d2_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="17_全地点_フラックス_絶対_d2_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <h2 id="g18">相対フラックス（18）</h2>
+  <p class="note">各地上（または検出器ごとの基準地点）を 1 とした相対 φ。塗り = NET、中空 = GROSS。</p>
+  <figure class="card">
+    <figcaption>検出器比較<span class="fname">18_全地点_フラックス_相対_検出器比較.png</span></figcaption>
+    <a href="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83.png" target="_blank" rel="noopener"><img src="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83.png" alt="18_全地点_フラックス_相対_検出器比較.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>検出器比較_片対数<span class="fname">18_全地点_フラックス_相対_検出器比較_片対数.png</span></figcaption>
+    <a href="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="18_全地点_フラックス_相対_検出器比較_片対数.png" loading="lazy"></a>
   </figure>
   <script src="../theme.js"></script>
 </body>
