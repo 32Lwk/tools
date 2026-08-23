@@ -46,6 +46,26 @@
       font-size: 0.95rem;
     }
     .page-nav a { color: var(--link); }
+    .badge.new {
+      display: inline-block;
+      margin-left: 0.35rem;
+      padding: 0.05rem 0.4rem;
+      border-radius: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      vertical-align: middle;
+      background: #dafbe1;
+      color: #116329;
+      border: 1px solid #4ac26b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .badge.new {
+        background: #033a16;
+        color: #7ee787;
+        border-color: #238636;
+      }
+    }
   </style>
 </head>
 <body>
@@ -104,13 +124,13 @@
       / <a href="./d2_20260822_115232_PF.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_115232_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: smalld2_20260822_PF</span></li>
     <li><a href="./d2_20260822_155046_%E5%9C%B0%E4%B8%8A.mca">d2_20260822_155046_地上.mca</a>
       / <a href="./d2_20260822_155046_%E5%9C%B0%E4%B8%8A.csv">csv</a> / <span class="plots">図: <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形(ROI)</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener">線形クリップ</a> · <a href="./figures/%E5%9C%B0%E7%82%B9%E5%88%A5/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener">対数</a></span> <span class="note">— 旧: smalld2_20260822＿地上</span></li>
-    <li><a href="./D2_20260823_0835_Linac3.mca">D2_20260823_0835_Linac3.mca</a>
+    <li><a href="./D2_20260823_0835_Linac3.mca">D2_20260823_0835_Linac3.mca</a><span class="badge new">New</span>
       / <a href="./D2_20260823_0835_Linac3.csv">csv</a> <span class="note">— Linac3 D2。終了 08:35。D2/d2 衝突回避のため秒付き</span></li>
-    <li><a href="./d2_20260823_0834_Linac3.mca">d2_20260823_0834_Linac3.mca</a>
+    <li><a href="./d2_20260823_0834_Linac3.mca">d2_20260823_0834_Linac3.mca</a><span class="badge new">New</span>
       / <a href="./d2_20260823_0834_Linac3.csv">csv</a> <span class="note">— Linac3 d2。終了 08:34。D2/d2 衝突回避のため秒付き</span></li>
-    <li><a href="./D1_20260823_1510_Linac3.mca">D1_20260823_1510_Linac3.mca</a>
+    <li><a href="./D1_20260823_1510_Linac3.mca">D1_20260823_1510_Linac3.mca</a><span class="badge new">New</span>
       / <a href="./D1_20260823_1510_Linac3.csv">csv</a> <span class="note">— Linac3 D1。終了 15:10</span></li>
-    <li><a href="./d1_20260823_1509_Linac3.mca">d1_20260823_1509_Linac3.mca</a>
+    <li><a href="./d1_20260823_1509_Linac3.mca">d1_20260823_1509_Linac3.mca</a><span class="badge new">New</span>
       / <a href="./d1_20260823_1509_Linac3.csv">csv</a> <span class="note">— Linac3 d1。終了 15:09</span></li>
   </ul>
 
