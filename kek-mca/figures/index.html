@@ -22,6 +22,8 @@
     .site-grid figure { margin: 0; }
     .site-grid figcaption { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--fg); }
     .site-grid img { width: 100%; height: auto; border: 1px solid var(--border); background: #fff; }
+
+    h2, h3 { scroll-margin-top: 4.5rem; }
   </style>
 </head>
 <body>
@@ -468,6 +470,25 @@
     <figcaption>標準<span class="fname">16_全地点_等価コンクリート_実測CPS_誤差棒.png</span></figcaption>
     <a href="./16_%E5%85%A8%E5%9C%B0%E7%82%B9_%E7%AD%89%E4%BE%A1%E3%82%B3%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%88_%E5%AE%9F%E6%B8%ACCPS_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" target="_blank" rel="noopener"><img src="./16_%E5%85%A8%E5%9C%B0%E7%82%B9_%E7%AD%89%E4%BE%A1%E3%82%B3%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%88_%E5%AE%9F%E6%B8%ACCPS_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" alt="標準" loading="lazy"></a>
   </figure>
+
+  <script>
+  (function () {
+    function jumpToHash() {
+      var id = location.hash.replace(/^#/, "");
+      if (!id) return;
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({ block: "start" });
+    }
+    // initial (after layout) + after late image layout shifts
+    window.addEventListener("load", function () {
+      jumpToHash();
+      setTimeout(jumpToHash, 100);
+      setTimeout(jumpToHash, 500);
+    });
+    window.addEventListener("hashchange", jumpToHash);
+  })();
+  </script>
   <script src="../theme.js"></script>
 </body>
 </html>
