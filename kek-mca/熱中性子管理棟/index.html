@@ -16,6 +16,7 @@
 
   <p>
     <a href="#why">なぜ d1 だけ効率があるか</a> ·
+    <a href="#windows">解析窓（ピーク / 壁効果）</a> ·
     <a href="#d1-transfer">D1 転送較正</a> ·
     <a href="#method">フラックスの求め方</a> ·
     <a href="#efficiency">効率の値</a> ·
@@ -47,6 +48,33 @@
   </ul>
 
   <p>パイル上での D1 直接較正は不可。D1 の絶対効率は<strong>現場転送</strong>（下節）で求めた。D2 / d2 は絶対 φ なし・地点間相対比較。</p>
+
+  <h2 id="windows">解析窓は 2 系統</h2>
+  <p>³He(n,p)³H の Q 値は 764 keV。壁効果によりエネルギー付与は理論上およそ 191–764 keV（本解析では <strong>196–764 keV</strong>）に連続分布する。ピーク近傍だけを切ると壁効果成分を落とす。</p>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <tr>
+      <th>系統</th>
+      <th>窓の定義</th>
+      <th>背景</th>
+      <th>d1 ε×S [cm²]</th>
+      <th>D1 ε×S [cm²]</th>
+    </tr>
+    <tr>
+      <td>peak ROI（従来）</td>
+      <td>シリアル別固定窓（例: 2162 は ch 350–408）</td>
+      <td>両側帯</td>
+      <td>50.22</td>
+      <td>210.9（転送）</td>
+    </tr>
+    <tr>
+      <td>wall 196–764 keV（追加）</td>
+      <td>ピーク=764 keV 線形校正 → 196–764 keV（+ピーク分解能）</td>
+      <td>右側帯のみ</td>
+      <td>74.0 ± 0.3</td>
+      <td>134.3（転送）</td>
+    </tr>
+  </table>
+  <p>両方の計数率・φ は <code>窓比較_計数率.csv</code> / <code>フラックス_窓比較.csv</code> に並記。ピーク ROI だけを「中性子全検出」とみなすのは物理的に狭すぎるため、壁効果窓を正とする解析も併記する。</p>
 
   <h2 id="d1-transfer">D1 転送較正（パイル不可の代替）</h2>
 
