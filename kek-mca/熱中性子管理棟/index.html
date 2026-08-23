@@ -86,7 +86,7 @@
   <p>幾何面積の目安: 小径 d 端面 ≈ 20.3 cm²・側面 ≈ 495 cm²。大径 D 端面 ≈ 72 cm²・側面 ≈ 1690 cm²（側面比 ≈ 3.4）。</p>
 
   <h2 id="rates">計数率・フラックス一覧（2026-08-22）</h2>
-  <p>CPS は ROI NET（側帯引き後）。φ は ε×S_ROI = 50.22 cm² を使える d1 のみ。</p>
+  <p>CPS は ROI NET（側帯引き後）。φ は ε×S_ROI = 50.22 cm² を使える d1 のみ。Gain 変更後の D1 はピーク位置がずれるため、<strong>ピーク追従 ROI</strong>の CPS を示す（標準 ROI の数値は参考にならない）。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>測定</th>
@@ -118,29 +118,29 @@
     <tr>
       <td><a href="./D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.mca">D1 · gain500</a></td>
       <td>D1</td>
-      <td>Gain 試験</td>
+      <td>Gain≈500・coarse≈200</td>
       <td>61.6</td>
-      <td>1455 ± 7</td>
+      <td>1482（peak≈247）</td>
       <td>—</td>
-      <td>調整用</td>
+      <td>調整用・ピーク追従ROI。飽和気味</td>
     </tr>
     <tr>
-      <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1 · gain 変更中</a></td>
+      <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1 · coarse=100</a></td>
       <td>D1</td>
-      <td>Corse 変更中</td>
+      <td>coarse=100・Gain≈500</td>
       <td>59.9</td>
-      <td>−4.93 ± 0.43</td>
+      <td>2338（peak≈123）</td>
       <td>—</td>
-      <td>無効</td>
+      <td>有効スペクトル。標準ROI外のため負値は窓の取り違え。絶対較正には不使用（飽和・Gain未確定）</td>
     </tr>
     <tr>
       <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.mca">D1 · Gain750</a></td>
       <td>D1</td>
-      <td>Gain 確定後</td>
+      <td>coarse=100・Gain=750</td>
       <td>32.9</td>
-      <td>10.51 ± 2.28</td>
+      <td>1816（peak≈189）</td>
       <td>—</td>
-      <td>調整用</td>
+      <td>調整用・ピーク追従ROI。標準ROIでは10.5（窓外）。絶対較正には不使用</td>
     </tr>
     <tr>
       <td><a href="./d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1 · 80 cm</a></td>
