@@ -16,9 +16,11 @@
 
   <p>
     <a href="#why">なぜ d1 だけ効率があるか</a> ·
+    <a href="#d1-transfer">D1 転送較正</a> ·
     <a href="#method">フラックスの求め方</a> ·
     <a href="#efficiency">効率の値</a> ·
-    <a href="#rates">計数率一覧</a> ·
+    <a href="#rates">計数率一覧（パイル）</a> ·
+    <a href="#d1-field">D1 現場計数率</a> ·
     <a href="#pe">PE 確認</a> ·
     <a href="#field">現場への適用</a> ·
     <a href="#files">生データ</a>
@@ -44,7 +46,39 @@
     <li><strong>D2 / d2（約 400 cm）</strong> … 黒鉛なし・Am-Be + PE の見通し距離。熱中性子 φ(d) の公式の前提と違うため、φ（既知）を置けない。PE 効果の相対比較用。</li>
   </ul>
 
-  <p>D 系の再較正予定はない。現場の絶対フラックスは d1 のみ。D1 / D2 / d2 は地点間の相対 CPS（＝相対 φ）で比較する。</p>
+  <p>パイル上での D1 直接較正は不可。D1 の絶対効率は<strong>現場転送</strong>（下節）で求めた。D2 / d2 は絶対 φ なし・地点間相対比較。</p>
+
+  <h2 id="d1-transfer">D1 転送較正（パイル不可の代替）</h2>
+
+  <p>管理棟2階は低計数率（dead ≈ 0.1%）で D1 も d1 も非飽和。同地点・同 ROI 窓で CPS 比を取る。</p>
+  <p>ε×S_ROI(D1) = ε×S_ROI(d1) × (CPS_D1 / CPS_d1)</p>
+
+  <table border="1" cellpadding="6" cellspacing="0">
+    <tr>
+      <th>ファイル</th>
+      <th>ROI NET CPS</th>
+      <th>備考</th>
+    </tr>
+    <tr>
+      <td>d1_20260819_1520_管理棟2階</td>
+      <td>0.1271</td>
+      <td>基準（d1 パイル較正済み）</td>
+    </tr>
+    <tr>
+      <td>D1_20260819_0832_管理棟2階（終夜）</td>
+      <td>0.5336</td>
+      <td>主結果 → 比 = 4.199</td>
+    </tr>
+    <tr>
+      <td>D1_20260818_1552_管理棟2階（短時間）</td>
+      <td>0.5022</td>
+      <td>チェック → 比 = 3.952</td>
+    </tr>
+  </table>
+
+  <p>主結果: ε×S_ROI(D1) = 50.22 × 4.199 = <strong>210.9 ± 8.8 cm²</strong>（ε×S_total ≈ 376 cm²）。</p>
+  <p>管理棟2階の絶対 φ は d1 と D1 で一致（≈ 2.53×10⁻³ n/cm²/s）→ 転送の整合チェック OK。</p>
+  <p>注意: 同時測定ではないため系統誤差あり。パイル 30/80 cm の dead 補正のみ（≈94 cm²）は過小で不採用。</p>
 
   <h2 id="method">フラックスの求め方</h2>
   <ol>
@@ -72,9 +106,9 @@
     </tr>
     <tr>
       <td>D1（大径・1715）</td>
-      <td>—</td>
-      <td>—</td>
-      <td>30/80 cm・黒鉛ありだが飽和 → 絶対較正不可</td>
+      <td>375.6 ± 15.6</td>
+      <td>210.9 ± 8.8</td>
+      <td>パイル 30/80 cm は飽和 → 管理棟2階 D1/d1 転送</td>
     </tr>
     <tr>
       <td>D2 / d2</td>
@@ -180,6 +214,60 @@
     </tr>
   </table>
 
+  <h2 id="d1-field">D1 現場計数率（8/18–8/20 施設測定）</h2>
+  <p>標準 ROI NET CPS（ch 314–366 付近・ピーク中心移動）。dead ≈ 0.1%。絶対 φ = CPS / (ε×S_ROI = 210.9 cm²)。</p>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <tr>
+      <th>地点</th>
+      <th>ROI NET CPS</th>
+      <th>絶対 φ [n/cm²/s]</th>
+      <th>相対（地上=1）</th>
+    </tr>
+    <tr>
+      <td>地上</td>
+      <td>0.433 ± 0.011</td>
+      <td>2.05×10⁻³</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>管理棟2階</td>
+      <td>0.534 ± 0.004</td>
+      <td>2.53×10⁻³</td>
+      <td>1.23</td>
+    </tr>
+    <tr>
+      <td>管理棟1階</td>
+      <td>0.383 ± 0.005</td>
+      <td>1.82×10⁻³</td>
+      <td>0.88</td>
+    </tr>
+    <tr>
+      <td>PF</td>
+      <td>0.223 ± 0.002</td>
+      <td>1.06×10⁻³</td>
+      <td>0.52</td>
+    </tr>
+    <tr>
+      <td>放射線棟BT</td>
+      <td>0.082 ± 0.003</td>
+      <td>3.90×10⁻⁴</td>
+      <td>0.19</td>
+    </tr>
+    <tr>
+      <td>linac</td>
+      <td>0.069 ± 0.005</td>
+      <td>3.26×10⁻⁴</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>KEKB</td>
+      <td>0.034 ± 0.001</td>
+      <td>1.59×10⁻⁴</td>
+      <td>0.08</td>
+    </tr>
+  </table>
+  <p>D2 / d2 の施設測定は ε×S 未較正のため絶対 φ なし。地上基準の相対 CPS で比較（図 11/12）。</p>
+
   <h2 id="pe">D2 / d2 @ 400 cm（PE 効果・相対）</h2>
   <p>黒鉛なし・見通し距離 ≈ 400 cm。絶対 φ は算出しない。</p>
   <table border="1" cellpadding="6" cellspacing="0">
@@ -204,23 +292,35 @@
   </table>
   <p>D2/d2（ROI）≈ 3.86（幾何側面比 ≈ 3.4 と比較用）。</p>
 
-  <h2 id="field">現場への適用（参考）</h2>
-  <p>d1 の ε×S_ROI = 50.22 cm² を用いた例。</p>
+  <h2 id="field">現場への適用</h2>
+  <p>絶対 φ が出せるのは d1（パイル）と D1（転送）のみ。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
-      <th>地点</th>
       <th>検出器</th>
-      <th>ROI NET CPS</th>
-      <th>絶対 φ [n/cm²/s]</th>
+      <th>ε×S_ROI [cm²]</th>
+      <th>較正方法</th>
+      <th>管理棟2階 φ 例</th>
     </tr>
     <tr>
-      <td>管理棟2階</td>
       <td>d1</td>
-      <td>0.1271</td>
-      <td>≈ 2.53×10⁻³</td>
+      <td>50.22</td>
+      <td>黒鉛パイル 30 &amp; 80 cm</td>
+      <td>2.53×10⁻³</td>
+    </tr>
+    <tr>
+      <td>D1</td>
+      <td>210.9</td>
+      <td>管理棟2階 D1/d1 転送</td>
+      <td>2.53×10⁻³</td>
+    </tr>
+    <tr>
+      <td>D2 / d2</td>
+      <td>—</td>
+      <td>未較正</td>
+      <td>相対比較のみ</td>
     </tr>
   </table>
-  <p>D1 / D2 / d2 の施設測定は、地上基準の相対 CPS（＝相対 φ）で比較する（図 11/12）。</p>
+  <p>式: φ = ROI NET CPS / (ε×S_ROI)。同一検出器内の地点比較なら相対 φ ≈ 相対 CPS。</p>
 
   <h2 id="files">生データ</h2>
   <ul>
