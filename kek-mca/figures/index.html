@@ -28,13 +28,15 @@
     .roi-stats th { text-align: left; font-weight: 500; color: var(--muted); width: 12.5rem; padding: 0.18rem 0.5rem 0.18rem 0; vertical-align: top; white-space: nowrap; }
     .roi-stats td { padding: 0.18rem 0; color: var(--fg); word-break: break-word; }
     .roi-miss { margin: 0 0 1.5rem; }
+    .roi-stats td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .roi-stats thead th { font-weight: 600; }
     h2, h3 { scroll-margin-top: 4.5rem; }
   </style>
 </head>
 <body>
   <p class="note"><a href="../">← KEK MCA 生データ</a></p>
   <h1>図ギャラリー</h1>
-  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）、および絶対/相対中性子フラックス（191–764 keV）の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
+  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）、および絶対/相対中性子フラックス（191–764 keV）、上岡比較（19）とプロット点 CSV の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
   <ul class="toc">
     <li><a href="#gsites">地点別スペクトル</a></li>
     <li><a href="#g11">相対 CPS（11）</a></li>
@@ -46,6 +48,7 @@
     <li><a href="#g16a">実測 CPS・誤差棒（16）</a></li>
     <li><a href="#g17">絶対フラックス（17）</a></li>
     <li><a href="#g18">相対フラックス（18）</a></li>
+    <li><a href="#g19">相対フラックス・上岡（19）</a></li>
   </ul>
 
   <h2 id="gsites">地点別スペクトル</h2>
@@ -896,6 +899,36 @@
     <figcaption>検出器比較_片対数<span class="fname">18_全地点_フラックス_相対_検出器比較_片対数.png</span></figcaption>
     <a href="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="18_全地点_フラックス_相対_検出器比較_片対数.png" loading="lazy"></a>
   </figure>
+  <figure class="card">
+    <figcaption>検出器比較_誤差棒<span class="fname">18_全地点_フラックス_相対_検出器比較_誤差棒.png</span></figcaption>
+    <a href="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" target="_blank" rel="noopener"><img src="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E8%AA%A4%E5%B7%AE%E6%A3%92.png" alt="18_全地点_フラックス_相対_検出器比較_誤差棒.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>検出器比較_誤差棒_片対数<span class="fname">18_全地点_フラックス_相対_検出器比較_誤差棒_片対数.png</span></figcaption>
+    <a href="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="18_全地点_フラックス_相対_検出器比較_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <h2 id="g19">相対フラックス・上岡（19）</h2>
+  <p class="note">上岡文献点を含む連続横軸。理論曲線は参考。点データのみ CSV / 下表。</p>
+  <figure class="card">
+    <figcaption>相対・上岡・連続・誤差棒・片対数<span class="fname">19_全地点_フラックス_相対_検出器比較_上岡_連続_誤差棒_片対数.png</span></figcaption>
+    <a href="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E4%B8%8A%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E4%B8%8A%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_相対_検出器比較_上岡_連続_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>絶対・上岡・連続・誤差棒・片対数<span class="fname">19_全地点_フラックス_絶対_検出器比較_上岡_連続_誤差棒_片対数.png</span></figcaption>
+    <a href="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E4%B8%8A%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E4%B8%8A%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_絶対_検出器比較_上岡_連続_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <div class="roi-stats">
+    <p class="roi-title">プロット点データ（x = t<sub>eq</sub> [cm]、y = 相対フラックス D1地上=1）</p>
+    <p class="note" style="margin:0 0 0.5rem"><a href="./%E3%83%97%E3%83%AD%E3%83%83%E3%83%88%E3%81%99%E3%82%8B%E5%9C%B0%E7%82%B9.csv" download>CSV をダウンロード（プロットする地点.csv）</a></p>
+    <table>
+      <thead>
+        <tr><th>detector</th><th>site</th><th>x</th><th>y</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>D1</td><td>地上</td><td class="num">0.0</td><td class="num">1.0</td></tr><tr><td>D2</td><td>地上</td><td class="num">0.0</td><td class="num">0.7094142656493186</td></tr><tr><td>d2</td><td>地上</td><td class="num">0.0</td><td class="num">0.9995216945678169</td></tr><tr><td>D1</td><td>PF</td><td class="num">105.0</td><td class="num">0.43428083361803893</td></tr><tr><td>D2</td><td>PF</td><td class="num">105.0</td><td class="num">0.359196750559921</td></tr><tr><td>d2</td><td>PF</td><td class="num">105.0</td><td class="num">1.1807311240177656</td></tr><tr><td>D1</td><td>BT</td><td class="num">189.13043478260875</td><td class="num">0.2165045742702046</td></tr><tr><td>d2</td><td>BT</td><td class="num">189.13043478260875</td><td class="num">0.11265079907375775</td></tr><tr><td>D1</td><td>Linac3</td><td class="num">300.0</td><td class="num">0.2106054739399461</td></tr><tr><td>D2</td><td>Linac3</td><td class="num">300.0</td><td class="num">0.2105933265003986</td></tr><tr><td>d1</td><td>Linac3</td><td class="num">300.0</td><td class="num">0.23022814409900164</td></tr><tr><td>d2</td><td>Linac3</td><td class="num">300.0</td><td class="num">0.1265102683824925</td></tr><tr><td>D1</td><td>PS</td><td class="num">480.00000000000006</td><td class="num">0.10162472003947917</td></tr><tr><td>d1</td><td>PS</td><td class="num">480.00000000000006</td><td class="num">0.22423338268230647</td></tr><tr><td>D1</td><td>KEKB</td><td class="num">525.4347826086957</td><td class="num">0.09336142428728696</td></tr><tr><td>d2</td><td>KEKB</td><td class="num">525.4347826086957</td><td class="num">0.0715503169722507</td></tr><tr><td>D2</td><td>linacIRON</td><td class="num">728.2608695652175</td><td class="num">0.534826709182705</td></tr><tr><td>d2</td><td>linacIRON</td><td class="num">728.2608695652175</td><td class="num">0.42779713775955663</td></tr><tr><td>literature</td><td>上岡</td><td class="num">80341.3043478261</td><td class="num">0.00592187677941009</td></tr>
+      </tbody>
+    </table>
+  </div>
   <script src="../theme.js"></script>
 </body>
 </html>
