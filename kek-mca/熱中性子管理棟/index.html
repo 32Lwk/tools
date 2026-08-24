@@ -13,7 +13,7 @@
   <h1>熱中性子管理棟（校正）— データまとめ</h1>
 
   <p>2026-08-22 午後に、黒鉛パイルでの校正・Gain 試験・PE 効果確認を行った。地下施設キャンペーン（等価コンクリート図 11/12）とは別セッションである。</p>
-  <p>MCA はピークを積算するモードであるため、<strong>dead time では較正点を捨てない</strong>。計数率は net / LIVE_TIME。計測効率は ε = εS / S_iso（無次元）。</p>
+  <p>MCA はピークを積算するモードであるため、<strong>dead time では較正点を捨てない</strong>。計数率は net / LIVE_TIME。計測効率は（効率×面積）÷ 等方面積。</p>
 
   <p>
     <a href="#method">較正の定義</a> ·
@@ -28,15 +28,15 @@
   </p>
 
   <h2 id="method">較正の定義（d1 / D1 共通）</h2>
-  <p>メーカー感度は等方熱場の<strong>全計数</strong>（cps/nv = εS_total）。現場の主窓は壁効果 191–764 keV。</p>
-  <pre>εS_total = メーカー cps/nv
-S_iso    = π r (L+r)/2　（L = He-3 が入っている長さ）
-ε_mfr    = εS_total / S_iso　（メーカー公称の計測効率）
-f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
-εS_wall  = εS_total × f_wall
-φ        = R_wall / εS_wall</pre>
-  <p>パイル点束 φ は米内ほか, 保健物理 37(2) 118–127 (2002)：Q = 2.26×10<sup>6</sup> n/s、φ/Q = 9.44×10<sup>−6</sup> @30 cm、R_half = 95 cm。φ(30) = 21.33、φ(80) = 10.88 n/cm²/s。</p>
-  <p>パイル R/φ は点束×長い円筒のためメーカー公称と一致しなくてよい（照合）。絶対 φ の主結果はメーカー × f_wall。</p>
+  <p>メーカー感度は等方熱場の<strong>全計数</strong>（cps/nv = 効率×面積）。現場の主窓は壁効果 191–764 keV。</p>
+  <pre>効率×面積（全計数） = メーカー cps/nv
+等方面積 S         = π r (L+r)/2　（L = He-3 が入っている長さ）
+計測効率           = （効率×面積） / S
+壁窓の割合 f_wall  = d1 パイル 30&amp;80 cm の（壁窓計数率）/（全計数率）
+効率×面積（壁窓）  = メーカー × f_wall
+フラックス         = 壁窓計数率 / （効率×面積・壁窓）</pre>
+  <p>パイルの熱中性子フラックスは米内ほか, 保健物理 37(2) 118–127 (2002)：Q = 2.26×10<sup>6</sup> n/s、φ/Q = 9.44×10<sup>−6</sup> @30 cm、R_half = 95 cm。30 cm で 21.33、80 cm で 10.88 n/cm²/s。</p>
+  <p>パイルでの実測（効率×面積）は点束×長い円筒のためメーカー公称と一致しなくてよい（照合）。絶対フラックスの主結果はメーカー × 壁窓の割合。</p>
 
   <h2 id="geom">メーカー公称</h2>
   <table border="1" cellpadding="6" cellspacing="0">
@@ -45,9 +45,9 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <th>外形全長 [cm]</th>
       <th>He-3 が入っている長さ [cm]</th>
       <th>直径 [cm]</th>
-      <th>S_iso [cm²]</th>
-      <th>メーカー εS [cm²]</th>
-      <th>ε_mfr</th>
+      <th>等方面積 [cm²]</th>
+      <th>メーカー感度 [cm²]</th>
+      <th>メーカー計測効率</th>
     </tr>
     <tr>
       <td>d1 / d2</td>
@@ -70,17 +70,17 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
   </table>
 
   <h2 id="mfr">実績</h2>
-  <p>εS_meas = R / φ、ε_meas = εS_meas / S_iso。メーカーは全計数。D1 は ch0 除外の ch1+。</p>
-  <p><strong>採用する実測:</strong> d1 は 30&amp;80 cm の平均（距離比が理論と整合）。D1 は Gain=750・coarse=100（変更後）の ch1+。D1 @30 cm はパイルアップで不採用。80 cm（gain 前）は参考。</p>
+  <p>実測の効率×面積 = 計数率 / パイルフラックス。計測効率 = （効率×面積）/ 等方面積。メーカーは全計数。D1 は ch0 を除いた計数。</p>
+  <p><strong>採用する実測:</strong> d1 は 30&amp;80 cm の平均。D1 は Gain=750・coarse=100（変更後）。D1 @30 cm はパイルアップで不採用。80 cm（gain 前）は参考。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
       <th>実測の取り方</th>
-      <th>εS_meas [cm²]</th>
-      <th>ε_meas</th>
-      <th>メーカー εS</th>
-      <th>ε_mfr</th>
-      <th>εS 比</th>
+      <th>実測の効率×面積 [cm²]</th>
+      <th>実測の計測効率</th>
+      <th>メーカー感度 [cm²]</th>
+      <th>メーカー計測効率</th>
+      <th>感度の比</th>
       <th>結論</th>
     </tr>
     <tr>
@@ -95,7 +95,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
     </tr>
     <tr>
       <td>D1</td>
-      <td>Gain750 変更後・ch1+（80 cm 規模）</td>
+      <td>Gain750 変更後（80 cm 規模）</td>
       <td>444</td>
       <td>0.969</td>
       <td>450</td>
@@ -104,20 +104,20 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>公称と一致。主結果はメーカー 450</td>
     </tr>
   </table>
-  <p>d1 の R30/R80 = 2.04（理論 1.96）。D1 @30 cm の ch1+/φ = 854（比 1.90）は不採用。変更後のもう一方（coarse 200→100）は εS=428（比 0.95）で同傾向。</p>
+  <p>d1 の 30 cm / 80 cm 計数比 = 2.04（理論 1.96）。D1 @30 cm は不採用。変更後のもう一方（coarse 200→100）は効率×面積 428（比 0.95）で同傾向。</p>
 
   <h2 id="efficiency">採用している検出器効率</h2>
-  <p>絶対 φ には εS_wall（メーカー × f_wall、または転送）を使う。パイル φ は較正場の文献値。ε = εS / S_iso。</p>
+  <p>現場のフラックスには「採用する効率×面積（壁窓）」を使う。パイルのフラックスは較正場の文献値。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
-      <th>S_iso [cm²]</th>
-      <th>メーカー εS [cm²]</th>
-      <th>ε_mfr</th>
-      <th>パイル φ [n/cm²/s]</th>
-      <th>実測 εS [cm²]</th>
-      <th>ε_meas</th>
-      <th>εS_wall 採用 [cm²]</th>
+      <th>等方面積 [cm²]</th>
+      <th>メーカー感度 [cm²]</th>
+      <th>メーカー計測効率</th>
+      <th>パイルのフラックス [n/cm²/s]</th>
+      <th>実測の効率×面積 [cm²]</th>
+      <th>実測の計測効率</th>
+      <th>採用する効率×面積（壁窓）[cm²]</th>
       <th>較正</th>
     </tr>
     <tr>
@@ -129,7 +129,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>83.4</td>
       <td>0.497</td>
       <td><strong>112.3</strong></td>
-      <td>123 × f_wall=0.913</td>
+      <td>123 × 壁窓割合 0.913</td>
     </tr>
     <tr>
       <td>D1</td>
@@ -140,7 +140,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>444</td>
       <td>0.969</td>
       <td><strong>410.9</strong></td>
-      <td>450 × 同じ f_wall</td>
+      <td>450 × 同じ壁窓割合</td>
     </tr>
     <tr>
       <td>d2</td>
@@ -151,7 +151,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>—</td>
       <td>—</td>
       <td><strong>132.1</strong></td>
-      <td>地上 wall 比 0.321 × D1</td>
+      <td>地上の壁窓計数比 0.321 × D1</td>
     </tr>
     <tr>
       <td>D2</td>
@@ -162,22 +162,23 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>—</td>
       <td>—</td>
       <td><strong>306.6</strong></td>
-      <td>linac wall 比 0.746 × D1</td>
+      <td>linac の壁窓計数比 0.746 × D1</td>
     </tr>
   </table>
-  <p>d2/D2 は PE 付きのため、メーカー裸管の εS・ε_mfr は参考。採用は現場転送の εS_wall。</p>
+  <p>d2/D2 は PE 付きのため、メーカー裸管の感度・計測効率は参考。採用は現場での転送値。</p>
 
   <h2 id="rates">計数率一覧（2026-08-22）</h2>
-  <p>CPS は LIVE_TIME 除算。wall は 191–764 keV NET。</p>
+  <p>計数率は LIVE_TIME で割った値。壁窓は 191–764 keV。dead time 割合 = 100 × (1 − LIVE/REAL)。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>測定</th>
       <th>検出器</th>
       <th>条件</th>
       <th>live [s]</th>
-      <th>R_total / ch1+</th>
-      <th>wall NET [cps]</th>
-      <th>peak ROI [cps]</th>
+      <th>dead time [%]</th>
+      <th>全計数率 / ch0除外 [cps]</th>
+      <th>壁窓の計数率 [cps]</th>
+      <th>ピーク窓の計数率 [cps]</th>
       <th>メモ</th>
     </tr>
     <tr>
@@ -185,6 +186,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>D1</td>
       <td>黒鉛・水平</td>
       <td>28.1</td>
+      <td>62.8</td>
       <td>2.70×10<sup>4</sup> / 1.82×10<sup>4</sup></td>
       <td>7162</td>
       <td>1634</td>
@@ -195,6 +197,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>D1</td>
       <td>黒鉛・水平</td>
       <td>50.4</td>
+      <td>33.2</td>
       <td>8290 / 5412</td>
       <td>2875</td>
       <td>1161</td>
@@ -205,6 +208,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>D1</td>
       <td>Gain≈500</td>
       <td>61.6</td>
+      <td>25.3</td>
       <td>8172 / 5068</td>
       <td>4107</td>
       <td>1455</td>
@@ -215,46 +219,51 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>D1</td>
       <td>coarse=100（変更後）</td>
       <td>59.9</td>
+      <td>19.2</td>
       <td>8064 / 4662</td>
       <td>3796</td>
       <td>NET≤0</td>
-      <td>変更後。εS≈428</td>
+      <td>変更後。効率×面積 ≈428</td>
     </tr>
     <tr>
       <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.mca">D1 · Gain750</a></td>
       <td>D1</td>
       <td>coarse=100・Gain=750</td>
       <td>32.9</td>
+      <td>21.9</td>
       <td>8046 / 4835</td>
       <td>4009</td>
       <td>9.5</td>
-      <td>実績採用。εS=444</td>
+      <td>実績採用。効率×面積 =444</td>
     </tr>
     <tr>
       <td><a href="./d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1 · 80 cm</a></td>
       <td>d1</td>
       <td>黒鉛・水平</td>
       <td>62.9</td>
+      <td>4.3</td>
       <td>889</td>
       <td>827</td>
       <td>513</td>
-      <td>実績・f_wall</td>
+      <td>実績・壁窓割合</td>
     </tr>
     <tr>
       <td><a href="./d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">d1 · 30 cm</a></td>
       <td>d1</td>
       <td>黒鉛・水平</td>
       <td>67.5</td>
+      <td>8.9</td>
       <td>1817</td>
       <td>1628</td>
       <td>1020</td>
-      <td>実績・f_wall</td>
+      <td>実績・壁窓割合</td>
     </tr>
     <tr>
       <td><a href="./D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">D2 · 400 cm</a></td>
       <td>D2</td>
       <td>黒鉛なし・鉛直</td>
       <td>150.9</td>
+      <td>2.3</td>
       <td>897 / 532</td>
       <td>284</td>
       <td>246</td>
@@ -265,6 +274,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>d2</td>
       <td>黒鉛なし・鉛直</td>
       <td>194.3</td>
+      <td>1.6</td>
       <td>117</td>
       <td>103</td>
       <td>63.7</td>
@@ -273,14 +283,14 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
   </table>
 
   <h2 id="field-phi">現場フラックス（主窓 191–764 keV）</h2>
-  <p>φ = wall NET / εS_wall（メーカー×f_wall または転送）。相対は D1 地上=1。</p>
+  <p>フラックス = 壁窓の計数率 / 採用する効率×面積（壁窓）。相対は D1 地上=1。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
       <th>地点</th>
-      <th>wall NET [cps]</th>
-      <th>εS_wall [cm²]</th>
-      <th>絶対 φ [n/cm²/s]</th>
+      <th>壁窓の計数率 [cps]</th>
+      <th>採用する効率×面積 [cm²]</th>
+      <th>フラックス [n/cm²/s]</th>
       <th>相対（D1 地上=1）</th>
     </tr>
     <tr><td>D1</td><td>地上</td><td>0.541</td><td>410.9</td><td>1.32×10⁻³</td><td>1.00</td></tr>
@@ -307,92 +317,64 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
     <tr><td>D2</td><td>linac</td><td>0.0850</td><td>306.6</td><td>2.77×10⁻⁴</td><td>0.21</td></tr>
     <tr><td>D2</td><td>linac_IRON</td><td>0.216</td><td>306.6</td><td>7.04×10⁻⁴</td><td>0.53</td></tr>
   </table>
-  <p>同一地点でも検出器間の絶対 φ は一致しない（スペクトル・PE）。地点間比較は同一検出器内で行う。</p>
+  <p>同一地点でも検出器間のフラックスは一致しない（スペクトル・PE）。地点間比較は同一検出器内で行う。</p>
 
   <h2 id="pe">D2 / d2 @ 400 cm（PE 効果）</h2>
-  <p>黒鉛なし・見通し距離 ≈ 400 cm。Am-Be + PE。熱 φ 公式は使わない（φ は置かない）。現場用の εS_wall は転送値。</p>
+  <p>黒鉛なし・見通し距離 ≈ 400 cm。Am-Be + PE。ここでの熱フラックス公式は使わない。現場用の効率×面積は転送値。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
-      <th>wall NET [cps]</th>
-      <th>peak ROI [cps]</th>
-      <th>ch1+ [cps]</th>
-      <th>ch0</th>
-      <th>εS_wall 採用 [cm²]</th>
-      <th>メーカー裸管 [cm²]</th>
+      <th>壁窓の計数率 [cps]</th>
+      <th>ピーク窓の計数率 [cps]</th>
+      <th>採用する効率×面積（壁窓）[cm²]</th>
+      <th>メーカー感度（裸管・参考）[cm²]</th>
     </tr>
     <tr>
       <td>D2</td>
       <td>284</td>
       <td>246</td>
-      <td>532</td>
-      <td>40.7%</td>
       <td>306.6</td>
-      <td>450（参考）</td>
+      <td>450</td>
     </tr>
     <tr>
       <td>d2</td>
       <td>103</td>
       <td>63.7</td>
-      <td>117</td>
-      <td>≈0%</td>
       <td>132.1</td>
-      <td>123（参考）</td>
+      <td>123</td>
     </tr>
   </table>
-  <table border="1" cellpadding="6" cellspacing="0">
-    <tr>
-      <th>比</th>
-      <th>値</th>
-      <th>比較</th>
-    </tr>
-    <tr>
-      <td>D2/d2（ch1+）</td>
-      <td>4.53</td>
-      <td>メーカー比 450/123 = 3.66</td>
-    </tr>
-    <tr>
-      <td>D2/d2（peak ROI）</td>
-      <td>3.86</td>
-      <td>S_iso 比 = 2.73</td>
-    </tr>
-    <tr>
-      <td>D2/d2（wall）</td>
-      <td>2.75</td>
-      <td>転送比 D2/D1@linac = 0.746（別場）</td>
-    </tr>
-  </table>
-  <p>PE 形状が違う（d2=薄肉筒 5 cm、D2=容器）ため、比がメーカー比とずれるのは熱効率の不一致ではない。現場の絶対 φ は上表の転送 εS_wall を使う。</p>
+  <p>PE 形状が違う（d2=薄肉筒 5 cm、D2=容器）ため、計数比はメーカー感度比と一致しなくてよい。現場のフラックスは転送した効率×面積を使う。</p>
 
   <h2 id="apply">現場への適用</h2>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
-      <th>εS_wall [cm²]</th>
+      <th>採用する効率×面積（壁窓）[cm²]</th>
       <th>較正方法</th>
     </tr>
     <tr>
       <td>d1</td>
       <td>112.3</td>
-      <td>メーカー 123 × パイル f_wall</td>
+      <td>メーカー 123 × パイルの壁窓割合</td>
     </tr>
     <tr>
       <td>D1</td>
       <td>410.9</td>
-      <td>メーカー 450 × 同じ f_wall</td>
+      <td>メーカー 450 × 同じ壁窓割合</td>
     </tr>
     <tr>
       <td>d2</td>
       <td>132.1</td>
-      <td>地上 wall 比 × D1</td>
+      <td>地上の壁窓計数比 × D1</td>
     </tr>
     <tr>
       <td>D2</td>
       <td>306.6</td>
-      <td>linac wall 比 × D1</td>
+      <td>linac の壁窓計数比 × D1</td>
     </tr>
   </table>
-  <p>式: φ = wall NET CPS / εS_wall。同一検出器内なら相対 φ ≈ 相対 CPS。</p>
+  <p>式: フラックス = 壁窓の計数率 / 採用する効率×面積。同一検出器内なら相対フラックス ≈ 相対計数率。</p>
 
   <h2 id="files">生データ</h2>
   <ul>
