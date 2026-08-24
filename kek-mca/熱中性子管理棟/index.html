@@ -13,14 +13,13 @@
   <h1>熱中性子管理棟（校正）— データまとめ</h1>
 
   <p>2026-08-22 午後に、黒鉛パイルでの校正・Gain 試験・PE 効果確認を行った。地下施設キャンペーン（等価コンクリート図 11/12）とは別セッションである。</p>
-  <p>MCA はピークを積算するモードであるため、<strong>dead time では較正点を捨てない</strong>。計数率は net / LIVE_TIME（追加の 1/(1−DT) はしない）。ch0 オーバーフローは dead time とは別指標で、大径管では ch1+ をメーカー比較に使う。</p>
+  <p>MCA はピークを積算するモードであるため、<strong>dead time では較正点を捨てない</strong>。計数率は net / LIVE_TIME。計測効率は ε = εS / S_iso（無次元）。</p>
 
   <p>
     <a href="#method">較正の定義</a> ·
-    <a href="#geom">幾何・メーカー</a> ·
-    <a href="#mfr">パイル実測 vs メーカー</a> ·
-    <a href="#windows">解析窓</a> ·
-    <a href="#efficiency">採用 ε×S</a> ·
+    <a href="#geom">メーカー公称</a> ·
+    <a href="#mfr">実績</a> ·
+    <a href="#efficiency">採用している検出器効率</a> ·
     <a href="#rates">計数率一覧</a> ·
     <a href="#field-phi">現場フラックス</a> ·
     <a href="#pe">PE 確認</a> ·
@@ -31,32 +30,29 @@
   <h2 id="method">較正の定義（d1 / D1 共通）</h2>
   <p>メーカー感度は等方熱場の<strong>全計数</strong>（cps/nv = εS_total）。現場の主窓は壁効果 191–764 keV。</p>
   <pre>εS_total = メーカー cps/nv
-S_iso    = π r (L+r)/2
-ε_mfr    = εS_total / S_iso
+S_iso    = π r (L+r)/2　（L = He-3 が入っている長さ）
+ε_mfr    = εS_total / S_iso　（メーカー公称の計測効率）
 f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
 εS_wall  = εS_total × f_wall
 φ        = R_wall / εS_wall</pre>
-  <ul>
-    <li><strong>d1</strong> … S_iso は実測外形：高さ L = 39.53 cm、幅（直径）= 5.08 cm。</li>
-    <li><strong>D1</strong> … S_iso は He-3 内半径 ×（全長 − 信管）= 4.80 cm × 56 cm。</li>
-    <li><strong>d2 / D2</strong> … PE 付きのため裸管メーカーは使わない。現場の wall CPS 比で D1 から転送。</li>
-  </ul>
   <p>パイル点束 φ は米内ほか, 保健物理 37(2) 118–127 (2002)：Q = 2.26×10<sup>6</sup> n/s、φ/Q = 9.44×10<sup>−6</sup> @30 cm、R_half = 95 cm。φ(30) = 21.33、φ(80) = 10.88 n/cm²/s。</p>
-  <p>パイル R/φ は点束×長い円筒のため、等方校正のメーカー値とは一致しなくてよい。照合用。主結果はメーカー × f_wall。</p>
+  <p>パイル R/φ は点束×長い円筒のためメーカー公称と一致しなくてよい（照合）。絶対 φ の主結果はメーカー × f_wall。</p>
 
-  <h2 id="geom">幾何とメーカー公称</h2>
+  <h2 id="geom">メーカー公称</h2>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
-      <th>L [cm]</th>
+      <th>外形全長 [cm]</th>
+      <th>He-3 が入っている長さ [cm]</th>
       <th>直径 [cm]</th>
       <th>S_iso [cm²]</th>
-      <th>メーカー [cps/nv]</th>
+      <th>メーカー εS [cm²]</th>
       <th>ε_mfr</th>
     </tr>
     <tr>
       <td>d1 / d2</td>
-      <td>39.53（外形）</td>
+      <td>50</td>
+      <td>39.53</td>
       <td>5.08</td>
       <td>167.9</td>
       <td>123</td>
@@ -64,7 +60,8 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
     </tr>
     <tr>
       <td>D1 / D2</td>
-      <td>56（全長−信管）</td>
+      <td>66</td>
+      <td>56（全長 − 信管）</td>
       <td>9.60（He 内径）</td>
       <td>458.4</td>
       <td>450</td>
@@ -72,155 +69,106 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
     </tr>
   </table>
 
-  <h2 id="mfr">パイル実測 εS とメーカーの比較</h2>
-  <p>εS_meas = R / φ。メーカーは全計数なので、比較は R_total（D1 は ch0 除外の ch1+）。
-  <code>D1_…gain750_corse_gainを200から100に変更.mca</code> は<strong>変更後</strong>のスペクトルである（変更中ではない）。</p>
-  <table border="1" cellpadding="6" cellspacing="0">
-    <tr>
-      <th>測定</th>
-      <th>条件</th>
-      <th>R（比較用）[cps]</th>
-      <th>φ [n/cm²/s]</th>
-      <th>εS_meas [cm²]</th>
-      <th>メーカー</th>
-      <th>比</th>
-    </tr>
-    <tr>
-      <td>d1 · 30 cm</td>
-      <td>黒鉛・水平</td>
-      <td>1817（全 ch）</td>
-      <td>21.33</td>
-      <td>85.2</td>
-      <td>123</td>
-      <td>0.69</td>
-    </tr>
-    <tr>
-      <td>d1 · 80 cm</td>
-      <td>黒鉛・水平</td>
-      <td>889（全 ch）</td>
-      <td>10.88</td>
-      <td>81.7</td>
-      <td>123</td>
-      <td>0.66</td>
-    </tr>
-    <tr>
-      <td>D1 · 30 cm</td>
-      <td>黒鉛・水平</td>
-      <td>1.82×10<sup>4</sup>（ch1+）</td>
-      <td>21.33</td>
-      <td>854</td>
-      <td>450</td>
-      <td>1.90</td>
-    </tr>
-    <tr>
-      <td>D1 · 80 cm</td>
-      <td>黒鉛・水平</td>
-      <td>5412（ch1+）</td>
-      <td>10.88</td>
-      <td>497</td>
-      <td>450</td>
-      <td>1.10</td>
-    </tr>
-    <tr>
-      <td>D1 · coarse 100 / Gain 750（変更後）</td>
-      <td>80 cm 規模（計数率が 30 cm ではない）</td>
-      <td>4835（ch1+）</td>
-      <td>10.88</td>
-      <td>444</td>
-      <td>450</td>
-      <td><strong>0.99</strong></td>
-    </tr>
-    <tr>
-      <td>D1 · coarse を 200→100 に変更後</td>
-      <td>同上</td>
-      <td>4662（ch1+）</td>
-      <td>10.88</td>
-      <td>428</td>
-      <td>450</td>
-      <td>0.95</td>
-    </tr>
-    <tr>
-      <td>d2 / D2 · 400 cm</td>
-      <td>黒鉛なし・PE</td>
-      <td>—</td>
-      <td>公式不可</td>
-      <td>—</td>
-      <td>123 / 450（裸管）</td>
-      <td>—</td>
-    </tr>
-  </table>
-  <p>d1 の 30/80 比は観測 R30/R80 = 2.04、理論 φ30/φ80 = 1.96 で整合。εS がメーカーの約 68% なのは、パイルが等方場ではなく点状熱束だからである。</p>
-  <p>D1 @30 cm は ch1+ でもメーカーの 1.9 倍で、ch0≈33% と高計数のパイルアップが残る。照合は 80 cm 規模（gain 確定後は公称の 95–99%）を使う。主結果の εS_total(D1) はメーカー 450 のまま。</p>
-  <p>管理棟2階の D1/d1 CPS 比は宇宙線スペクトルなので、熱中性子 εS には使わない（参考のみ）。</p>
-
-  <h2 id="windows">解析窓は 2 系統</h2>
-  <p>³He(n,p)³H の Q 値は 764 keV。壁効果によりエネルギー付与はおよそ 191–764 keV に連続分布する。ピーク近傍だけを切ると壁効果成分を落とす。公式 φ は wall 窓。</p>
-  <table border="1" cellpadding="6" cellspacing="0">
-    <tr>
-      <th>系統</th>
-      <th>窓の定義</th>
-      <th>背景</th>
-      <th>d1 ε×S [cm²]</th>
-      <th>D1 ε×S [cm²]</th>
-    </tr>
-    <tr>
-      <td>peak ROI（参考）</td>
-      <td>シリアル別固定窓（例: 2162 は ch 350–408）</td>
-      <td>両側帯</td>
-      <td>70.1（=123 × f_peak）</td>
-      <td>256（=450 × f_peak）</td>
-    </tr>
-    <tr>
-      <td>wall 191–764 keV（主窓）</td>
-      <td>ピーク=764 keV 線形校正 → 191–764 keV</td>
-      <td>右側帯（必要なら平坦部）</td>
-      <td><strong>112.3</strong>（=123 × 0.913）</td>
-      <td><strong>410.9</strong>（=450 × 0.913）</td>
-    </tr>
-  </table>
-  <p>f_wall = 0.913（d1 パイル 30 cm で 0.896、80 cm で 0.930）。Gain を変えた D1 では固定 peak ROI がピークを外すことがある。wall 窓と全計数（ch1+）は使える。</p>
-
-  <h2 id="efficiency">採用している検出器効率</h2>
+  <h2 id="mfr">実績</h2>
+  <p>εS_meas = R / φ、ε_meas = εS_meas / S_iso。メーカーは全計数。D1 は ch0 除外の ch1+。</p>
+  <p><strong>採用する実測:</strong> d1 は 30&amp;80 cm の平均（距離比が理論と整合）。D1 は Gain=750・coarse=100（変更後）の ch1+。D1 @30 cm はパイルアップで不採用。80 cm（gain 前）は参考。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
-      <th>εS_total [cm²]</th>
-      <th>εS_wall [cm²]</th>
-      <th>εS_peak [cm²]</th>
+      <th>実測の取り方</th>
+      <th>εS_meas [cm²]</th>
+      <th>ε_meas</th>
+      <th>メーカー εS</th>
+      <th>ε_mfr</th>
+      <th>εS 比</th>
+      <th>結論</th>
+    </tr>
+    <tr>
+      <td>d1</td>
+      <td>30&amp;80 cm 平均（全 ch）</td>
+      <td>83.4</td>
+      <td>0.497</td>
+      <td>123</td>
+      <td>0.733</td>
+      <td>0.68</td>
+      <td>点束のため公称より低い。主結果はメーカー 123</td>
+    </tr>
+    <tr>
+      <td>D1</td>
+      <td>Gain750 変更後・ch1+（80 cm 規模）</td>
+      <td>444</td>
+      <td>0.969</td>
+      <td>450</td>
+      <td>0.982</td>
+      <td>0.99</td>
+      <td>公称と一致。主結果はメーカー 450</td>
+    </tr>
+  </table>
+  <p>d1 の R30/R80 = 2.04（理論 1.96）。D1 @30 cm の ch1+/φ = 854（比 1.90）は不採用。変更後のもう一方（coarse 200→100）は εS=428（比 0.95）で同傾向。</p>
+
+  <h2 id="efficiency">採用している検出器効率</h2>
+  <p>絶対 φ には εS_wall（メーカー × f_wall、または転送）を使う。パイル φ は較正場の文献値。ε = εS / S_iso。</p>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <tr>
+      <th>検出器</th>
+      <th>S_iso [cm²]</th>
+      <th>メーカー εS [cm²]</th>
+      <th>ε_mfr</th>
+      <th>パイル φ [n/cm²/s]</th>
+      <th>実測 εS [cm²]</th>
+      <th>ε_meas</th>
+      <th>εS_wall 採用 [cm²]</th>
       <th>較正</th>
     </tr>
     <tr>
       <td>d1</td>
+      <td>167.9</td>
       <td>123</td>
-      <td>112.3 ± 2.1</td>
-      <td>70.1</td>
-      <td>メーカー × パイル f_wall</td>
+      <td>0.733</td>
+      <td>21.33 / 10.88</td>
+      <td>83.4</td>
+      <td>0.497</td>
+      <td><strong>112.3</strong></td>
+      <td>123 × f_wall=0.913</td>
     </tr>
     <tr>
       <td>D1</td>
+      <td>458.4</td>
       <td>450</td>
-      <td>410.9</td>
-      <td>256</td>
-      <td>メーカー × 同じ f_wall</td>
+      <td>0.982</td>
+      <td>10.88（照合）</td>
+      <td>444</td>
+      <td>0.969</td>
+      <td><strong>410.9</strong></td>
+      <td>450 × 同じ f_wall</td>
     </tr>
     <tr>
       <td>d2</td>
+      <td>167.9</td>
+      <td>123（裸管・参考）</td>
+      <td>0.733</td>
       <td>—</td>
-      <td>132.1</td>
       <td>—</td>
-      <td>地上 wall CPS 比 d2/D1 = 0.321 × D1</td>
+      <td>—</td>
+      <td><strong>132.1</strong></td>
+      <td>地上 wall 比 0.321 × D1</td>
     </tr>
     <tr>
       <td>D2</td>
+      <td>458.4</td>
+      <td>450（裸管・参考）</td>
+      <td>0.982</td>
       <td>—</td>
-      <td>306.6</td>
       <td>—</td>
-      <td>linac 同日 wall CPS 比 D2/D1 = 0.746 × D1</td>
+      <td>—</td>
+      <td><strong>306.6</strong></td>
+      <td>linac wall 比 0.746 × D1</td>
     </tr>
   </table>
+  <p>d2/D2 は PE 付きのため、メーカー裸管の εS・ε_mfr は参考。採用は現場転送の εS_wall。</p>
 
   <h2 id="rates">計数率一覧（2026-08-22）</h2>
-  <p>CPS は LIVE_TIME 除算。wall は 191–764 keV NET。peak は固定 ROI（Gain ずれ時は参考にならない）。</p>
+  <p>CPS は LIVE_TIME 除算。wall は 191–764 keV NET。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>測定</th>
@@ -240,7 +188,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>2.70×10<sup>4</sup> / 1.82×10<sup>4</sup></td>
       <td>7162</td>
       <td>1634</td>
-      <td>ch0=33%。メーカー照合には使わない</td>
+      <td>不採用（パイルアップ）</td>
     </tr>
     <tr>
       <td><a href="./D1_20260822_1644_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F2-80cm.mca">D1 · 80 cm</a></td>
@@ -250,7 +198,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>8290 / 5412</td>
       <td>2875</td>
       <td>1161</td>
-      <td>ch0=35%。ch1+/φ ≈ 497（メーカー 450 の 1.10）</td>
+      <td>参考（gain 前）</td>
     </tr>
     <tr>
       <td><a href="./D1_20260822_1650_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain500.mca">D1 · gain500</a></td>
@@ -259,18 +207,18 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>61.6</td>
       <td>8172 / 5068</td>
       <td>4107</td>
-      <td>1455（peak≈248）</td>
-      <td>ゲイン試験。ピークは低 ch</td>
+      <td>1455</td>
+      <td>ゲイン試験</td>
     </tr>
     <tr>
-      <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1 · coarse 200→100 変更後</a></td>
+      <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-gain750_corse_gain%E3%82%92200%E3%81%8B%E3%82%89100%E3%81%AB%E5%A4%89%E6%9B%B4.mca">D1 · coarse 変更後</a></td>
       <td>D1</td>
       <td>coarse=100（変更後）</td>
       <td>59.9</td>
       <td>8064 / 4662</td>
       <td>3796</td>
-      <td>NET≤0（固定 ROI 外れ）</td>
-      <td>変更後。ch1+/φ ≈ 428（0.95×メーカー）</td>
+      <td>NET≤0</td>
+      <td>変更後。εS≈428</td>
     </tr>
     <tr>
       <td><a href="./D1_20260822_1653_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-corse_gain100_Gain_750.mca">D1 · Gain750</a></td>
@@ -279,8 +227,8 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>32.9</td>
       <td>8046 / 4835</td>
       <td>4009</td>
-      <td>9.5（固定 ROI 外れ）</td>
-      <td>変更後。ch1+/φ ≈ 444（0.99×メーカー）</td>
+      <td>9.5</td>
+      <td>実績採用。εS=444</td>
     </tr>
     <tr>
       <td><a href="./d1_20260822_1702_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-80cm.mca">d1 · 80 cm</a></td>
@@ -290,7 +238,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>889</td>
       <td>827</td>
       <td>513</td>
-      <td>f_wall 較正点。R/φ_total = 81.7</td>
+      <td>実績・f_wall</td>
     </tr>
     <tr>
       <td><a href="./d1_20260822_1705_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F-30cm.mca">d1 · 30 cm</a></td>
@@ -300,7 +248,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>1817</td>
       <td>1628</td>
       <td>1020</td>
-      <td>f_wall 較正点。R/φ_total = 85.2</td>
+      <td>実績・f_wall</td>
     </tr>
     <tr>
       <td><a href="./D2_20260822_1720_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">D2 · 400 cm</a></td>
@@ -310,7 +258,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>897 / 532</td>
       <td>284</td>
       <td>246</td>
-      <td>PE 確認（ch0≈41%）</td>
+      <td>PE 確認</td>
     </tr>
     <tr>
       <td><a href="./d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2 · 400 cm</a></td>
@@ -325,30 +273,44 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
   </table>
 
   <h2 id="field-phi">現場フラックス（主窓 191–764 keV）</h2>
-  <p>φ = wall NET / εS_wall。D1 の相対は地上=1。</p>
+  <p>φ = wall NET / εS_wall（メーカー×f_wall または転送）。相対は D1 地上=1。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
       <th>地点</th>
       <th>wall NET [cps]</th>
+      <th>εS_wall [cm²]</th>
       <th>絶対 φ [n/cm²/s]</th>
       <th>相対（D1 地上=1）</th>
     </tr>
-    <tr><td>D1</td><td>地上</td><td>0.541</td><td>1.32×10⁻³</td><td>1.00</td></tr>
-    <tr><td>D1</td><td>管理棟2階</td><td>0.650</td><td>1.58×10⁻³</td><td>1.20</td></tr>
-    <tr><td>D1</td><td>管理棟1階</td><td>0.477</td><td>1.16×10⁻³</td><td>0.88</td></tr>
-    <tr><td>D1</td><td>PF</td><td>0.235</td><td>5.72×10⁻⁴</td><td>0.43</td></tr>
-    <tr><td>D1</td><td>放射線棟BT</td><td>0.117</td><td>2.85×10⁻⁴</td><td>0.22</td></tr>
-    <tr><td>D1</td><td>linac</td><td>0.114</td><td>2.77×10⁻⁴</td><td>0.21</td></tr>
-    <tr><td>D1</td><td>KEKB</td><td>0.0505</td><td>1.23×10⁻⁴</td><td>0.093</td></tr>
-    <tr><td>d1</td><td>管理棟2階</td><td>0.202</td><td>1.80×10⁻³</td><td>1.36</td></tr>
-    <tr><td>d2</td><td>地上</td><td>0.174</td><td>1.32×10⁻³</td><td>1.00</td></tr>
-    <tr><td>D2</td><td>地上</td><td>0.286</td><td>9.34×10⁻⁴</td><td>0.71</td></tr>
+    <tr><td>D1</td><td>地上</td><td>0.541</td><td>410.9</td><td>1.32×10⁻³</td><td>1.00</td></tr>
+    <tr><td>D1</td><td>管理棟2階</td><td>0.650</td><td>410.9</td><td>1.58×10⁻³</td><td>1.20</td></tr>
+    <tr><td>D1</td><td>管理棟1階</td><td>0.477</td><td>410.9</td><td>1.16×10⁻³</td><td>0.88</td></tr>
+    <tr><td>D1</td><td>PF</td><td>0.235</td><td>410.9</td><td>5.72×10⁻⁴</td><td>0.43</td></tr>
+    <tr><td>D1</td><td>放射線棟BT</td><td>0.117</td><td>410.9</td><td>2.85×10⁻⁴</td><td>0.22</td></tr>
+    <tr><td>D1</td><td>linac</td><td>0.114</td><td>410.9</td><td>2.77×10⁻⁴</td><td>0.21</td></tr>
+    <tr><td>D1</td><td>PS</td><td>0.0550</td><td>410.9</td><td>1.34×10⁻⁴</td><td>0.10</td></tr>
+    <tr><td>D1</td><td>testhole</td><td>0.190</td><td>410.9</td><td>4.64×10⁻⁴</td><td>0.35</td></tr>
+    <tr><td>D1</td><td>KEKB</td><td>0.0505</td><td>410.9</td><td>1.23×10⁻⁴</td><td>0.093</td></tr>
+    <tr><td>d1</td><td>管理棟2階</td><td>0.202</td><td>112.3</td><td>1.80×10⁻³</td><td>1.36</td></tr>
+    <tr><td>d1</td><td>linac</td><td>0.0341</td><td>112.3</td><td>3.03×10⁻⁴</td><td>0.23</td></tr>
+    <tr><td>d1</td><td>PS</td><td>0.0332</td><td>112.3</td><td>2.95×10⁻⁴</td><td>0.22</td></tr>
+    <tr><td>d1</td><td>testhole</td><td>0.402</td><td>112.3</td><td>3.58×10⁻³</td><td>2.72</td></tr>
+    <tr><td>d2</td><td>地上</td><td>0.174</td><td>132.1</td><td>1.32×10⁻³</td><td>1.00</td></tr>
+    <tr><td>d2</td><td>PF</td><td>0.205</td><td>132.1</td><td>1.56×10⁻³</td><td>1.18</td></tr>
+    <tr><td>d2</td><td>linac</td><td>0.0220</td><td>132.1</td><td>1.67×10⁻⁴</td><td>0.13</td></tr>
+    <tr><td>d2</td><td>linac_IRON</td><td>0.0744</td><td>132.1</td><td>5.63×10⁻⁴</td><td>0.43</td></tr>
+    <tr><td>d2</td><td>放射線棟BT</td><td>0.0196</td><td>132.1</td><td>1.48×10⁻⁴</td><td>0.11</td></tr>
+    <tr><td>d2</td><td>KEKB</td><td>0.0124</td><td>132.1</td><td>9.42×10⁻⁵</td><td>0.072</td></tr>
+    <tr><td>D2</td><td>地上</td><td>0.286</td><td>306.6</td><td>9.34×10⁻⁴</td><td>0.71</td></tr>
+    <tr><td>D2</td><td>PF</td><td>0.145</td><td>306.6</td><td>4.73×10⁻⁴</td><td>0.36</td></tr>
+    <tr><td>D2</td><td>linac</td><td>0.0850</td><td>306.6</td><td>2.77×10⁻⁴</td><td>0.21</td></tr>
+    <tr><td>D2</td><td>linac_IRON</td><td>0.216</td><td>306.6</td><td>7.04×10⁻⁴</td><td>0.53</td></tr>
   </table>
-  <p>同一地点でも検出器間の絶対 φ は一致しない（熱較正 vs 宇宙線スペクトル、PE の有無）。地点間の相対比較は同一検出器内で行う。</p>
+  <p>同一地点でも検出器間の絶対 φ は一致しない（スペクトル・PE）。地点間比較は同一検出器内で行う。</p>
 
-  <h2 id="pe">D2 / d2 @ 400 cm（PE 効果・相対）</h2>
-  <p>黒鉛なし・見通し距離 ≈ 400 cm。Am-Be 高速中性子 + PE。熱 φ 公式は使わない。メーカー 123 / 450 は裸管の等方熱感度。</p>
+  <h2 id="pe">D2 / d2 @ 400 cm（PE 効果）</h2>
+  <p>黒鉛なし・見通し距離 ≈ 400 cm。Am-Be + PE。熱 φ 公式は使わない（φ は置かない）。現場用の εS_wall は転送値。</p>
   <table border="1" cellpadding="6" cellspacing="0">
     <tr>
       <th>検出器</th>
@@ -356,6 +318,8 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <th>peak ROI [cps]</th>
       <th>ch1+ [cps]</th>
       <th>ch0</th>
+      <th>εS_wall 採用 [cm²]</th>
+      <th>メーカー裸管 [cm²]</th>
     </tr>
     <tr>
       <td>D2</td>
@@ -363,6 +327,8 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>246</td>
       <td>532</td>
       <td>40.7%</td>
+      <td>306.6</td>
+      <td>450（参考）</td>
     </tr>
     <tr>
       <td>d2</td>
@@ -370,9 +336,33 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>63.7</td>
       <td>117</td>
       <td>≈0%</td>
+      <td>132.1</td>
+      <td>123（参考）</td>
     </tr>
   </table>
-  <p>D2/d2（ch1+）= 4.53、（peak ROI）= 3.86。メーカー比 450/123 = 3.66、S_iso 比 = 2.73。PE 形状が違う（d2=薄肉筒 5 cm、D2=容器）ため、比の差は熱効率の不一致ではない。</p>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <tr>
+      <th>比</th>
+      <th>値</th>
+      <th>比較</th>
+    </tr>
+    <tr>
+      <td>D2/d2（ch1+）</td>
+      <td>4.53</td>
+      <td>メーカー比 450/123 = 3.66</td>
+    </tr>
+    <tr>
+      <td>D2/d2（peak ROI）</td>
+      <td>3.86</td>
+      <td>S_iso 比 = 2.73</td>
+    </tr>
+    <tr>
+      <td>D2/d2（wall）</td>
+      <td>2.75</td>
+      <td>転送比 D2/D1@linac = 0.746（別場）</td>
+    </tr>
+  </table>
+  <p>PE 形状が違う（d2=薄肉筒 5 cm、D2=容器）ため、比がメーカー比とずれるのは熱効率の不一致ではない。現場の絶対 φ は上表の転送 εS_wall を使う。</p>
 
   <h2 id="apply">現場への適用</h2>
   <table border="1" cellpadding="6" cellspacing="0">
@@ -402,8 +392,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
       <td>linac wall 比 × D1</td>
     </tr>
   </table>
-  <p>式: φ = wall NET CPS / εS_wall。同一検出器内の地点比較なら相対 φ ≈ 相対 CPS。</p>
-  <p>関数とデータの持ち方: 幾何定数は <code>detector_specs.DETECTORS</code>、計算は <code>flux_calibration.py</code>、永続化は <code>tables/検出器効率_壁効果191_764keV.csv</code>。フラックスは CSV を唯一の εS ソースにする。</p>
+  <p>式: φ = wall NET CPS / εS_wall。同一検出器内なら相対 φ ≈ 相対 CPS。</p>
 
   <h2 id="files">生データ</h2>
   <ul>
@@ -418,7 +407,7 @@ f_wall   = d1 パイル 30&amp;80 cm の R_wall / R_total
     <li><a href="./d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.mca">d2_20260822_1729_熱中性子管理棟.mca</a> / <a href="./d2_20260822_1729_%E7%86%B1%E4%B8%AD%E6%80%A7%E5%AD%90%E7%AE%A1%E7%90%86%E6%A3%9F.csv">csv</a></li>
   </ul>
 
-  <p>数値出典: <code>測定_20260818/tables/</code> の 検出器効率_壁効果191_764keV・メーカー感度比較・フラックス_地点まとめ、および指定 MCA の LIVE_TIME 計数。</p>
+  <p>数値出典: <code>測定_20260818/tables/</code> の 検出器効率_壁効果191_764keV・メーカー感度比較・フラックス_地点まとめ、および指定 MCA。</p>
   <script src="../../theme.js"></script>
 </body>
 </html>
