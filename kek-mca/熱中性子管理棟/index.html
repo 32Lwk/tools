@@ -23,7 +23,6 @@
     <a href="#rates">計数率一覧</a> ·
     <a href="#field-phi">現場フラックス</a> ·
     <a href="#pe">PE 確認</a> ·
-    <a href="#apply">現場への適用</a> ·
     <a href="#files">生データ</a>
   </p>
 
@@ -348,36 +347,6 @@
     </tr>
   </table>
   <p>PE 形状が違う（d2=薄肉筒 5 cm、D2=容器）ため、計数比はメーカー感度比と一致しなくてよい。現場のフラックスは転送した効率×面積を使う。</p>
-
-  <h2 id="apply">現場への適用</h2>
-  <table border="1" cellpadding="6" cellspacing="0">
-    <tr>
-      <th>検出器</th>
-      <th>採用する効率×面積（壁窓）[cm²]</th>
-      <th>較正方法</th>
-    </tr>
-    <tr>
-      <td>d1</td>
-      <td>112.3</td>
-      <td>メーカー 123 × パイルの壁窓割合</td>
-    </tr>
-    <tr>
-      <td>D1</td>
-      <td>410.9</td>
-      <td>メーカー 450 × 同じ壁窓割合</td>
-    </tr>
-    <tr>
-      <td>d2</td>
-      <td>132.1</td>
-      <td>地上の壁窓計数比 × D1</td>
-    </tr>
-    <tr>
-      <td>D2</td>
-      <td>306.6</td>
-      <td>linac の壁窓計数比 × D1</td>
-    </tr>
-  </table>
-  <p>式: フラックス = 壁窓の計数率 / 採用する効率×面積。同一検出器内なら相対フラックス ≈ 相対計数率。</p>
 
   <h2 id="files">生データ</h2>
   <ul>
