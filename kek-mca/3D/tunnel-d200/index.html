@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>トンネル天井 200 cm Center vs Corner 3D — KEK MCA</title>
+  <title>トンネル天井 200 cm 宇宙線 4dtrack 3D — KEK MCA</title>
   <script src="../../../theme-boot.js"></script>
   <link rel="stylesheet" href="../../../theme.css">
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
@@ -31,21 +31,6 @@
     header h1 { font-size: 1.05rem; margin: 0; font-weight: 650; }
     header .note { font-size: 0.85rem; color: var(--muted); margin: 0; }
     header a { color: var(--link); }
-    .header-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem 1.5rem;
-      margin-top: 0.45rem;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-    .header-row label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      cursor: pointer;
-      user-select: none;
-    }
     .main-area {
       flex: 1 1 auto;
       min-height: 0;
@@ -134,62 +119,60 @@
         <a href="../../../tunnel-ceiling-d200/">スペクトル比較</a> ·
         <a href="../../">KEK MCA</a>
       </p>
-      <h1>トンネル天井 200&nbsp;cm — Center vs Corner 3D</h1>
+      <h1>トンネル天井 200&nbsp;cm — 宇宙線 4dtrack 3D（上空入射）</h1>
       <p class="note" id="metaLine">PHITS · 読込中…</p>
-    </div>
-    <div class="header-row">
-      <label><input type="checkbox" id="showMuon" checked> μ フラックス</label>
-      <label><input type="checkbox" id="showNeutron" checked> 中性子フラックス</label>
-      <label><input type="checkbox" id="showSurf" checked> xz 断面ヒートマップ</label>
-      <label><input type="checkbox" id="showDet" checked> 検出器（中央 / 壁際）</label>
-      <label><input type="checkbox" id="showGeom" checked> コンクリート / 空洞</label>
     </div>
   </header>
   <div class="main-area">
     <div class="plot-wrap">
       <div id="plot"></div>
       <div class="legend-note">
-        <span class="sw" style="background:#4FC3F7"></span>μ フラックス　
-        <span class="sw" style="background:#66BB6A"></span>中性子フラックス<br>
-        <span class="sw" style="background:#2f6fed"></span>Center 検出器　
-        <span class="sw" style="background:#c45c26"></span>Corner 検出器<br>
-        灰点線: コンクリート　緑: トンネル空洞　紫: 線源面
+        <span class="sw" style="background:#4FC3F7"></span>μ⁺　
+        <span class="sw" style="background:#29B6F6"></span>μ⁻　
+        <span class="sw" style="background:#66BB6A"></span>中性子　
+        <span class="sw" style="background:#EF5350"></span>陽子<br>
+        <span class="sw" style="background:#2f6fed"></span>Center　
+        <span class="sw" style="background:#c45c26"></span>Corner<br>
+        灰点線: コンクリート　緑: トンネル空洞　紫: 線源面（上空）
       </div>
     </div>
     <aside class="info-panel">
       <section>
-        <h2>検出器フラックス比較</h2>
+        <h2>軌跡数（4dtrack 可視化）</h2>
+        <div id="currentStats">—</div>
+      </section>
+      <section>
+        <h2>検出器フラックス比較（本番統計）</h2>
         <div id="detCompare">—</div>
       </section>
       <section>
-        <h2>T-Track メッシュ（全体）</h2>
-        <dl id="meshStats"></dl>
+        <h2>二次粒子・トンネル内</h2>
+        <dl id="secondaryStats"></dl>
       </section>
       <section>
-        <h2>ジオメトリ（c10 = 200 cm）</h2>
+        <h2>エネルギー [MeV]（ROI内）</h2>
+        <div id="energyTable">—</div>
+      </section>
+      <section>
+        <h2>領域別軌跡数（最深点）</h2>
+        <div id="regionTable">—</div>
+      </section>
+      <section>
+        <h2>ジオメトリ</h2>
         <dl id="geomStats"></dl>
       </section>
       <section>
         <h2>シミュレーション条件</h2>
         <dl id="simMeta"></dl>
       </section>
-      <section>
-        <h2>見方</h2>
-        <p class="note" style="margin:0;font-size:0.78rem;color:var(--muted)">
-          軌跡そのものではなく、<strong>T-Track の空間フラックス分布</strong>（8ジョブ平均）を 3D 表示しています。
-          青い箱が床中央、オレンジが壁際の検出器（各 100×1000×100 cm）。
-          詳細スペクトルは
-          <a href="../../../tunnel-ceiling-d200/">スペクトル比較ページ</a>へ。
-        </p>
-      </section>
     </aside>
   </div>
   <p id="status">読み込み中…</p>
   <script>
-    function sci(x, d = 3) {
-      if (x == null || !Number.isFinite(x)) return "—";
-      return Number(x).toExponential(d);
-    }
+    const ORDER = ["muon+", "muon-", "neutron", "proton"];
+    const LABELS = { "muon+": "μ⁺", "muon-": "μ⁻", neutron: "中性子", proton: "陽子" };
+    let pack = null;
+
     function fmt(n, d = 2) {
       if (n == null || Number.isNaN(n)) return "—";
       if (Math.abs(n) >= 1000) return n.toExponential(2);
@@ -197,129 +180,56 @@
       if (Math.abs(n) >= 10) return n.toFixed(1);
       return n.toFixed(d);
     }
-
-    let scene = null;
-
-    function wire(name, g, color, width, dash) {
-      return {
-        type: "scatter3d",
-        mode: "lines",
-        name,
-        x: g.x, y: g.y, z: g.z,
-        line: { color, width: width || 3, dash: dash || "solid" },
-        hoverinfo: "skip",
-        showlegend: true,
-      };
-    }
-
-    function fluxScatter(label, pts, colorscale, visible) {
-      const cmax = Math.max(...pts.v) || 1;
-      return {
-        type: "scatter3d",
-        mode: "markers",
-        name: label + " (" + pts.n.toLocaleString() + ")",
-        x: pts.x, y: pts.y, z: pts.z,
-        text: pts.text,
-        hovertemplate: "%{text}<extra></extra>",
-        marker: {
-          size: 2.2,
-          color: pts.v,
-          colorscale,
-          cmin: 0,
-          cmax,
-          opacity: 0.55,
-          showscale: false,
-        },
-        visible: visible ? true : "legendonly",
-      };
-    }
-
-    /** Vertical flux heatmap on y=0 plane as a Plotly surface (x–z as x–y of surface, then mapped). */
-    function fluxSurface(label, surf, colorscale, visible) {
-      // Plotly surface: z is height. We fake a thin sheet at y≈0 by using y as second axis in scene via...
-      // Better approach: use mesh of points as surface with x, z as coordinates and a dummy y=0,
-      // implemented as scattergl isn't 3d. Use surface with:
-      //   x = x coords, y = z coords (horizontal), and transform via customdata — actually Plotly 3d surface
-      // needs z(x,y). So we create a surface in the x–z plane by setting:
-      //   X grid = surf.x, Y grid = zeros (thin), Z = surf.z via... can't.
-      // Alternative: use `mesh3d` or multiple `scatter3d` heatmap via colored plane.
-      // Implement as scatter3d dense markers on y=0 only from surface matrix.
-      const xs = [], ys = [], zs = [], vs = [], texts = [];
-      const thr = Math.max(...surf.flux.flat()) * 0.01;
-      for (let iz = 0; iz < surf.z.length; iz++) {
-        for (let ix = 0; ix < surf.x.length; ix++) {
-          const v = surf.flux[iz][ix];
-          if (v < thr) continue;
-          xs.push(surf.x[ix]);
-          ys.push(0);
-          zs.push(surf.z[iz]);
-          vs.push(v);
-          texts.push(`xz断面<br>x=${surf.x[ix].toFixed(0)} z=${surf.z[iz].toFixed(0)}<br>φ=${v.toExponential(3)}`);
-        }
-      }
-      const cmax = Math.max(...vs, 1e-30);
-      return {
-        type: "scatter3d",
-        mode: "markers",
-        name: label,
-        x: xs, y: ys, z: zs,
-        text: texts,
-        hovertemplate: "%{text}<extra></extra>",
-        marker: {
-          size: 3.5,
-          color: vs,
-          colorscale,
-          cmin: 0,
-          cmax,
-          opacity: 0.85,
-          showscale: true,
-          colorbar: { title: "φ", thickness: 12, len: 0.35, y: 0.35 },
-        },
-        visible: visible ? true : "legendonly",
-      };
+    function sci(x, d = 3) {
+      if (x == null || !Number.isFinite(x)) return "—";
+      return Number(x).toExponential(d);
     }
 
     function buildData() {
-      const g = scene.geom;
-      const showM = document.getElementById("showMuon").checked;
-      const showN = document.getElementById("showNeutron").checked;
-      const showS = document.getElementById("showSurf").checked;
-      const showD = document.getElementById("showDet").checked;
-      const showG = document.getElementById("showGeom").checked;
       const data = [];
-
-      if (showM) {
-        data.push(fluxScatter("μ flux", scene.muon.points, "Blues", true));
-        if (showS) data.push(fluxSurface("μ xz map", scene.muon.surface, "Blues", true));
+      for (const name of ORDER) {
+        const p = pack.particles[name];
+        if (!p) continue;
+        data.push({
+          type: "scatter3d", mode: "lines",
+          name: (LABELS[name] || name) + " (" + p.n + ")",
+          x: p.x, y: p.y, z: p.z, text: p.text,
+          hovertemplate: "%{text}<extra></extra>",
+          line: { color: p.color, width: p.width }, opacity: p.opacity,
+        });
       }
-      if (showN) {
-        data.push(fluxScatter("n flux", scene.neutron.points, "Greens", true));
-        if (showS) data.push(fluxSurface("n xz map", scene.neutron.surface, "YlGn", true));
-      }
-
-      const geomVis = showG ? true : "legendonly";
-      data.push({ ...wire("concrete", g.concrete, "#90A4AE", 3, "dot"), visible: geomVis });
-      data.push({ ...wire("tunnel air", g.tunnel, "#A5D6A7", 4), visible: geomVis });
-      data.push({ ...wire("ground z=0", g.ground, "#BCAAA4", 2), visible: geomVis });
-      data.push({ ...wire("source plane", g.source, "#CE93D8", 3), visible: geomVis });
-
-      const detVis = showD ? true : "legendonly";
-      data.push({ ...wire("Center detector", g.center, "#2f6fed", 6), visible: detVis });
-      data.push({ ...wire("Corner detector", g.corner, "#c45c26", 6), visible: detVis });
-
+      const g = pack.geom;
+      data.push({ type: "scatter3d", mode: "lines", name: "concrete",
+        x: g.concrete.x, y: g.concrete.y, z: g.concrete.z,
+        line: { color: "#90A4AE", width: 3, dash: "dot" }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "tunnel air",
+        x: g.tunnel.x, y: g.tunnel.y, z: g.tunnel.z,
+        line: { color: "#A5D6A7", width: 4 }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "Center detector",
+        x: g.center.x, y: g.center.y, z: g.center.z,
+        line: { color: "#2f6fed", width: 6 }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "Corner detector",
+        x: g.corner.x, y: g.corner.y, z: g.corner.z,
+        line: { color: "#c45c26", width: 6 }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "ground z=0",
+        x: g.ground.x, y: g.ground.y, z: g.ground.z,
+        line: { color: "#BCAAA4", width: 2 }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "source plane (sky)",
+        x: g.source.x, y: g.source.y, z: g.source.z,
+        line: { color: "#CE93D8", width: 3 }, hoverinfo: "skip" });
       return data;
     }
 
     function layout() {
       return {
-        title: "c10 = 200 cm（天井 2.0 m）· Center vs Corner",
+        title: "c10 = 200 cm（天井 2.0 m）· 上空宇宙線入射",
         scene: {
           xaxis: { title: "x [cm]", range: [-900, 900] },
           yaxis: { title: "y [cm]", range: [-550, 550] },
-          zaxis: { title: "z [cm] (上=地表)", range: scene.z_range },
+          zaxis: { title: "z [cm] (上=地表)", range: pack.z_range },
           aspectmode: "manual",
-          aspectratio: { x: 1.15, y: 0.7, z: 1.35 },
-          camera: { eye: { x: 1.55, y: 1.35, z: 0.55 }, up: { x: 0, y: 0, z: 1 } },
+          aspectratio: { x: 1.15, y: 0.7, z: 1.45 },
+          camera: { eye: { x: 1.35, y: 1.55, z: 0.85 }, up: { x: 0, y: 0, z: 1 } },
         },
         legend: { title: { text: "click to toggle" } },
         margin: { l: 0, r: 0, t: 40, b: 0 },
@@ -330,75 +240,138 @@
       };
     }
 
-    function renderSide() {
-      const d = scene.detectors;
-      const cs = d.center, ks = d.corner;
-      const maxS = Math.max(cs.sum, ks.sum);
-      document.getElementById("detCompare").innerHTML = `
-        <div class="bar-row"><span>Center</span><div class="bar-track"><div class="bar-fill center" style="width:${100*cs.sum/maxS}%"></div></div><span>${sci(cs.sum)}</span></div>
-        <div class="bar-row"><span>Corner</span><div class="bar-track"><div class="bar-fill corner" style="width:${100*ks.sum/maxS}%"></div></div><span>${sci(ks.sum)}</span></div>
-        <dl style="margin-top:0.55rem">
-          <dt>比 Center/Corner</dt><dd><strong>${d.ratio_center_over_corner.toFixed(3)}</strong>（中央が ${((d.ratio_center_over_corner-1)*100).toFixed(1)}% 高）</dd>
-          <dt>Center E&gt;1 MeV</dt><dd>${sci(cs.Egt1MeV)}</dd>
-          <dt>Corner E&gt;1 MeV</dt><dd>${sci(ks.Egt1MeV)}</dd>
-          <dt>単位</dt><dd>1/cm²/source（積分）</dd>
-        </dl>
-        <table class="stats" style="margin-top:0.45rem">
-          <thead><tr><th></th><th>Center</th><th>Corner</th></tr></thead>
-          <tbody>
-            <tr><td>全帯</td><td>${sci(cs.sum)}</td><td>${sci(ks.sum)}</td></tr>
-            <tr><td>誤差</td><td>${sci(cs.err)}</td><td>${sci(ks.err)}</td></tr>
-            <tr><td>E&gt;10 MeV</td><td>${sci(cs.Egt10MeV)}</td><td>${sci(ks.Egt10MeV)}</td></tr>
-          </tbody>
-        </table>`;
-
-      document.getElementById("meshStats").innerHTML = `
-        <dt>μ mesh max</dt><dd>${sci(scene.muon.max)}</dd>
-        <dt>μ mesh sum</dt><dd>${fmt(scene.muon.sum, 1)}</dd>
-        <dt>n mesh max</dt><dd>${sci(scene.neutron.max)}</dd>
-        <dt>n mesh sum</dt><dd>${fmt(scene.neutron.sum, 1)}</dd>
-        <dt>描画点 μ / n</dt><dd>${scene.muon.points.n.toLocaleString()} / ${scene.neutron.points.n.toLocaleString()}</dd>`;
-
-      const g = scene.geometry_depth;
-      document.getElementById("geomStats").innerHTML = `
-        <dt>天井深さ</dt><dd>${g.c10_cm} cm（${g.ceiling_depth_m} m）</dd>
-        <dt>空洞上面 z</dt><dd>${g.tunnel_top_z_cm} cm</dd>
-        <dt>空洞下面 z</dt><dd>${g.tunnel_bottom_z_cm} cm</dd>
-        <dt>コンクリート</dt><dd>z=${g.concrete_bottom_z_cm} … ${g.concrete_top_z_cm} cm</dd>
-        <dt>Center 箱</dt><dd>x=${g.center_detector.x.join("…")}, z=${g.center_detector.z.join("…")}</dd>
-        <dt>Corner 箱</dt><dd>x=${g.corner_detector.x.join("…")}, z=${g.corner_detector.z.join("…")}</dd>`;
-
-      const m = scene.meta;
-      const src = m.source;
-      document.getElementById("simMeta").innerHTML = `
-        <dt>PHITS</dt><dd>${m.phits}</dd>
-        <dt>履歴</dt><dd>${m.histories.toLocaleString()}（${m.jobs}×${m.maxbch_per_job} batch）</dd>
-        <dt>線源</dt><dd>e-type=${src.e_type}, icenv=${src.icenv}</dd>
-        <dt>位置</dt><dd>${src.location}</dd>
-        <dt>入射</dt><dd>${src.particles.join(", ")}</dd>
-        <dt>線源半径</dt><dd>${src.radius_cm} cm（z=${src.z_cm} cm）</dd>
-        <dt>データ</dt><dd>${m.note}</dd>`;
+    function renderCurrentStats() {
+      const s = pack.stats;
+      const roi = s.tracks_in_view_roi;
+      const disp = s.tracks_displayed;
+      const raw = s.tracks_raw_by_particle;
+      let html = "<dl>";
+      html += "<dt>履歴数</dt><dd>" + s.histories + " <span style='color:var(--muted)'>（" + s.histories_note + "）</span></dd>";
+      html += "<dt>4dtrack 全軌跡</dt><dd>" + s.tracks_raw_all.toLocaleString() + " 本</dd>";
+      html += "<dt>表示中（描画）</dt><dd>" + Object.values(disp).reduce((a,b)=>a+b,0).toLocaleString() + " 本</dd>";
+      html += "<dt>計算時間</dt><dd>" + (s.run.wall_sec != null ? s.run.wall_sec + " s" : "—") + "</dd>";
+      html += "<dt>出力サイズ</dt><dd>" + (s.run.file_bytes != null ? (s.run.file_bytes/1e6).toFixed(1) + " MB" : "—") + "</dd>";
+      html += "</dl>";
+      html += "<table class='stats' style='margin-top:0.5rem'><thead><tr><th>粒子</th><th>raw</th><th>ROI</th><th>表示</th></tr></thead><tbody>";
+      for (const name of ORDER) {
+        html += "<tr><td>" + (LABELS[name]||name) + "</td><td>" + (raw[name]||0) + "</td><td>" + (roi[name]||0) + "</td><td>" + (disp[name]||0) + "</td></tr>";
+      }
+      html += "</tbody></table>";
+      html += "<p class='note' style='margin:0.4rem 0 0;font-size:0.75rem;color:var(--muted)'>紫の線源面から下向きに宇宙線が入射します（dir=cr）。</p>";
+      document.getElementById("currentStats").innerHTML = html;
     }
 
-    function render() {
-      Plotly.react("plot", buildData(), layout(), { responsive: true });
+    function renderDetectors() {
+      const d = pack.detectors;
+      if (!d) {
+        document.getElementById("detCompare").textContent = "—";
+        return;
+      }
+      const cs = d.center, ks = d.corner;
+      const maxS = Math.max(cs.sum, ks.sum);
+      const hits = pack.stats.detector_track_hits || { center: {}, corner: {} };
+      document.getElementById("detCompare").innerHTML = `
+        <p class="note" style="margin:0 0 0.4rem;font-size:0.75rem;color:var(--muted)">本番 1×10⁷ histories の T-Track 積分</p>
+        <div class="bar-row"><span>Center</span><div class="bar-track"><div class="bar-fill center" style="width:${100*cs.sum/maxS}%"></div></div><span>${sci(cs.sum)}</span></div>
+        <div class="bar-row"><span>Corner</span><div class="bar-track"><div class="bar-fill corner" style="width:${100*ks.sum/maxS}%"></div></div><span>${sci(ks.sum)}</span></div>
+        <dl style="margin-top:0.45rem">
+          <dt>比 Center/Corner</dt><dd><strong>${d.ratio_center_over_corner.toFixed(3)}</strong></dd>
+        </dl>
+        <table class="stats" style="margin-top:0.4rem">
+          <thead><tr><th>4dtrack通過</th><th>Center</th><th>Corner</th></tr></thead>
+          <tbody>
+            ${ORDER.map(n => `<tr><td>${LABELS[n]}</td><td>${hits.center[n]||0}</td><td>${hits.corner[n]||0}</td></tr>`).join("")}
+          </tbody>
+        </table>`;
+    }
+
+    function renderSecondary() {
+      const sec = pack.stats.secondary;
+      document.getElementById("secondaryStats").innerHTML = ""
+        + "<dt>中性子 / μ 軌跡</dt><dd>" + fmt(sec.neutron_per_muon_track, 3) + "</dd>"
+        + "<dt>陽子 / μ 軌跡</dt><dd>" + fmt(sec.proton_per_muon_track, 3) + "</dd>"
+        + "<dt>中性子 / 履歴</dt><dd>" + fmt(sec.neutron_per_history, 3) + "</dd>"
+        + "<dt>陽子 / 履歴</dt><dd>" + fmt(sec.proton_per_history, 3) + "</dd>"
+        + "<dt>μ（空洞内）</dt><dd>" + sec.muon_tracks_in_tunnel_air + "</dd>"
+        + "<dt>中性子（空洞内）</dt><dd>" + sec.neutron_tracks_in_tunnel_air + "</dd>";
+    }
+
+    function renderEnergy() {
+      const e = pack.stats.energy_mev;
+      let html = "<table class='stats'><thead><tr><th>粒子</th><th>n</th><th>min</th><th>median</th><th>max</th><th>mean</th></tr></thead><tbody>";
+      for (const name of ORDER) {
+        const row = e[name];
+        if (!row) continue;
+        html += "<tr><td>" + (LABELS[name]||name) + "</td>"
+          + "<td>" + row.n + "</td>"
+          + "<td>" + fmt(row.min_mev) + "</td>"
+          + "<td>" + fmt(row.median_mev) + "</td>"
+          + "<td>" + fmt(row.max_mev) + "</td>"
+          + "<td>" + fmt(row.mean_mev) + "</td></tr>";
+      }
+      html += "</tbody></table>";
+      document.getElementById("energyTable").innerHTML = html;
+    }
+
+    function renderRegion() {
+      const reg = pack.stats.by_region;
+      const regions = ["tunnel_air", "center_detector", "corner_detector", "concrete", "soil_or_outer", "above_surface"];
+      const regLabel = {
+        tunnel_air: "トンネル空洞", center_detector: "Center検出器", corner_detector: "Corner検出器",
+        concrete: "コンクリート", soil_or_outer: "外側", above_surface: "地表面上",
+      };
+      let html = "<table class='stats'><thead><tr><th>領域</th>";
+      for (const name of ORDER) html += "<th>" + (LABELS[name]||name) + "</th>";
+      html += "</tr></thead><tbody>";
+      for (const r of regions) {
+        if (!reg[r]) continue;
+        html += "<tr><td>" + (regLabel[r]||r) + "</td>";
+        for (const name of ORDER) html += "<td>" + (reg[r][name]||0) + "</td>";
+        html += "</tr>";
+      }
+      html += "</tbody></table>";
+      document.getElementById("regionTable").innerHTML = html;
+    }
+
+    function renderGeom() {
+      const g = pack.stats.geometry_depth;
+      document.getElementById("geomStats").innerHTML = ""
+        + "<dt>天井深さ</dt><dd>" + g.c10_cm + " cm（" + g.ceiling_depth_m + " m）</dd>"
+        + "<dt>空洞上面 z</dt><dd>" + g.tunnel_top_z_cm + " cm</dd>"
+        + "<dt>空洞下面 z</dt><dd>" + g.tunnel_bottom_z_cm + " cm</dd>"
+        + "<dt>コンクリート</dt><dd>z=" + g.concrete_bottom_z_cm + " … " + g.concrete_top_z_cm + " cm</dd>";
+    }
+
+    function renderSimMeta() {
+      const m = pack.meta;
+      const src = m.source;
+      document.getElementById("simMeta").innerHTML = ""
+        + "<dt>PHITS</dt><dd>" + m.phits + "</dd>"
+        + "<dt>線源</dt><dd>e-type=" + src.e_type + ", icenv=" + src.icenv + ", dir=" + src.dir + "</dd>"
+        + "<dt>位置</dt><dd>" + src.location + "</dd>"
+        + "<dt>入射粒子</dt><dd>" + src.particles.join(", ") + "</dd>"
+        + "<dt>線源半径</dt><dd>" + src.radius_cm + " cm（z=" + src.z_cm + " cm）</dd>"
+        + "<dt>注記</dt><dd>" + (m.flux_stats_note || "") + "</dd>";
     }
 
     async function init() {
       const statusEl = document.getElementById("status");
       statusEl.hidden = false;
-      statusEl.textContent = "シーンデータを読み込み中…";
-      const res = await fetch("./scene.json");
-      if (!res.ok) throw new Error("scene.json: " + res.status);
-      scene = await res.json();
+      statusEl.textContent = "軌跡データを読み込み中…";
+      const res = await fetch("./tracks.json");
+      if (!res.ok) throw new Error("tracks.json: " + res.status);
+      pack = await res.json();
       document.getElementById("metaLine").textContent =
-        scene.meta.phits + " · " + scene.meta.histories.toLocaleString() + " histories · " + scene.meta.source.location;
-      renderSide();
-      ["showMuon", "showNeutron", "showSurf", "showDet", "showGeom"].forEach((id) => {
-        document.getElementById(id).addEventListener("change", render);
-      });
+        pack.meta.phits + " · " + pack.stats.histories + " histories · " + pack.meta.source.location;
+      renderCurrentStats();
+      renderDetectors();
+      renderSecondary();
+      renderEnergy();
+      renderRegion();
+      renderGeom();
+      renderSimMeta();
       statusEl.hidden = true;
-      render();
+      Plotly.newPlot("plot", buildData(), layout(), { responsive: true });
     }
 
     init().catch((err) => {
