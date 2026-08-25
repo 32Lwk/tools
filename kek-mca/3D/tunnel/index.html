@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トンネル宇宙線 4dtrack 3D — KEK MCA</title>
+  <script src="../../../theme-boot.js"></script>
+  <link rel="stylesheet" href="../../../theme.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      flex: 0 0 auto;
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      align-items: baseline;
+    }
+    header h1 { font-size: 1.05rem; margin: 0; font-weight: 650; }
+    header .note { font-size: 0.85rem; color: var(--muted); margin: 0; }
+    header a { color: var(--link); }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 260px;
+      flex: 1;
+    }
+    .controls label { font-size: 0.85rem; }
+    .controls input[type=range] { width: 100%; max-width: 420px; }
+    .meta { font-size: 0.8rem; color: var(--muted); }
+    .plot-wrap { position: relative; flex: 1 1 auto; min-height: 0; }
+    #plot { width: 100%; height: 100%; min-height: 0; }
+    .legend-note {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      z-index: 2;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+      pointer-events: none;
+      line-height: 1.5;
+    }
+    .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; }
+    #status { font-size: 0.85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="note"><a href="../">← He-3 4dtrack</a> · <a href="../../">KEK MCA</a></p>
+    <h1>トンネル / 土中 — 宇宙線 4dtrack 3D</h1>
+    <div class="controls">
+      <label for="depth">天井深さ c10 = <strong id="depthVal">—</strong> cm</label>
+      <input id="depth" type="range" min="0" max="0" step="1" disabled>
+      <div class="meta" id="countMeta"></div>
+    </div>
+    <p class="note">東京 · 高度 0 km · μ± / 中性子 / 陽子 · Plotly</p>
+  </header>
+  <div class="plot-wrap">
+    <div id="plot"></div>
+    <div class="legend-note">
+      <span class="sw" style="background:#4FC3F7"></span>muon±　
+      <span class="sw" style="background:#66BB6A"></span>neutron　
+      <span class="sw" style="background:#EF5350"></span>proton<br>
+      灰点線: concrete　緑: tunnel air　紫: source
+    </div>
+  </div>
+  <p id="status" hidden>読み込み中…</p>
+  <script>
+    const ORDER = ["muon+", "muon-", "proton", "neutron"];
+    const slider = document.getElementById("depth");
+    const depthVal = document.getElementById("depthVal");
+    const countMeta = document.getElementById("countMeta");
+    const statusEl = document.getElementById("status");
+    let depths = [];
+    let byDepth = {};
+
+    function buildData(pack) {
+      const data = [];
+      for (const name of ORDER) {
+        const p = pack.particles[name];
+        if (!p) continue;
+        data.push({
+          type: "scatter3d",
+          mode: "lines",
+          name: name + " (" + p.n + ")",
+          x: p.x, y: p.y, z: p.z,
+          text: p.text,
+          hovertemplate: "%{text}<extra></extra>",
+          line: { color: p.color, width: p.width },
+          opacity: p.opacity,
+        });
+      }
+      const g = pack.geom;
+      data.push({
+        type: "scatter3d", mode: "lines", name: "concrete",
+        x: g.concrete.x, y: g.concrete.y, z: g.concrete.z,
+        line: { color: "#90A4AE", width: 3, dash: "dot" }, hoverinfo: "skip",
+      });
+      data.push({
+        type: "scatter3d", mode: "lines", name: "tunnel air",
+        x: g.tunnel.x, y: g.tunnel.y, z: g.tunnel.z,
+        line: { color: "#A5D6A7", width: 4 }, hoverinfo: "skip",
+      });
+      data.push({
+        type: "scatter3d", mode: "lines", name: "ground z=0",
+        x: g.ground.x, y: g.ground.y, z: g.ground.z,
+        line: { color: "#BCAAA4", width: 2 }, hoverinfo: "skip",
+      });
+      data.push({
+        type: "scatter3d", mode: "lines", name: "source plane",
+        x: g.source.x, y: g.source.y, z: g.source.z,
+        line: { color: "#CE93D8", width: 3 }, hoverinfo: "skip",
+      });
+      return data;
+    }
+
+    function layoutFor(pack) {
+      return {
+        title: "c10 = " + pack.c10 + " cm（天井深さ）",
+        scene: {
+          xaxis: { title: "x [cm]", range: [-650, 650] },
+          yaxis: { title: "y [cm]", range: [-400, 400] },
+          zaxis: { title: "z [cm] (上=地表)", range: pack.z_range },
+          aspectmode: "manual",
+          aspectratio: { x: 1.0, y: 0.65, z: 1.5 },
+          camera: {
+            eye: { x: 1.55, y: 1.35, z: 0.55 },
+            up: { x: 0, y: 0, z: 1 },
+          },
+        },
+        legend: { title: { text: "click to toggle" } },
+        margin: { l: 0, r: 0, t: 40, b: 0 },
+        template: "plotly_white",
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        font: { color: "var(--fg)" },
+      };
+    }
+
+    function render() {
+      const c10 = depths[Number(slider.value)];
+      const pack = byDepth[String(c10)];
+      depthVal.textContent = String(c10);
+      const c = pack.counts;
+      countMeta.textContent =
+        "tracks: μ+=" + (c["muon+"] || 0) +
+        " μ-=" + (c["muon-"] || 0) +
+        " n=" + (c.neutron || 0) +
+        " p=" + (c.proton || 0);
+      Plotly.react("plot", buildData(pack), layoutFor(pack), { responsive: true });
+    }
+
+    async function init() {
+      statusEl.hidden = false;
+      statusEl.textContent = "軌跡データを読み込み中…";
+      const res = await fetch("tracks_by_depth.json");
+      if (!res.ok) throw new Error("tracks_by_depth.json: " + res.status);
+      const payload = await res.json();
+      depths = payload.depths;
+      byDepth = payload.by_depth;
+      slider.min = 0;
+      slider.max = depths.length - 1;
+      slider.value = depths.length - 1;
+      slider.disabled = false;
+      statusEl.hidden = true;
+      slider.addEventListener("input", render);
+      render();
+    }
+
+    init().catch((err) => {
+      statusEl.hidden = false;
+      statusEl.textContent = "読み込み失敗: " + err.message;
+    });
+  </script>
+  <script src="../../../theme.js"></script>
+</body>
+</html>
