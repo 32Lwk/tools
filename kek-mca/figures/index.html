@@ -36,7 +36,7 @@
 <body>
   <p class="note"><a href="../">← KEK MCA 生データ</a></p>
   <h1>図ギャラリー</h1>
-  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）、絶対/相対中性子フラックス（191–764 keV）、上岡比較（19）、神岡比較（19）、強ノイズ4件の ch≥300 割合補正確認（地点別_denoised）とプロット点 CSV の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
+  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）、絶対/相対中性子フラックス（191–764 keV）、上岡比較（19）、神岡比較（19）、large-D（D1/D2）15件の ch≥200 割合補正確認（地点別_denoised）とプロット点 CSV の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
   <ul class="toc">
     <li><a href="#gsites">地点別スペクトル</a></li>
     <li><a href="#g11">相対 CPS（11）</a></li>
@@ -1093,72 +1093,248 @@
     <a href="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数.png" loading="lazy"></a>
   </figure>
   <h2 id="gdenoise">割合補正確認（denoised）</h2>
-  <p class="note">強ノイズ small_d 4 件のみ。方式 B 後に wall 内 ch&lt;300 を捨て、ch≥300 を ×1/0.769 して wall 全体相当へ換算した確認用。本解析 tables/figures とは別。スペクトルの緑帯=wall、灰帯=捨てた帯、破線=cut=300。</p>
+  <p class="note">large-D（D1/D2）15 件。いまの raw/ を入力に、wall 内 ch&lt;200 を捨て、ch≥200 を ×1/f（f=0.872813、D1 熱中性子 30cm/80cm 平均）して wall 全体相当へ換算した確認用。本解析 tables/figures とは別。スペクトルの緑帯=wall、灰帯=捨てた帯、破線=cut=200。除外: 熱中性子・gain・D1 PF・_error。生 MCA は <a href="../raw_denoised/">raw_denoised/</a>。方式 B 前の退避は <a href="../raw_pre_denoise/">raw_pre_denoise/</a>（small_d 4 件）。</p>
   <ul class="toc toc-sites">
-    <li><a href="#denoise-d1_20260823_1509_linac_testhole">d1_20260823_1509_linac_testhole</a></li>
-    <li><a href="#denoise-d2_20260821_080725_linac">d2_20260821_080725_linac</a></li>
-    <li><a href="#denoise-d1_20260823_1509_PS">d1_20260823_1509_PS</a></li>
-    <li><a href="#denoise-d2_20260822_155046_地上">d2_20260822_155046_地上</a></li>
+    <li><a href="#denoise-D1_20260818_1552_管理棟2階">D1_20260818_1552_管理棟2階</a></li>
+    <li><a href="#denoise-D1_20260818_1730_linac">D1_20260818_1730_linac</a></li>
+    <li><a href="#denoise-D1_20260819_0832_管理棟2階">D1_20260819_0832_管理棟2階</a></li>
+    <li><a href="#denoise-D1_20260819_1344_管理棟1階">D1_20260819_1344_管理棟1階</a></li>
+    <li><a href="#denoise-D1_20260819_1530_地上">D1_20260819_1530_地上</a></li>
+    <li><a href="#denoise-D1_20260819_1854_放射線棟BT">D1_20260819_1854_放射線棟BT</a></li>
+    <li><a href="#denoise-D1_20260820_1939_KEKB">D1_20260820_1939_KEKB</a></li>
+    <li><a href="#denoise-D1_20260823_1510_Linac3">D1_20260823_1510_Linac3</a></li>
+    <li><a href="#denoise-D1_20260823_1510_PS">D1_20260823_1510_PS</a></li>
+    <li><a href="#denoise-D1_20260823_1510_linac_testhole">D1_20260823_1510_linac_testhole</a></li>
+    <li><a href="#denoise-D2_20260821_080728_linac">D2_20260821_080728_linac</a></li>
+    <li><a href="#denoise-D2_20260821_170217_linacIRON">D2_20260821_170217_linacIRON</a></li>
+    <li><a href="#denoise-D2_20260822_115234_PF">D2_20260822_115234_PF</a></li>
+    <li><a href="#denoise-D2_20260822_155048_地上">D2_20260822_155048_地上</a></li>
+    <li><a href="#denoise-D2_20260823_0835_Linac3">D2_20260823_0835_Linac3</a></li>
     <li><a href="#denoise-theory">補正後 fig16–19 / 同型</a></li>
   </ul>
-  <h3 id="denoise-d1_20260823_1509_linac_testhole">d1_20260823_1509_linac_testhole（ch≥300 割合補正）</h3>
+  <h3 id="denoise-D1_20260818_1552_管理棟2階">D1_20260818_1552_管理棟2階（ch≥200 割合補正）</h3>
   <div class="site-grid">
     <figure>
       <figcaption>線形(ROI)</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_linac_testhole 線形(ROI)" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260818_1552_管理棟2階 線形(ROI)" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>線形クリップ</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_linac_testhole 線形クリップ" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260818_1552_管理棟2階 線形クリップ" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>対数</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d1_20260823_1509_linac_testhole 対数" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1552_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260818_1552_管理棟2階 対数" loading="lazy"></a>
     </figure>
   </div>
-  <h3 id="denoise-d2_20260821_080725_linac">d2_20260821_080725_linac（ch≥300 割合補正）</h3>
+  <h3 id="denoise-D1_20260818_1730_linac">D1_20260818_1730_linac（ch≥200 割合補正）</h3>
   <div class="site-grid">
     <figure>
       <figcaption>線形(ROI)</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260821_080725_linac 線形(ROI)" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260818_1730_linac 線形(ROI)" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>線形クリップ</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260821_080725_linac 線形クリップ" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1730_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260818_1730_linac 線形クリップ" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>対数</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d2_20260821_080725_linac 対数" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1730_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260818_1730_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260818_1730_linac 対数" loading="lazy"></a>
     </figure>
   </div>
-  <h3 id="denoise-d1_20260823_1509_PS">d1_20260823_1509_PS（ch≥300 割合補正）</h3>
+  <h3 id="denoise-D1_20260819_0832_管理棟2階">D1_20260819_0832_管理棟2階（ch≥200 割合補正）</h3>
   <div class="site-grid">
     <figure>
       <figcaption>線形(ROI)</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_PS 線形(ROI)" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_0832_管理棟2階 線形(ROI)" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>線形クリップ</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_PS 線形クリップ" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_0832_管理棟2階 線形クリップ" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>対数</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d1_20260823_1509_PS 対数" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_0832_%E7%AE%A1%E7%90%86%E6%A3%9F2%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260819_0832_管理棟2階 対数" loading="lazy"></a>
     </figure>
   </div>
-  <h3 id="denoise-d2_20260822_155046_地上">d2_20260822_155046_地上（ch≥300 割合補正）</h3>
+  <h3 id="denoise-D1_20260819_1344_管理棟1階">D1_20260819_1344_管理棟1階（ch≥200 割合補正）</h3>
   <div class="site-grid">
     <figure>
       <figcaption>線形(ROI)</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260822_155046_地上 線形(ROI)" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_1344_管理棟1階 線形(ROI)" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>線形クリップ</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260822_155046_地上 線形クリップ" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_1344_管理棟1階 線形クリップ" loading="lazy"></a>
     </figure>
     <figure>
       <figcaption>対数</figcaption>
-      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d2_20260822_155046_地上 対数" loading="lazy"></a>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1344_%E7%AE%A1%E7%90%86%E6%A3%9F1%E9%9A%8E/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260819_1344_管理棟1階 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D1_20260819_1530_地上">D1_20260819_1530_地上（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_1530_地上 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_1530_地上 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1530_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260819_1530_地上 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D1_20260819_1854_放射線棟BT">D1_20260819_1854_放射線棟BT（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_1854_放射線棟BT 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260819_1854_放射線棟BT 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260819_1854_%E6%94%BE%E5%B0%84%E7%B7%9A%E6%A3%9FBT/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260819_1854_放射線棟BT 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D1_20260820_1939_KEKB">D1_20260820_1939_KEKB（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260820_1939_KEKB 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260820_1939_KEKB/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260820_1939_KEKB 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260820_1939_KEKB/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260820_1939_KEKB/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260820_1939_KEKB 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D1_20260823_1510_Linac3">D1_20260823_1510_Linac3（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260823_1510_Linac3 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260823_1510_Linac3 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260823_1510_Linac3 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D1_20260823_1510_PS">D1_20260823_1510_PS（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260823_1510_PS 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260823_1510_PS 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_PS/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_PS/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260823_1510_PS 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D1_20260823_1510_linac_testhole">D1_20260823_1510_linac_testhole（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260823_1510_linac_testhole 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D1_20260823_1510_linac_testhole 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_linac_testhole/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D1_20260823_1510_linac_testhole/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D1_20260823_1510_linac_testhole 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D2_20260821_080728_linac">D2_20260821_080728_linac（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260821_080728_linac 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_080728_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260821_080728_linac 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_080728_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_080728_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D2_20260821_080728_linac 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D2_20260821_170217_linacIRON">D2_20260821_170217_linacIRON（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260821_170217_linacIRON 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260821_170217_linacIRON 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260821_170217_linacIRON/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D2_20260821_170217_linacIRON 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D2_20260822_115234_PF">D2_20260822_115234_PF（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260822_115234_PF 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_115234_PF/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260822_115234_PF 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_115234_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_115234_PF/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D2_20260822_115234_PF 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D2_20260822_155048_地上">D2_20260822_155048_地上（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260822_155048_地上 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260822_155048_地上 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260822_155048_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D2_20260822_155048_地上 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-D2_20260823_0835_Linac3">D2_20260823_0835_Linac3（ch≥200 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260823_0835_Linac3 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260823_0835_Linac3/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="D2_20260823_0835_Linac3 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260823_0835_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/D2_20260823_0835_Linac3/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="D2_20260823_0835_Linac3 対数" loading="lazy"></a>
     </figure>
   </div>
   <h3 id="denoise-theory">補正後 fig16–19 / 同型比較</h3>
