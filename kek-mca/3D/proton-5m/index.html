@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>陽子影響 5 m 地下 4dtrack 3D — KEK MCA</title>
+  <script src="../../../theme-boot.js"></script>
+  <link rel="stylesheet" href="../../../theme.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      flex: 0 0 auto;
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      align-items: baseline;
+    }
+    header h1 { font-size: 1.05rem; margin: 0; font-weight: 650; }
+    header .note { font-size: 0.85rem; color: var(--muted); margin: 0; }
+    header a { color: var(--link); }
+    .main-area {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: row;
+    }
+    .plot-wrap { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; }
+    #plot { width: 100%; height: 100%; }
+    .info-panel {
+      flex: 0 0 320px;
+      max-width: 40vw;
+      overflow-y: auto;
+      border-left: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .info-panel section { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border); }
+    .info-panel h2 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin: 0 0 0.45rem;
+      font-weight: 650;
+    }
+    .info-panel dl {
+      display: grid;
+      grid-template-columns: 9.5rem 1fr;
+      gap: 0.2rem 0.5rem;
+      margin: 0;
+    }
+    .info-panel dt { color: var(--muted); margin: 0; }
+    .info-panel dd { margin: 0; font-variant-numeric: tabular-nums; }
+    table.stats {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    table.stats th, table.stats td {
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.35rem;
+      text-align: right;
+    }
+    table.stats th:first-child, table.stats td:first-child { text-align: left; }
+    table.stats th { background: var(--surface-2, var(--surface)); color: var(--muted); font-weight: 600; }
+    .legend-note {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      z-index: 2;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      pointer-events: none;
+      line-height: 1.5;
+    }
+    .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; }
+    #status { padding: 0.5rem 1rem; font-size: 0.85rem; color: var(--muted); }
+    @media (max-width: 960px) {
+      .main-area { flex-direction: column; }
+      .info-panel { flex: 0 0 auto; max-width: none; border-left: none; border-top: 1px solid var(--border); max-height: 42vh; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <p class="note">
+        <a href="../tunnel/">← トンネル深度スイープ</a> ·
+        <a href="../">He-3</a> ·
+        <a href="../../">KEK MCA</a>
+      </p>
+      <h1>陽子影響 — 5 m 地下 4dtrack 3D</h1>
+      <p class="note" id="metaLine">読込中…</p>
+    </div>
+  </header>
+  <div class="main-area">
+    <div class="plot-wrap">
+      <div id="plot"></div>
+      <div class="legend-note">
+        <span class="sw" style="background:#EF5350"></span>陽子（強調）　
+        <span class="sw" style="background:#66BB6A"></span>中性子　
+        <span class="sw" style="background:#90CAF9"></span>μ（薄表示）<br>
+        灰点線: コンクリート　緑: トンネル空洞　紫: 線源面
+      </div>
+    </div>
+    <aside class="info-panel">
+      <section>
+        <h2>軌跡数（4dtrack ROI）</h2>
+        <div id="trackStats">—</div>
+      </section>
+      <section>
+        <h2>フラックス結果（陽子専用 tally）</h2>
+        <dl id="fluxStats"></dl>
+      </section>
+      <section>
+        <h2>トンネル内中性子寄与</h2>
+        <div id="contribTable">—</div>
+      </section>
+      <section>
+        <h2>文献・線源</h2>
+        <dl id="litMeta"></dl>
+        <ul id="litList" style="margin:0.4rem 0 0; padding-left:1.1rem; color:var(--muted); font-size:0.75rem;"></ul>
+      </section>
+    </aside>
+  </div>
+  <p id="status">読み込み中…</p>
+  <script>
+    const ORDER = ["proton", "neutron", "muon+", "muon-"];
+    const LABELS = { proton: "陽子", neutron: "中性子", "muon+": "μ⁺", "muon-": "μ⁻" };
+
+    function fmt(n, d) {
+      if (n == null || Number.isNaN(n)) return "—";
+      if (Math.abs(n) >= 1000) return n.toExponential(2);
+      if (Math.abs(n) < 0.01) return n.toExponential(2);
+      return Number(n).toPrecision(d || 3);
+    }
+
+    function buildData(pack) {
+      const data = [];
+      for (const name of ORDER) {
+        const p = pack.particles[name];
+        if (!p) continue;
+        data.push({
+          type: "scatter3d", mode: "lines",
+          name: (LABELS[name] || name) + " (" + p.n + ")",
+          x: p.x, y: p.y, z: p.z, text: p.text,
+          hovertemplate: "%{text}<extra></extra>",
+          line: { color: p.color, width: p.width }, opacity: p.opacity,
+        });
+      }
+      const g = pack.geom;
+      data.push({ type: "scatter3d", mode: "lines", name: "concrete",
+        x: g.concrete.x, y: g.concrete.y, z: g.concrete.z,
+        line: { color: "#90A4AE", width: 3, dash: "dot" }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "tunnel air",
+        x: g.tunnel.x, y: g.tunnel.y, z: g.tunnel.z,
+        line: { color: "#A5D6A7", width: 4 }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "ground z=0",
+        x: g.ground.x, y: g.ground.y, z: g.ground.z,
+        line: { color: "#BCAAA4", width: 2 }, hoverinfo: "skip" });
+      data.push({ type: "scatter3d", mode: "lines", name: "source plane",
+        x: g.source.x, y: g.source.y, z: g.source.z,
+        line: { color: "#CE93D8", width: 3 }, hoverinfo: "skip" });
+      return data;
+    }
+
+    function layoutFor(pack) {
+      return {
+        title: "c10 = 500 cm（天井深さ 5 m）— 陽子強調",
+        scene: {
+          xaxis: { title: "x [cm]", range: [-650, 650] },
+          yaxis: { title: "y [cm]", range: [-400, 400] },
+          zaxis: { title: "z [cm] (上=地表)", range: pack.z_range },
+          aspectmode: "manual",
+          aspectratio: { x: 1.0, y: 0.65, z: 1.5 },
+          camera: { eye: { x: 1.55, y: 1.35, z: 0.55 }, up: { x: 0, y: 0, z: 1 } },
+        },
+        legend: { title: { text: "click to toggle" } },
+        margin: { l: 0, r: 0, t: 40, b: 0 },
+        template: "plotly_white",
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        font: { color: "var(--fg)" },
+      };
+    }
+
+    function render(pack) {
+      const m = pack.meta;
+      const fs = m.flux_stats;
+      const roi = pack.roi_counts || {};
+      const disp = pack.counts || {};
+
+      let html = "<table class='stats'><thead><tr><th>粒子</th><th>ROI</th><th>表示</th></tr></thead><tbody>";
+      for (const name of ORDER) {
+        html += "<tr><td>" + (LABELS[name]||name) + "</td><td>" + (roi[name]||0) + "</td><td>" + (disp[name]||0) + "</td></tr>";
+      }
+      html += "</tbody></table>";
+      html += "<p style='margin:0.4rem 0 0;font-size:0.75rem;color:var(--muted)'>4dtrack histories=" + m.track_histories + "</p>";
+      document.getElementById("trackStats").innerHTML = html;
+
+      document.getElementById("fluxStats").innerHTML = ""
+        + "<dt>地表 Φ_p (E&gt;100 MeV)</dt><dd>" + fmt(fs.proton_surface_Egt100) + " /cm²/s</dd>"
+        + "<dt>トンネル Φ_p</dt><dd>" + fmt(fs.proton_tunnel_Egt100) + " /cm²/s</dd>"
+        + "<dt>減衰比</dt><dd>×" + Math.round(fs.proton_attenuation).toLocaleString() + "</dd>"
+        + "<dt>tally 履歴</dt><dd>" + fs.histories_flux_run.toLocaleString() + "（" + fs.wall_sec_flux_run + " s）</dd>";
+
+      document.getElementById("contribTable").innerHTML = ""
+        + "<table class='stats'><thead><tr><th>成分</th><th>Φ_n</th><th>寄与</th></tr></thead><tbody>"
+        + "<tr><td>μ 由来</td><td>" + fmt(fs.n_from_muon_tunnel) + "</td><td>" + fs.n_share_muon_pct + "%</td></tr>"
+        + "<tr><td><strong>陽子由来</strong></td><td>" + fmt(fs.n_from_proton_tunnel) + "</td><td><strong>" + fs.n_share_proton_pct + "%</strong></td></tr>"
+        + "<tr><td>宇宙線 n 直接</td><td>" + fmt(fs.n_cosmic_direct_tunnel) + "</td><td>" + fs.n_share_cosmic_pct + "%</td></tr>"
+        + "</tbody></table>";
+
+      document.getElementById("litMeta").innerHTML = ""
+        + "<dt>線源モデル</dt><dd>" + m.source_model + "</dd>"
+        + "<dt>場所</dt><dd>" + m.location + "</dd>"
+        + "<dt>深度</dt><dd>" + m.depth_m + " m（c10=" + m.c10_cm + " cm）</dd>";
+      document.getElementById("litList").innerHTML =
+        (m.literature || []).map(function (s) { return "<li>" + s + "</li>"; }).join("");
+
+      document.getElementById("metaLine").textContent =
+        m.phits + " · 5 m · PARMA/EXPACS · 陽子強調";
+      Plotly.newPlot("plot", buildData(pack), layoutFor(pack), { responsive: true });
+    }
+
+    async function init() {
+      const statusEl = document.getElementById("status");
+      const res = await fetch("tracks.json");
+      if (!res.ok) throw new Error("tracks.json: " + res.status);
+      const pack = await res.json();
+      statusEl.hidden = true;
+      render(pack);
+    }
+
+    init().catch(function (err) {
+      document.getElementById("status").textContent = "読み込み失敗: " + err.message;
+    });
+  </script>
+  <script src="../../../theme.js"></script>
+</body>
+</html>
