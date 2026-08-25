@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トンネル天井深さ 200 cm — Center vs Corner — tools.yutok.dev</title>
+  <script src="../theme-boot.js"></script>
+  <link rel="stylesheet" href="../theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 62rem;
+      margin: 2rem auto;
+      padding: 0 1rem 3rem;
+      line-height: 1.55;
+    }
+    h1 { font-size: 1.35rem; margin-bottom: 0.35rem; }
+    h2 { font-size: 1.1rem; margin-top: 1.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; }
+    .note { font-size: 0.9rem; color: var(--muted); }
+    .lead { margin: 0.4rem 0 1rem; }
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+      gap: 0.65rem;
+      margin: 1rem 0 1.25rem;
+    }
+    .kpi .item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.8rem;
+      background: var(--surface);
+    }
+    .kpi .item .k { font-size: 0.78rem; color: var(--muted); }
+    .kpi .item .v { font-size: 1.2rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .kpi .item .u { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+    .kpi .item.accent-c { border-color: #2f6fed55; }
+    .kpi .item.accent-k { border-color: #c45c2655; }
+    .kpi .item.accent-r { border-color: #2a9d8f55; }
+    .chart-wrap {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 0.85rem 0.4rem;
+      background: var(--bg);
+      margin: 0.75rem 0 1rem;
+    }
+    .chart-wrap canvas { width: 100% !important; max-height: 420px; }
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem;
+      align-items: center; margin: 0.5rem 0 0.25rem; font-size: 0.9rem;
+    }
+    .controls label { display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; }
+    table {
+      border-collapse: collapse; width: 100%; font-size: 0.86rem; margin-top: 0.5rem;
+    }
+    th, td {
+      border: 1px solid var(--border); padding: 0.4rem 0.5rem; text-align: left;
+    }
+    th { background: var(--surface-2); }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .bar-row { display: grid; grid-template-columns: 7.5rem 1fr 5.5rem; gap: 0.5rem; align-items: center; margin: 0.4rem 0; font-size: 0.9rem; }
+    .bar-track { height: 1.1rem; background: var(--track); border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; }
+    .bar-fill.center { background: #2f6fed; }
+    .bar-fill.corner { background: #c45c26; }
+    .meta-list { font-size: 0.88rem; color: var(--muted); padding-left: 1.1rem; }
+    .tag {
+      display: inline-block; font-size: 0.75rem; padding: 0.1rem 0.45rem;
+      border-radius: 999px; border: 1px solid var(--border); color: var(--muted);
+      margin-left: 0.35rem; vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <p class="note"><a href="../">← tools.yutok.dev</a></p>
+  <h1>トンネル天井深さ 200&nbsp;cm — Center vs Corner</h1>
+  <p class="lead">
+    PHITS 矩形トンネル計算（宇宙線 μ<sup>±</sup> / 中性子）の床面検出器スペクトル比較。
+    <span class="tag">8 jobs × 125 batch</span>
+    <span class="tag">1.0×10<sup>7</sup> histories</span>
+  </p>
+
+  <div class="kpi" id="kpi"></div>
+
+  <h2>エネルギー・スペクトル比較</h2>
+  <div class="controls">
+    <label><input type="checkbox" id="showCenter" checked> Center（床中央）</label>
+    <label><input type="checkbox" id="showCorner" checked> Corner（壁際）</label>
+    <label><input type="checkbox" id="showBand" checked> 誤差バンド（±1σ）</label>
+    <label><input type="checkbox" id="logY" checked> 対数 Y</label>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="specChart" height="360"></canvas>
+  </div>
+
+  <h2>比（Center / Corner）</h2>
+  <p class="note">1 より大きい帯域は床中央の方が高いフラックス。熱領域と MeV 帯で差が出やすい。</p>
+  <div class="chart-wrap">
+    <canvas id="ratioChart" height="260"></canvas>
+  </div>
+
+  <h2>積分フラックス比較</h2>
+  <p class="note">PHITS <code>sum over</code> 相当（エネルギービン値の合計、単位 1/cm²/source）。</p>
+  <div id="bars"></div>
+
+  <h2>数値まとめ</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>量</th>
+        <th class="num">Center</th>
+        <th class="num">Corner</th>
+        <th class="num">比 C/K</th>
+      </tr>
+    </thead>
+    <tbody id="summaryBody"></tbody>
+  </table>
+
+  <h2>計算条件</h2>
+  <ul class="meta-list" id="metaList"></ul>
+  <p class="note" style="margin-top:1.25rem">
+    データ: <a href="./data.json">data.json</a>（8ジョブ平均スペクトル）
+  </p>
+
+  <script src="../theme.js"></script>
+  <script>
+  const COL_C = '#2f6fed';
+  const COL_K = '#c45c26';
+  const COL_R = '#2a9d8f';
+
+  function sci(x, dig = 3) {
+    if (x == null || !Number.isFinite(x)) return '—';
+    return Number(x).toExponential(dig);
+  }
+  function pct(x, dig = 1) {
+    if (x == null || !Number.isFinite(x)) return '—';
+    return (100 * x).toFixed(dig) + '%';
+  }
+  function mid(r) { return Math.sqrt(r.elo * r.ehi); }
+
+  function bandDataset(spec, color, label, hidden) {
+    const up = spec.map(r => ({ x: mid(r), y: Math.max(r.y * (1 + r.relerr), 1e-30) }));
+    const dn = spec.map(r => ({ x: mid(r), y: Math.max(r.y * (1 - r.relerr), 1e-30) })).reverse();
+    return {
+      label,
+      data: up.concat(dn),
+      fill: true,
+      backgroundColor: color + '22',
+      borderColor: 'transparent',
+      pointRadius: 0,
+      tension: 0,
+      hidden,
+      order: 3,
+    };
+  }
+
+  function lineDataset(spec, color, label, hidden) {
+    return {
+      label,
+      data: spec.map(r => ({ x: mid(r), y: Math.max(r.y, 1e-30) })),
+      borderColor: color,
+      backgroundColor: color,
+      borderWidth: 2,
+      pointRadius: 0,
+      tension: 0.15,
+      hidden,
+      order: 1,
+    };
+  }
+
+  function fgColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--fg').trim() || '#1f2328';
+  }
+  function mutedColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#656d76';
+  }
+  function borderColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#d0d7de';
+  }
+
+  async function main() {
+    const data = await fetch('./data.json').then(r => r.json());
+    const { center, corner, comparison, meta } = data;
+    const cs = center.stats, ks = corner.stats;
+    const ratio = comparison.ratio_center_over_corner;
+
+    document.getElementById('kpi').innerHTML = `
+      <div class="item accent-c"><div class="k">Center 全エネルギー</div><div class="v">${sci(cs.sum)}</div><div class="u">± ${sci(cs.err)} &nbsp;·&nbsp; 1/cm²/src</div></div>
+      <div class="item accent-k"><div class="k">Corner 全エネルギー</div><div class="v">${sci(ks.sum)}</div><div class="u">± ${sci(ks.err)} &nbsp;·&nbsp; 1/cm²/src</div></div>
+      <div class="item accent-r"><div class="k">比 Center / Corner</div><div class="v">${ratio.toFixed(3)}</div><div class="u">中央が ${(100*(ratio-1)).toFixed(1)}% 高い</div></div>
+      <div class="item"><div class="k">履歴数</div><div class="v">${meta.histories.toLocaleString('en-US')}</div><div class="u">${meta.jobs} jobs · c10 = ${meta.c10_cm} cm</div></div>
+    `;
+
+    const maxSum = Math.max(cs.sum, ks.sum);
+    document.getElementById('bars').innerHTML = `
+      <div class="bar-row"><span>Center</span><div class="bar-track"><div class="bar-fill center" style="width:${100*cs.sum/maxSum}%"></div></div><span class="num">${sci(cs.sum)}</span></div>
+      <div class="bar-row"><span>Corner</span><div class="bar-track"><div class="bar-fill corner" style="width:${100*ks.sum/maxSum}%"></div></div><span class="num">${sci(ks.sum)}</span></div>
+      <div class="bar-row"><span>Center E&gt;1 MeV</span><div class="bar-track"><div class="bar-fill center" style="width:${100*cs.Egt1MeV/maxSum}%"></div></div><span class="num">${sci(cs.Egt1MeV)}</span></div>
+      <div class="bar-row"><span>Corner E&gt;1 MeV</span><div class="bar-track"><div class="bar-fill corner" style="width:${100*ks.Egt1MeV/maxSum}%"></div></div><span class="num">${sci(ks.Egt1MeV)}</span></div>
+    `;
+
+    const rows = [
+      ['全エネルギー sum', cs.sum, ks.sum, cs.err, ks.err],
+      ['E &gt; 1 MeV', cs.Egt1MeV, ks.Egt1MeV, null, null],
+      ['E &gt; 10 MeV', cs.Egt10MeV, ks.Egt10MeV, null, null],
+      ['熱〜低速（E ≲ 0.5 eV）', cs.thermal, ks.thermal, null, null],
+    ];
+    document.getElementById('summaryBody').innerHTML = rows.map(([name, c, k, ce, ke]) => {
+      const r = k ? c / k : NaN;
+      const cerr = ce != null ? ` <span class="note">±${sci(ce)}</span>` : '';
+      const kerr = ke != null ? ` <span class="note">±${sci(ke)}</span>` : '';
+      return `<tr><td>${name}</td><td class="num">${sci(c)}${cerr}</td><td class="num">${sci(k)}${kerr}</td><td class="num">${Number.isFinite(r)?r.toFixed(3):'—'}</td></tr>`;
+    }).join('');
+
+    document.getElementById('metaList').innerHTML = [
+      `天井深さ c10 = ${meta.c10_cm} cm（地表面→天井天面）`,
+      `線源: ${meta.source}`,
+      `検出器: ${meta.geometry}`,
+      `統計: maxcas=${meta.maxcas}, ${meta.jobs}×maxbch=${meta.maxbch_per_job}（合計 ${meta.histories.toLocaleString('en-US')} histories）`,
+      `単位: ${meta.unit}（T-Track mesh=reg）`,
+    ].map(t => `<li>${t}</li>`).join('');
+
+    const showC = () => document.getElementById('showCenter').checked;
+    const showK = () => document.getElementById('showCorner').checked;
+    const showB = () => document.getElementById('showBand').checked;
+    const logY = () => document.getElementById('logY').checked;
+
+    const commonScales = () => ({
+      x: {
+        type: 'logarithmic',
+        title: { display: true, text: '中性子エネルギー [MeV]', color: mutedColor() },
+        ticks: { color: mutedColor() },
+        grid: { color: borderColor() + '88' },
+        min: 1e-8, max: 1e4,
+      },
+      y: {
+        type: logY() ? 'logarithmic' : 'linear',
+        title: { display: true, text: 'フラックス [1/cm²/source / bin]', color: mutedColor() },
+        ticks: { color: mutedColor() },
+        grid: { color: borderColor() + '88' },
+      },
+    });
+
+    const specChart = new Chart(document.getElementById('specChart'), {
+      type: 'line',
+      data: {
+        datasets: [
+          bandDataset(center.spectrum, COL_C, 'Center ±σ', !showB() || !showC()),
+          bandDataset(corner.spectrum, COL_K, 'Corner ±σ', !showB() || !showK()),
+          lineDataset(center.spectrum, COL_C, 'Center', !showC()),
+          lineDataset(corner.spectrum, COL_K, 'Corner', !showK()),
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'nearest', intersect: false, axis: 'x' },
+        plugins: {
+          legend: { labels: { color: fgColor(), filter: item => !item.text.includes('±σ') } },
+          tooltip: {
+            callbacks: {
+              title: items => {
+                const x = items[0]?.parsed?.x;
+                return x != null ? `E ≈ ${sci(x, 2)} MeV` : '';
+              },
+              label: ctx => `${ctx.dataset.label}: ${sci(ctx.parsed.y)}`,
+            },
+          },
+        },
+        scales: commonScales(),
+      },
+    });
+
+    const ratioPts = center.spectrum.map((c, i) => {
+      const k = corner.spectrum[i];
+      const y = (k && k.y > 0) ? c.y / k.y : null;
+      return y != null ? { x: mid(c), y } : null;
+    }).filter(Boolean);
+
+    const ratioChart = new Chart(document.getElementById('ratioChart'), {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'Center / Corner',
+          data: ratioPts,
+          borderColor: COL_R,
+          backgroundColor: COL_R,
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.15,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: fgColor() } },
+          annotation: {
+            annotations: {
+              one: {
+                type: 'line',
+                yMin: 1, yMax: 1,
+                borderColor: mutedColor(),
+                borderWidth: 1,
+                borderDash: [4, 4],
+              },
+            },
+          },
+          tooltip: {
+            callbacks: {
+              title: items => `E ≈ ${sci(items[0]?.parsed?.x, 2)} MeV`,
+              label: ctx => `比 = ${ctx.parsed.y.toFixed(3)}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            type: 'logarithmic',
+            title: { display: true, text: '中性子エネルギー [MeV]', color: mutedColor() },
+            ticks: { color: mutedColor() },
+            grid: { color: borderColor() + '88' },
+            min: 1e-8, max: 1e4,
+          },
+          y: {
+            title: { display: true, text: '比 Center / Corner', color: mutedColor() },
+            ticks: { color: mutedColor() },
+            grid: { color: borderColor() + '88' },
+            suggestedMin: 0.5,
+            suggestedMax: 1.8,
+          },
+        },
+      },
+    });
+
+    function refresh() {
+      const ds = specChart.data.datasets;
+      ds[0].hidden = !showB() || !showC();
+      ds[1].hidden = !showB() || !showK();
+      ds[2].hidden = !showC();
+      ds[3].hidden = !showK();
+      specChart.options.scales = commonScales();
+      specChart.update();
+    }
+    ['showCenter', 'showCorner', 'showBand', 'logY'].forEach(id => {
+      document.getElementById(id).addEventListener('change', refresh);
+    });
+  }
+
+  main().catch(err => {
+    document.body.insertAdjacentHTML('beforeend',
+      `<p style="color:var(--error-fg);background:var(--error-bg);padding:0.75rem;border-radius:6px">読込エラー: ${err}</p>`);
+  });
+  </script>
+</body>
+</html>
