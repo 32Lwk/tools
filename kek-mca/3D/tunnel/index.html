@@ -65,6 +65,7 @@
       line-height: 1.45;
     }
     .info-panel section { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border); }
+    #secCompare { max-height: 220px; overflow-y: auto; }
     .info-panel h2 {
       font-size: 0.78rem;
       text-transform: uppercase;
@@ -128,7 +129,7 @@
   <header>
     <div class="header-top">
       <p class="note"><a href="../">← He-3 4dtrack</a> · <a href="../../">KEK MCA</a></p>
-      <h1>トンネル / 土中 — 宇宙線 4dtrack 3D</h1>
+      <h1>トンネル / 土中 — 宇宙線 4dtrack 3D（0–1000 m）</h1>
       <p class="note" id="metaLine">PHITS · 読込中…</p>
     </div>
     <div class="header-row">
@@ -342,7 +343,7 @@
       let html = "<table class='stats'><thead><tr><th>深度[m]</th><th>Hist</th><th>μ⁺</th><th>μ⁻</th><th>n</th><th>p</th><th>n/μ</th><th>空洞n</th></tr></thead><tbody>";
       for (const row of summaryTable) {
         const cls = row.c10_cm === activeC10 ? " class='active'" : "";
-        html += "<tr" + cls + "><td>" + row.depth_m + "</td><td>" + row.histories + "</td>"
+        html += "<tr" + cls + "><td>" + depthLabel(row.c10_cm) + "</td><td>" + row.histories + "</td>"
           + "<td>" + row["muon+"] + "</td><td>" + row["muon-"] + "</td>"
           + "<td>" + row.neutron + "</td><td>" + row.proton + "</td>"
           + "<td>" + fmt(row.n_per_muon, 3) + "</td><td>" + row.n_in_tunnel + "</td></tr>";
@@ -351,11 +352,18 @@
       document.getElementById("compareTable").innerHTML = html;
     }
 
+    function depthLabel(c10) {
+      const m = c10 / 100;
+      if (m >= 100) return m.toFixed(0) + " m";
+      if (m >= 10) return m.toFixed(1) + " m";
+      return m.toFixed(2) + " m";
+    }
+
     function render() {
       const c10 = depths[Number(slider.value)];
       const pack = byDepth[String(c10)];
-      depthVal.textContent = String(c10);
-      depthM.textContent = (c10 / 100).toFixed(1);
+      depthVal.textContent = c10.toLocaleString();
+      depthM.textContent = depthLabel(c10);
       renderCurrentStats(pack);
       renderSecondary(pack.stats);
       renderEnergy(pack.stats);
