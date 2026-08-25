@@ -36,7 +36,7 @@
 <body>
   <p class="note"><a href="../">← KEK MCA 生データ</a></p>
   <h1>図ギャラリー</h1>
-  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）、および絶対/相対中性子フラックス（191–764 keV）、上岡比較（19）とプロット点 CSV の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
+  <p class="note">地点別スペクトルと等価コンクリート厚さ（相対/実測 CPS、組成補正、PHITS 比較、誤差棒、検出器比較）、絶対/相対中性子フラックス（191–764 keV）、上岡比較（19）、神岡比較（19）、強ノイズ4件の ch≥300 割合補正確認（地点別_denoised）とプロット点 CSV の一覧。スペクトル図に <sup>3</sup>He エネルギー目印あり。熱中性子管理棟は除く。画像クリックで原寸 PNG。各地点の図の下に ROI 解析結果（台形のチャンネル数・ピークのチャンネル数など）を記載。シリアルは 1715(D) / 2162(d)。</p>
   <ul class="toc">
     <li><a href="#gsites">地点別スペクトル</a></li>
     <li><a href="#g11">相対 CPS（11）</a></li>
@@ -49,6 +49,8 @@
     <li><a href="#g17">絶対フラックス（17）</a></li>
     <li><a href="#g18">相対フラックス（18）</a></li>
     <li><a href="#g19">相対フラックス・上岡（19）</a></li>
+    <li><a href="#g19k">神岡比較（19）</a></li>
+    <li><a href="#gdenoise">割合補正確認（denoised）</a></li>
   </ul>
 
   <h2 id="gsites">地点別スペクトル</h2>
@@ -541,7 +543,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>41897.1</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>392</td></tr><tr><th>自動 ROI [ch]</th><td>360–421</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ピーク ROI 総計数 N</th><td>1399</td></tr><tr><th>ピーク NET 計数</th><td>425.50</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>98–408（311 ch）</td></tr><tr><th>wall NET CPS</th><td>0.097835</td></tr><tr><th>wall GROSS CPS</th><td>0.209179</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
+<tr><th>LIVE [s]</th><td>41897.1</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td>350–408（59 ch）</td></tr><tr><th>ピークのチャンネル数</th><td>392</td></tr><tr><th>自動 ROI [ch]</th><td>360–421</td></tr><tr><th>ピーク背景モード</th><td>sideband</td></tr><tr><th>ピーク側帯 [ch]</th><td>335–349 / 409–423</td></tr><tr><th>ピーク ROI 総計数 N</th><td>1399</td></tr><tr><th>ピーク NET 計数</th><td>425.50</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>98–408（311 ch）</td></tr><tr><th>wall NET CPS</th><td>0.114352</td></tr><tr><th>wall GROSS CPS</th><td>0.209179</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr>
       </tbody>
     </table>
   </div>
@@ -679,7 +681,7 @@
     <p class="roi-title">ROI 解析結果</p>
     <table>
       <tbody>
-<tr><th>LIVE [s]</th><td>76892.8</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td></td></tr><tr><th>ピークのチャンネル数</th><td>393</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>98-409</td></tr><tr><th>wall NET CPS</th><td>0.028871</td></tr><tr><th>wall GROSS CPS</th><td>0.000000</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=393 が積分窓端に近い（側帯定義を確認）</td></tr>
+<tr><th>LIVE [s]</th><td>76892.8</td></tr><tr><th>シリアル</th><td>2162(d)</td></tr><tr><th>ピーク ROI 窓 [ch]</th><td></td></tr><tr><th>ピークのチャンネル数</th><td>393</td></tr><tr><th>壁効果窓 191–764 keV [ch]</th><td>98-409</td></tr><tr><th>wall NET CPS</th><td>0.0321227</td></tr><tr><th>wall GROSS CPS</th><td>0.000000</td></tr><tr><th>wall 背景モード</th><td>sideband_right</td></tr><tr><th>注記</th><td>peak=393 が積分窓端に近い（側帯定義を確認）</td></tr>
       </tbody>
     </table>
   </div>
@@ -747,7 +749,7 @@
     <tr><th>ピーク ROI 総計数 N</th><td>2142.0</td></tr>
     <tr><th>ピーク NET 計数</th><td>904.9666666666667</td></tr>
     <tr><th>壁効果窓 191–764 keV [ch]</th><td>97–408</td></tr>
-    <tr><th>wall NET CPS</th><td>0.401630055250164</td></tr>
+    <tr><th>wall NET CPS</th><td>0.396783</td></tr>
     <tr><th>wall GROSS CPS</th><td>0.6594778034223799</td></tr>
     <tr><th>wall 背景モード</th><td>sideband_right</td></tr>
   </table>
@@ -1072,6 +1074,110 @@
       </tbody>
     </table>
   </div>
+  <h2 id="g19k">神岡比較（19）</h2>
+  <p class="note">神岡文献点を含む比較（本解析 theory_research）。連続版は symlog 横軸。</p>
+  <figure class="card">
+    <figcaption>相対・神岡・誤差棒・片対数<span class="fname">19_全地点_フラックス_相対_検出器比較_神岡_誤差棒_片対数.png</span></figcaption>
+    <a href="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_相対_検出器比較_神岡_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>相対・神岡・連続・誤差棒・片対数<span class="fname">19_全地点_フラックス_相対_検出器比較_神岡_連続_誤差棒_片対数.png</span></figcaption>
+    <a href="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%9B%B8%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_相対_検出器比較_神岡_連続_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>絶対・神岡・誤差棒・片対数<span class="fname">19_全地点_フラックス_絶対_検出器比較_神岡_誤差棒_片対数.png</span></figcaption>
+    <a href="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_絶対_検出器比較_神岡_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>絶対・神岡・連続・誤差棒・片対数<span class="fname">19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数.png</span></figcaption>
+    <a href="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <h2 id="gdenoise">割合補正確認（denoised）</h2>
+  <p class="note">強ノイズ small_d 4 件のみ。方式 B 後に wall 内 ch&lt;300 を捨て、ch≥300 を ×1/0.769 して wall 全体相当へ換算した確認用。本解析 tables/figures とは別。スペクトルの緑帯=wall、灰帯=捨てた帯、破線=cut=300。</p>
+  <ul class="toc toc-sites">
+    <li><a href="#denoise-d1_20260823_1509_linac_testhole">d1_20260823_1509_linac_testhole</a></li>
+    <li><a href="#denoise-d2_20260821_080725_linac">d2_20260821_080725_linac</a></li>
+    <li><a href="#denoise-d1_20260823_1509_PS">d1_20260823_1509_PS</a></li>
+    <li><a href="#denoise-d2_20260822_155046_地上">d2_20260822_155046_地上</a></li>
+    <li><a href="#denoise-theory">補正後 fig16–19 / 同型</a></li>
+  </ul>
+  <h3 id="denoise-d1_20260823_1509_linac_testhole">d1_20260823_1509_linac_testhole（ch≥300 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_linac_testhole 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_linac_testhole 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_linac_testhole/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d1_20260823_1509_linac_testhole 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-d2_20260821_080725_linac">d2_20260821_080725_linac（ch≥300 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260821_080725_linac 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260821_080725_linac 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260821_080725_linac/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d2_20260821_080725_linac 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-d1_20260823_1509_PS">d1_20260823_1509_PS（ch≥300 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_PS 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d1_20260823_1509_PS 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d1_20260823_1509_PS/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d1_20260823_1509_PS 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-d2_20260822_155046_地上">d2_20260822_155046_地上（ch≥300 割合補正）</h3>
+  <div class="site-grid">
+    <figure>
+      <figcaption>線形(ROI)</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_ch0%E9%99%A4%E3%81%8F_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260822_155046_地上 線形(ROI)" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>線形クリップ</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E7%B7%9A%E5%BD%A2_%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97.png" alt="d2_20260822_155046_地上 線形クリップ" loading="lazy"></a>
+    </figure>
+    <figure>
+      <figcaption>対数</figcaption>
+      <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/d2_20260822_155046_%E5%9C%B0%E4%B8%8A/%E5%85%A8ch_%E5%AF%BE%E6%95%B0.png" alt="d2_20260822_155046_地上 対数" loading="lazy"></a>
+    </figure>
+  </div>
+  <h3 id="denoise-theory">補正後 fig16–19 / 同型比較</h3>
+  <figure class="card">
+    <figcaption>絶対・神岡・連続（割合補正後）<span class="fname">19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数.png</span></figcaption>
+    <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>同型裸管 D1–d1<span class="fname">19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数_同型裸管_D1d1.png</span></figcaption>
+    <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0_%E5%90%8C%E5%9E%8B%E8%A3%B8%E7%AE%A1_D1d1.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0_%E5%90%8C%E5%9E%8B%E8%A3%B8%E7%AE%A1_D1d1.png" alt="19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数_同型裸管_D1d1.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>同型 PE D2–d2<span class="fname">19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数_同型PE_D2d2.png</span></figcaption>
+    <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0_%E5%90%8C%E5%9E%8BPE_D2d2.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/19_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E7%A5%9E%E5%B2%A1_%E9%80%A3%E7%B6%9A_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0_%E5%90%8C%E5%9E%8BPE_D2d2.png" alt="19_全地点_フラックス_絶対_検出器比較_神岡_連続_誤差棒_片対数_同型PE_D2d2.png" loading="lazy"></a>
+  </figure>
+  <figure class="card">
+    <figcaption>絶対フラックス比較（割合補正後）<span class="fname">18_全地点_フラックス_絶対_検出器比較_誤差棒_片対数.png</span></figcaption>
+    <a href="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" target="_blank" rel="noopener"><img src="./%E5%9C%B0%E7%82%B9%E5%88%A5_denoised/theory_16_19/18_%E5%85%A8%E5%9C%B0%E7%82%B9_%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF%E3%82%B9_%E7%B5%B6%E5%AF%BE_%E6%A4%9C%E5%87%BA%E5%99%A8%E6%AF%94%E8%BC%83_%E8%AA%A4%E5%B7%AE%E6%A3%92_%E7%89%87%E5%AF%BE%E6%95%B0.png" alt="18_全地点_フラックス_絶対_検出器比較_誤差棒_片対数.png" loading="lazy"></a>
+  </figure>
   <script src="../theme.js"></script>
 </body>
 </html>
