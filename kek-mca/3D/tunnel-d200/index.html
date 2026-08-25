@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>トンネル天井 200 cm 宇宙線 4dtrack 3D — KEK MCA</title>
+  <title>トンネル天井 200 cm 時間発展 4dtrack 3D — KEK MCA</title>
   <script src="../../../theme-boot.js"></script>
   <link rel="stylesheet" href="../../../theme.css">
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
@@ -31,6 +31,39 @@
     header h1 { font-size: 1.05rem; margin: 0; font-weight: 650; }
     header .note { font-size: 0.85rem; color: var(--muted); margin: 0; }
     header a { color: var(--link); }
+    .playback {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem 1rem;
+      align-items: center;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .playback button {
+      font: inherit;
+      padding: 0.28rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-2, var(--surface));
+      color: var(--fg);
+      cursor: pointer;
+    }
+    .playback button:hover { border-color: var(--link); }
+    .playback button.active { background: color-mix(in srgb, var(--link) 18%, transparent); border-color: var(--link); }
+    .playback input[type=range] { width: min(420px, 55vw); }
+    .playback select {
+      font: inherit;
+      color: var(--fg);
+      background: var(--input-bg, var(--bg));
+      border: 1px solid var(--input-border, var(--border));
+      border-radius: 4px;
+      padding: 0.2rem 0.35rem;
+    }
+    .time-readout {
+      font-variant-numeric: tabular-nums;
+      font-weight: 650;
+      min-width: 7.5rem;
+    }
     .main-area {
       flex: 1 1 auto;
       min-height: 0;
@@ -119,8 +152,31 @@
         <a href="../../../tunnel-ceiling-d200/">スペクトル比較</a> ·
         <a href="../../">KEK MCA</a>
       </p>
-      <h1>トンネル天井 200&nbsp;cm — 宇宙線 4dtrack 3D（上空入射）</h1>
+      <h1>トンネル天井 200&nbsp;cm — 時間発展 3D（上空入射）</h1>
       <p class="note" id="metaLine">PHITS · 読込中…</p>
+    </div>
+    <div class="playback">
+      <button type="button" id="btnPlay" class="active">再生</button>
+      <button type="button" id="btnPause">停止</button>
+      <button type="button" id="btnReset">リセット</button>
+      <label>t = <span class="time-readout" id="timeLabel">0.0 ns</span></label>
+      <input id="timeSlider" type="range" min="0" max="80" step="0.1" value="0">
+      <label>窓
+        <select id="timeWindow">
+          <option value="fast" selected>高速 0–80 ns（μ中心）</option>
+          <option value="extended">延長 0–5000 ns（二次粒子）</option>
+        </select>
+      </label>
+      <label>速度
+        <select id="speed">
+          <option value="0.4">×0.4</option>
+          <option value="1" selected>×1</option>
+          <option value="2">×2</option>
+          <option value="4">×4</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="showHeads" checked> 先端点</label>
+      <label><input type="checkbox" id="showAllStatic"> 全時間表示</label>
     </div>
   </header>
   <div class="main-area">
@@ -133,29 +189,25 @@
         <span class="sw" style="background:#EF5350"></span>陽子<br>
         <span class="sw" style="background:#2f6fed"></span>Center　
         <span class="sw" style="background:#c45c26"></span>Corner<br>
-        灰点線: コンクリート　緑: トンネル空洞　紫: 線源面（上空）
+        紫: 線源面（上空 t=0）→ 下向き伝播
       </div>
     </div>
     <aside class="info-panel">
       <section>
-        <h2>軌跡数（4dtrack 可視化）</h2>
-        <div id="currentStats">—</div>
+        <h2>現在時刻の到達</h2>
+        <div id="nowStats">—</div>
       </section>
       <section>
-        <h2>検出器フラックス比較（本番統計）</h2>
+        <h2>検出器フラックス（本番統計）</h2>
         <div id="detCompare">—</div>
+      </section>
+      <section>
+        <h2>軌跡数（可視化用 4dtrack）</h2>
+        <div id="currentStats">—</div>
       </section>
       <section>
         <h2>二次粒子・トンネル内</h2>
         <dl id="secondaryStats"></dl>
-      </section>
-      <section>
-        <h2>エネルギー [MeV]（ROI内）</h2>
-        <div id="energyTable">—</div>
-      </section>
-      <section>
-        <h2>領域別軌跡数（最深点）</h2>
-        <div id="regionTable">—</div>
       </section>
       <section>
         <h2>ジオメトリ</h2>
@@ -172,6 +224,12 @@
     const ORDER = ["muon+", "muon-", "neutron", "proton"];
     const LABELS = { "muon+": "μ⁺", "muon-": "μ⁻", neutron: "中性子", proton: "陽子" };
     let pack = null;
+    let tNow = 0;
+    let playing = false;
+    let raf = null;
+    let lastTs = 0;
+    let geomTraces = [];
+    let plotReady = false;
 
     function fmt(n, d = 2) {
       if (n == null || Number.isNaN(n)) return "—";
@@ -184,45 +242,134 @@
       if (x == null || !Number.isFinite(x)) return "—";
       return Number(x).toExponential(d);
     }
+    function tMax() {
+      const w = document.getElementById("timeWindow").value;
+      return w === "extended" ? pack.meta.windows.extended_ns : pack.meta.windows.fast_ns;
+    }
 
-    function buildData() {
-      const data = [];
+    /** Grow each track up to time T (linear interpolate last segment). */
+    function sliceTrack(tr, T) {
+      const xs = [], ys = [], zs = [], texts = [];
+      if (!tr.t.length || tr.t[0] > T) return { xs, ys, zs, texts, head: null };
+      for (let i = 0; i < tr.t.length; i++) {
+        if (tr.t[i] <= T) {
+          xs.push(tr.x[i]); ys.push(tr.y[i]); zs.push(tr.z[i]);
+          texts.push(`${LABELS[tr._name] || tr._name}<br>t=${tr.t[i].toFixed(2)} ns<br>E=${tr.e[i].toExponential(3)} MeV`);
+        } else {
+          // interpolate between i-1 and i
+          if (i > 0) {
+            const t0 = tr.t[i - 1], t1 = tr.t[i];
+            const a = (T - t0) / Math.max(1e-12, t1 - t0);
+            const x = tr.x[i - 1] + a * (tr.x[i] - tr.x[i - 1]);
+            const y = tr.y[i - 1] + a * (tr.y[i] - tr.y[i - 1]);
+            const z = tr.z[i - 1] + a * (tr.z[i] - tr.z[i - 1]);
+            const e = tr.e[i - 1] + a * (tr.e[i] - tr.e[i - 1]);
+            xs.push(x); ys.push(y); zs.push(z);
+            texts.push(`${LABELS[tr._name] || tr._name}<br>t=${T.toFixed(2)} ns<br>E=${e.toExponential(3)} MeV`);
+          }
+          break;
+        }
+      }
+      const head = xs.length ? { x: xs[xs.length - 1], y: ys[ys.length - 1], z: zs[zs.length - 1] } : null;
+      return { xs, ys, zs, texts, head };
+    }
+
+    function buildTimedParticleTraces(T) {
+      const traces = [];
+      const nowCount = {};
       for (const name of ORDER) {
         const p = pack.particles[name];
         if (!p) continue;
-        data.push({
+        const X = [], Y = [], Z = [], Text = [];
+        const Hx = [], Hy = [], Hz = [];
+        let alive = 0;
+        for (const tr0 of p.tracks) {
+          const tr = Object.assign({ _name: name }, tr0);
+          const s = sliceTrack(tr, T);
+          if (s.xs.length < 2) {
+            if (s.xs.length === 1 && document.getElementById("showHeads").checked) {
+              Hx.push(s.head.x); Hy.push(s.head.y); Hz.push(s.head.z);
+              alive++;
+            }
+            continue;
+          }
+          alive++;
+          X.push(...s.xs, null);
+          Y.push(...s.ys, null);
+          Z.push(...s.zs, null);
+          Text.push(...s.texts, null);
+          if (s.head && document.getElementById("showHeads").checked) {
+            Hx.push(s.head.x); Hy.push(s.head.y); Hz.push(s.head.z);
+          }
+        }
+        nowCount[name] = alive;
+        traces.push({
+          type: "scatter3d", mode: "lines",
+          name: (LABELS[name] || name) + " (" + alive + ")",
+          x: X, y: Y, z: Z, text: Text,
+          hovertemplate: "%{text}<extra></extra>",
+          line: { color: p.color, width: p.width },
+          opacity: p.opacity,
+        });
+        if (document.getElementById("showHeads").checked) {
+          traces.push({
+            type: "scatter3d", mode: "markers",
+            name: (LABELS[name] || name) + " tip",
+            x: Hx, y: Hy, z: Hz,
+            marker: { size: 3, color: p.color, opacity: 0.95 },
+            hoverinfo: "skip",
+            showlegend: false,
+          });
+        }
+      }
+      return { traces, nowCount };
+    }
+
+    function buildStaticParticleTraces() {
+      const traces = [];
+      for (const name of ORDER) {
+        const p = pack.particles[name];
+        const g = pack.static[name];
+        if (!p || !g) continue;
+        traces.push({
           type: "scatter3d", mode: "lines",
           name: (LABELS[name] || name) + " (" + p.n + ")",
-          x: p.x, y: p.y, z: p.z, text: p.text,
+          x: g.x, y: g.y, z: g.z, text: g.text,
           hovertemplate: "%{text}<extra></extra>",
-          line: { color: p.color, width: p.width }, opacity: p.opacity,
+          line: { color: p.color, width: p.width },
+          opacity: p.opacity,
         });
       }
+      return traces;
+    }
+
+    function buildGeom() {
       const g = pack.geom;
-      data.push({ type: "scatter3d", mode: "lines", name: "concrete",
-        x: g.concrete.x, y: g.concrete.y, z: g.concrete.z,
-        line: { color: "#90A4AE", width: 3, dash: "dot" }, hoverinfo: "skip" });
-      data.push({ type: "scatter3d", mode: "lines", name: "tunnel air",
-        x: g.tunnel.x, y: g.tunnel.y, z: g.tunnel.z,
-        line: { color: "#A5D6A7", width: 4 }, hoverinfo: "skip" });
-      data.push({ type: "scatter3d", mode: "lines", name: "Center detector",
-        x: g.center.x, y: g.center.y, z: g.center.z,
-        line: { color: "#2f6fed", width: 6 }, hoverinfo: "skip" });
-      data.push({ type: "scatter3d", mode: "lines", name: "Corner detector",
-        x: g.corner.x, y: g.corner.y, z: g.corner.z,
-        line: { color: "#c45c26", width: 6 }, hoverinfo: "skip" });
-      data.push({ type: "scatter3d", mode: "lines", name: "ground z=0",
-        x: g.ground.x, y: g.ground.y, z: g.ground.z,
-        line: { color: "#BCAAA4", width: 2 }, hoverinfo: "skip" });
-      data.push({ type: "scatter3d", mode: "lines", name: "source plane (sky)",
-        x: g.source.x, y: g.source.y, z: g.source.z,
-        line: { color: "#CE93D8", width: 3 }, hoverinfo: "skip" });
-      return data;
+      return [
+        { type: "scatter3d", mode: "lines", name: "concrete",
+          x: g.concrete.x, y: g.concrete.y, z: g.concrete.z,
+          line: { color: "#90A4AE", width: 3, dash: "dot" }, hoverinfo: "skip" },
+        { type: "scatter3d", mode: "lines", name: "tunnel air",
+          x: g.tunnel.x, y: g.tunnel.y, z: g.tunnel.z,
+          line: { color: "#A5D6A7", width: 4 }, hoverinfo: "skip" },
+        { type: "scatter3d", mode: "lines", name: "Center detector",
+          x: g.center.x, y: g.center.y, z: g.center.z,
+          line: { color: "#2f6fed", width: 6 }, hoverinfo: "skip" },
+        { type: "scatter3d", mode: "lines", name: "Corner detector",
+          x: g.corner.x, y: g.corner.y, z: g.corner.z,
+          line: { color: "#c45c26", width: 6 }, hoverinfo: "skip" },
+        { type: "scatter3d", mode: "lines", name: "ground z=0",
+          x: g.ground.x, y: g.ground.y, z: g.ground.z,
+          line: { color: "#BCAAA4", width: 2 }, hoverinfo: "skip" },
+        { type: "scatter3d", mode: "lines", name: "source plane (sky)",
+          x: g.source.x, y: g.source.y, z: g.source.z,
+          line: { color: "#CE93D8", width: 3 }, hoverinfo: "skip" },
+      ];
     }
 
     function layout() {
       return {
-        title: "c10 = 200 cm（天井 2.0 m）· 上空宇宙線入射",
+        title: "t = " + tNow.toFixed(1) + " ns · 上空宇宙線の時間発展",
         scene: {
           xaxis: { title: "x [cm]", range: [-900, 900] },
           yaxis: { title: "y [cm]", range: [-550, 550] },
@@ -237,141 +384,169 @@
         paper_bgcolor: "rgba(0,0,0,0)",
         plot_bgcolor: "rgba(0,0,0,0)",
         font: { color: "var(--fg)" },
+        uirevision: "tunnel-d200-time",
       };
     }
 
-    function renderCurrentStats() {
+    function renderNowStats(nowCount) {
+      let html = "<dl><dt>現在時刻</dt><dd><strong>" + tNow.toFixed(2) + " ns</strong></dd>";
+      html += "<dt>光の距離換算</dt><dd>" + (tNow * 29.979).toFixed(0) + " cm</dd></dl>";
+      html += "<table class='stats'><thead><tr><th>粒子</th><th>到達中</th><th>収録</th></tr></thead><tbody>";
+      for (const name of ORDER) {
+        html += "<tr><td>" + LABELS[name] + "</td><td>" + (nowCount[name] || 0) + "</td><td>" + (pack.particles[name]?.n || 0) + "</td></tr>";
+      }
+      html += "</tbody></table>";
+      html += "<p class='note' style='margin:0.4rem 0 0;font-size:0.75rem;color:var(--muted)'>" + pack.meta.time_note + "</p>";
+      document.getElementById("nowStats").innerHTML = html;
+    }
+
+    function updatePlot() {
+      if (!pack) return;
+      document.getElementById("timeLabel").textContent = tNow.toFixed(1) + " ns";
+      document.getElementById("timeSlider").value = String(tNow);
+      const showAll = document.getElementById("showAllStatic").checked;
+      let particleTraces, nowCount = {};
+      if (showAll) {
+        particleTraces = buildStaticParticleTraces();
+        for (const name of ORDER) nowCount[name] = pack.particles[name]?.n || 0;
+      } else {
+        const built = buildTimedParticleTraces(tNow);
+        particleTraces = built.traces;
+        nowCount = built.nowCount;
+      }
+      renderNowStats(nowCount);
+      const data = particleTraces.concat(geomTraces);
+      if (!plotReady) {
+        Plotly.newPlot("plot", data, layout(), { responsive: true }).then(() => { plotReady = true; });
+      } else {
+        Plotly.react("plot", data, layout(), { responsive: true });
+      }
+    }
+
+    function tick(ts) {
+      if (!playing) return;
+      if (!lastTs) lastTs = ts;
+      const dtMs = ts - lastTs;
+      lastTs = ts;
+      const speed = Number(document.getElementById("speed").value);
+      // map: 1s wall ≈ 8 ns sim at ×1 in fast window
+      const simPerSec = (tMax() / 10) * speed;
+      tNow = Math.min(tMax(), tNow + (dtMs / 1000) * simPerSec);
+      if (tNow >= tMax()) {
+        tNow = tMax();
+        playing = false;
+        syncPlayButtons();
+      }
+      updatePlot();
+      if (playing) raf = requestAnimationFrame(tick);
+    }
+
+    function syncPlayButtons() {
+      document.getElementById("btnPlay").classList.toggle("active", playing);
+      document.getElementById("btnPause").classList.toggle("active", !playing);
+    }
+
+    function play() {
+      if (tNow >= tMax()) tNow = 0;
+      playing = true;
+      lastTs = 0;
+      syncPlayButtons();
+      raf = requestAnimationFrame(tick);
+    }
+    function pause() {
+      playing = false;
+      syncPlayButtons();
+      if (raf) cancelAnimationFrame(raf);
+    }
+    function reset() {
+      pause();
+      tNow = 0;
+      updatePlot();
+    }
+
+    function renderSideStatic() {
       const s = pack.stats;
-      const roi = s.tracks_in_view_roi;
-      const disp = s.tracks_displayed;
-      const raw = s.tracks_raw_by_particle;
-      let html = "<dl>";
-      html += "<dt>履歴数</dt><dd>" + s.histories + " <span style='color:var(--muted)'>（" + s.histories_note + "）</span></dd>";
-      html += "<dt>4dtrack 全軌跡</dt><dd>" + s.tracks_raw_all.toLocaleString() + " 本</dd>";
-      html += "<dt>表示中（描画）</dt><dd>" + Object.values(disp).reduce((a,b)=>a+b,0).toLocaleString() + " 本</dd>";
-      html += "<dt>計算時間</dt><dd>" + (s.run.wall_sec != null ? s.run.wall_sec + " s" : "—") + "</dd>";
-      html += "<dt>出力サイズ</dt><dd>" + (s.run.file_bytes != null ? (s.run.file_bytes/1e6).toFixed(1) + " MB" : "—") + "</dd>";
-      html += "</dl>";
-      html += "<table class='stats' style='margin-top:0.5rem'><thead><tr><th>粒子</th><th>raw</th><th>ROI</th><th>表示</th></tr></thead><tbody>";
-      for (const name of ORDER) {
-        html += "<tr><td>" + (LABELS[name]||name) + "</td><td>" + (raw[name]||0) + "</td><td>" + (roi[name]||0) + "</td><td>" + (disp[name]||0) + "</td></tr>";
-      }
-      html += "</tbody></table>";
-      html += "<p class='note' style='margin:0.4rem 0 0;font-size:0.75rem;color:var(--muted)'>紫の線源面から下向きに宇宙線が入射します（dir=cr）。</p>";
-      document.getElementById("currentStats").innerHTML = html;
-    }
-
-    function renderDetectors() {
       const d = pack.detectors;
-      if (!d) {
-        document.getElementById("detCompare").textContent = "—";
-        return;
+      if (d) {
+        const cs = d.center, ks = d.corner;
+        const maxS = Math.max(cs.sum, ks.sum);
+        document.getElementById("detCompare").innerHTML = `
+          <p class="note" style="margin:0 0 0.4rem;font-size:0.75rem;color:var(--muted)">本番 1×10⁷ histories</p>
+          <div class="bar-row"><span>Center</span><div class="bar-track"><div class="bar-fill center" style="width:${100*cs.sum/maxS}%"></div></div><span>${sci(cs.sum)}</span></div>
+          <div class="bar-row"><span>Corner</span><div class="bar-track"><div class="bar-fill corner" style="width:${100*ks.sum/maxS}%"></div></div><span>${sci(ks.sum)}</span></div>
+          <dl style="margin-top:0.4rem"><dt>比 C/K</dt><dd><strong>${d.ratio_center_over_corner.toFixed(3)}</strong></dd></dl>`;
       }
-      const cs = d.center, ks = d.corner;
-      const maxS = Math.max(cs.sum, ks.sum);
-      const hits = pack.stats.detector_track_hits || { center: {}, corner: {} };
-      document.getElementById("detCompare").innerHTML = `
-        <p class="note" style="margin:0 0 0.4rem;font-size:0.75rem;color:var(--muted)">本番 1×10⁷ histories の T-Track 積分</p>
-        <div class="bar-row"><span>Center</span><div class="bar-track"><div class="bar-fill center" style="width:${100*cs.sum/maxS}%"></div></div><span>${sci(cs.sum)}</span></div>
-        <div class="bar-row"><span>Corner</span><div class="bar-track"><div class="bar-fill corner" style="width:${100*ks.sum/maxS}%"></div></div><span>${sci(ks.sum)}</span></div>
-        <dl style="margin-top:0.45rem">
-          <dt>比 Center/Corner</dt><dd><strong>${d.ratio_center_over_corner.toFixed(3)}</strong></dd>
-        </dl>
-        <table class="stats" style="margin-top:0.4rem">
-          <thead><tr><th>4dtrack通過</th><th>Center</th><th>Corner</th></tr></thead>
-          <tbody>
-            ${ORDER.map(n => `<tr><td>${LABELS[n]}</td><td>${hits.center[n]||0}</td><td>${hits.corner[n]||0}</td></tr>`).join("")}
-          </tbody>
-        </table>`;
-    }
-
-    function renderSecondary() {
-      const sec = pack.stats.secondary;
-      document.getElementById("secondaryStats").innerHTML = ""
-        + "<dt>中性子 / μ 軌跡</dt><dd>" + fmt(sec.neutron_per_muon_track, 3) + "</dd>"
-        + "<dt>陽子 / μ 軌跡</dt><dd>" + fmt(sec.proton_per_muon_track, 3) + "</dd>"
-        + "<dt>中性子 / 履歴</dt><dd>" + fmt(sec.neutron_per_history, 3) + "</dd>"
-        + "<dt>陽子 / 履歴</dt><dd>" + fmt(sec.proton_per_history, 3) + "</dd>"
-        + "<dt>μ（空洞内）</dt><dd>" + sec.muon_tracks_in_tunnel_air + "</dd>"
-        + "<dt>中性子（空洞内）</dt><dd>" + sec.neutron_tracks_in_tunnel_air + "</dd>";
-    }
-
-    function renderEnergy() {
-      const e = pack.stats.energy_mev;
-      let html = "<table class='stats'><thead><tr><th>粒子</th><th>n</th><th>min</th><th>median</th><th>max</th><th>mean</th></tr></thead><tbody>";
+      const raw = s.tracks_raw_by_particle, roi = s.tracks_in_view_roi, disp = s.tracks_displayed;
+      let html = "<dl>";
+      html += "<dt>履歴数</dt><dd>" + s.histories + "</dd>";
+      html += "<dt>4dtrack 全軌跡</dt><dd>" + s.tracks_raw_all.toLocaleString() + "</dd>";
+      html += "<dt>計算時間</dt><dd>" + (s.run.wall_sec != null ? s.run.wall_sec + " s" : "—") + "</dd></dl>";
+      html += "<table class='stats'><thead><tr><th>粒子</th><th>raw</th><th>ROI</th><th>表示</th></tr></thead><tbody>";
       for (const name of ORDER) {
-        const row = e[name];
-        if (!row) continue;
-        html += "<tr><td>" + (LABELS[name]||name) + "</td>"
-          + "<td>" + row.n + "</td>"
-          + "<td>" + fmt(row.min_mev) + "</td>"
-          + "<td>" + fmt(row.median_mev) + "</td>"
-          + "<td>" + fmt(row.max_mev) + "</td>"
-          + "<td>" + fmt(row.mean_mev) + "</td></tr>";
+        html += "<tr><td>" + LABELS[name] + "</td><td>" + (raw[name]||0) + "</td><td>" + (roi[name]||0) + "</td><td>" + (disp[name]||0) + "</td></tr>";
       }
       html += "</tbody></table>";
-      document.getElementById("energyTable").innerHTML = html;
-    }
+      document.getElementById("currentStats").innerHTML = html;
 
-    function renderRegion() {
-      const reg = pack.stats.by_region;
-      const regions = ["tunnel_air", "center_detector", "corner_detector", "concrete", "soil_or_outer", "above_surface"];
-      const regLabel = {
-        tunnel_air: "トンネル空洞", center_detector: "Center検出器", corner_detector: "Corner検出器",
-        concrete: "コンクリート", soil_or_outer: "外側", above_surface: "地表面上",
-      };
-      let html = "<table class='stats'><thead><tr><th>領域</th>";
-      for (const name of ORDER) html += "<th>" + (LABELS[name]||name) + "</th>";
-      html += "</tr></thead><tbody>";
-      for (const r of regions) {
-        if (!reg[r]) continue;
-        html += "<tr><td>" + (regLabel[r]||r) + "</td>";
-        for (const name of ORDER) html += "<td>" + (reg[r][name]||0) + "</td>";
-        html += "</tr>";
-      }
-      html += "</tbody></table>";
-      document.getElementById("regionTable").innerHTML = html;
-    }
+      const sec = s.secondary;
+      document.getElementById("secondaryStats").innerHTML = ""
+        + "<dt>中性子 / μ</dt><dd>" + fmt(sec.neutron_per_muon_track, 3) + "</dd>"
+        + "<dt>陽子 / μ</dt><dd>" + fmt(sec.proton_per_muon_track, 3) + "</dd>"
+        + "<dt>μ（空洞）</dt><dd>" + sec.muon_tracks_in_tunnel_air + "</dd>"
+        + "<dt>中性子（空洞）</dt><dd>" + sec.neutron_tracks_in_tunnel_air + "</dd>";
 
-    function renderGeom() {
-      const g = pack.stats.geometry_depth;
+      const g = s.geometry_depth;
       document.getElementById("geomStats").innerHTML = ""
         + "<dt>天井深さ</dt><dd>" + g.c10_cm + " cm（" + g.ceiling_depth_m + " m）</dd>"
-        + "<dt>空洞上面 z</dt><dd>" + g.tunnel_top_z_cm + " cm</dd>"
-        + "<dt>空洞下面 z</dt><dd>" + g.tunnel_bottom_z_cm + " cm</dd>"
-        + "<dt>コンクリート</dt><dd>z=" + g.concrete_bottom_z_cm + " … " + g.concrete_top_z_cm + " cm</dd>";
-    }
+        + "<dt>空洞 z</dt><dd>" + g.tunnel_bottom_z_cm + " … " + g.tunnel_top_z_cm + "</dd>"
+        + "<dt>コンクリート</dt><dd>" + g.concrete_bottom_z_cm + " … " + g.concrete_top_z_cm + "</dd>";
 
-    function renderSimMeta() {
-      const m = pack.meta;
-      const src = m.source;
+      const m = pack.meta, src = m.source;
       document.getElementById("simMeta").innerHTML = ""
         + "<dt>PHITS</dt><dd>" + m.phits + "</dd>"
-        + "<dt>線源</dt><dd>e-type=" + src.e_type + ", icenv=" + src.icenv + ", dir=" + src.dir + "</dd>"
+        + "<dt>線源</dt><dd>dir=" + src.dir + ", e-type=" + src.e_type + "</dd>"
         + "<dt>位置</dt><dd>" + src.location + "</dd>"
-        + "<dt>入射粒子</dt><dd>" + src.particles.join(", ") + "</dd>"
-        + "<dt>線源半径</dt><dd>" + src.radius_cm + " cm（z=" + src.z_cm + " cm）</dd>"
         + "<dt>注記</dt><dd>" + (m.flux_stats_note || "") + "</dd>";
     }
 
     async function init() {
       const statusEl = document.getElementById("status");
       statusEl.hidden = false;
-      statusEl.textContent = "軌跡データを読み込み中…";
+      statusEl.textContent = "時間付き軌跡を読み込み中…";
       const res = await fetch("./tracks.json");
       if (!res.ok) throw new Error("tracks.json: " + res.status);
       pack = await res.json();
       document.getElementById("metaLine").textContent =
-        pack.meta.phits + " · " + pack.stats.histories + " histories · " + pack.meta.source.location;
-      renderCurrentStats();
-      renderDetectors();
-      renderSecondary();
-      renderEnergy();
-      renderRegion();
-      renderGeom();
-      renderSimMeta();
+        pack.meta.phits + " · 時間発展 · " + pack.stats.histories + " histories · " + pack.meta.source.location;
+      geomTraces = buildGeom();
+      renderSideStatic();
+
+      const slider = document.getElementById("timeSlider");
+      slider.max = String(tMax());
+      slider.addEventListener("input", () => {
+        pause();
+        tNow = Number(slider.value);
+        updatePlot();
+      });
+      document.getElementById("timeWindow").addEventListener("change", () => {
+        slider.max = String(tMax());
+        if (tNow > tMax()) tNow = tMax();
+        updatePlot();
+      });
+      document.getElementById("btnPlay").addEventListener("click", play);
+      document.getElementById("btnPause").addEventListener("click", pause);
+      document.getElementById("btnReset").addEventListener("click", reset);
+      document.getElementById("showHeads").addEventListener("change", updatePlot);
+      document.getElementById("showAllStatic").addEventListener("change", () => {
+        if (document.getElementById("showAllStatic").checked) pause();
+        updatePlot();
+      });
+
       statusEl.hidden = true;
-      Plotly.newPlot("plot", buildData(), layout(), { responsive: true });
+      syncPlayButtons();
+      updatePlot();
+      // auto-start a short demo play
+      setTimeout(play, 400);
     }
 
     init().catch((err) => {
