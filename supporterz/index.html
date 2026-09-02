@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>サポーターズ提案14社 — 企業研究</title>
-  <script src="../theme-boot.js"></script>
-  <link rel="stylesheet" href="../theme.css">
   <style>
-    
+    :root { color-scheme: dark; --bg:#0d1117; --fg:#e6edf3; --muted:#8b949e; --link:#58a6ff; --border:#30363d; --surface:#161b22; --surface-2:#21262d; --track:#2a2a2a; --code-bg:#161b22; --error-fg:#ffb4b4; --input-bg:#0d1117; --input-border:#555; }
+    body { background: var(--bg); color: var(--fg); }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 0 auto; padding: 1rem 1.25rem 3rem; line-height: 1.65; }
     h1 { font-size: 1.35rem; margin: 0 0 .25rem; }
@@ -215,8 +214,8 @@
       comment:'障害のない社会というビジョンと店舗×データ基盤の独自性に共感。福祉SaaSのドメイン複雑性とフルスタック開発に興味。',
       pros:['社会課題×テクノロジー','店舗×データの独自資産','WLB良好'],
       cons:['エンジニア若干名','待遇満足2.3','競争率高い'] },
-    { id:'dena', name:'DeNA', tier:'A', match:78, ic:'maybe', interest:'興味はある',
-      domain:'エンタメ＋社会課題・AI', listed:'東証プライム（2432）', emp:'約1,448名',
+    { id:'dena', name:'DeNA', tier:'A', match:78, ic:'entered', interest:'すでにエントリー済',
+      domain:'エンタメ＋AI', listed:'東証プライム（2432）', emp:'約1,448名',
       salary:'500〜1000万円', ow:4.19, diff:'最高', interviews:'3〜5回', remote:'ハイブリッド',
       financial:'売上1,477億（減益）、AIオールイン投資継続',
       mission:'一人ひとりに想像を超えるDelightを',
@@ -230,7 +229,7 @@
       comment:'10月イベント接触優先のためエントリー済。AIオールイン戦略やエンジニア成長環境に関心。',
       pros:['OW4.19・成長環境最高','高待遇・既卒可','多様な事業選択肢'],
       cons:['選考倍率極高','ゲーム依存の業績変動','イベント経由で接触予定'] },
-    { id:'timee', name:'タイミー', tier:'A', match:75, ic:'maybe', interest:'興味はある',
+    { id:'timee', name:'タイミー', tier:'A', match:75, ic:'entered', interest:'すでにエントリー済',
       domain:'労働マッチング toC', listed:'東証グロース（215A）', emp:'連結1,268名',
       salary:'500万円〜', ow:3.54, diff:'中〜高', interviews:'2〜3回', remote:'フルリモート可',
       financial:'売上343億、営業利益率19.7%',
@@ -335,7 +334,7 @@
       comment:'自社toCプロダクト開発の小規模精鋭環境とデータ駆動文化に興味。28卒積極募集とリモートも魅力。',
       pros:['自社プロダクト開発','データ駆動','上場・高収益'],
       cons:['エンジニア14名','ドメイン接点は限定的','年収非公表'] },
-    { id:'digitalio', name:'DIGITALIO', tier:'C', match:58, ic:'no', interest:'選考は受けたくない',
+    { id:'digitalio', name:'DIGITALIO', tier:'C', match:58, ic:'maybe', interest:'興味はある',
       domain:'ポイントメディア・デジタルギフト', listed:'非上場子会社', emp:'約60名',
       salary:'516万〜（CARTA経由）', ow:3.09, diff:'中', interviews:'4〜5回', remote:'リモート88%',
       financial:'2026年親会社変更・事業再編',
@@ -344,13 +343,13 @@
       eng:['エンジニア比率35%','大規模Webサービス運用'],
       wlb:['リモート88%','フルフレックス'],
       owScores:[['※回答者4人','—']],
-      hiring:['DIGITALIO配属は保証されない','28卒本選考未オープン'],
+      hiring:['CARTA配属は選考で要確認','28卒本選考未オープン'],
       flow:'CARTA: 書類→エンジニア面接→責任者→人事→最終',
       flowNote:'carta-recruit.snar.jpプレエントリー',
-      comment:'ポイントメディア領域は現時点で深く携わりたい事業ではない。2026年の親会社変更・配属不透明さから優先度を下げたい。',
-      pros:['リモート率高','多フェーズ経験'],
-      cons:['事業領域への関心薄い','配属不透明','親会社変更'] },
-    { id:'wealthnavi', name:'ウェルスナビ', tier:'C', match:55, ic:'no', interest:'選考は受けたくない',
+      comment:'大規模Webサービスの運用・内製35%に関心。CARTA経由の配属は選考で確認しながら、リモート中心の環境で実務を学びたい。',
+      pros:['リモート率高','大規模Web運用','内製開発'],
+      cons:['CARTA配属不透明','親会社変更','OWデータ少'] },
+    { id:'wealthnavi', name:'ウェルスナビ', tier:'C', match:55, ic:'maybe', interest:'興味はある',
       domain:'フィンテック・ロボアド', listed:'非上場（MUFG子会社）', emp:'271名',
       salary:'400〜550万円', ow:3.56, diff:'高', interviews:'4〜5回', remote:'ハイブリッド週3',
       financial:'営業収益111.7億（+37%）',
@@ -362,9 +361,9 @@
       hiring:['本選考2027/4まで','インターン参加者に優遇'],
       flow:'カジュアル→書類→WEBテスト→人事→現場→役員→内定',
       flowNote:'paiza / Track Job',
-      comment:'エンジニア比率は魅力的だが金融領域への関心が薄く、面談でもお伝えしたとおり今回は他社を優先したい。',
-      pros:['エンジニア47%','内製開発'],
-      cons:['金融ドメインへの関心薄い','面談で確認済'] }
+      comment:'エンジニア47%・内製開発に関心。2.1兆円規模のロボアドという信頼性最優先のシステムに、安全性重視の設計経験を活かせる可能性を感じ、選考で理解を深めたい。',
+      pros:['エンジニア47%','内製開発','信頼性が最優先の大規模システム'],
+      cons:['金融ドメインは未経験','選考難易度高'] }
   ];
 
   const sorted = [...companies].sort((a,b) => b.match - a.match);
@@ -378,14 +377,15 @@
       <div class="stat"><div class="stat-l">提案企業</div><div class="stat-v">14社</div></div>
       <div class="stat"><div class="stat-l">ぜひ選考</div><div class="stat-v">3社</div></div>
       <div class="stat"><div class="stat-l">興味はある</div><div class="stat-v">9社</div></div>
-      <div class="stat"><div class="stat-l">見送り</div><div class="stat-v">2社</div></div>`;
+      <div class="stat"><div class="stat-l">エントリー済</div><div class="stat-v">2社</div></div>
+      <div class="stat"><div class="stat-l">見送り</div><div class="stat-v">0社</div></div>`;
 
     document.getElementById('chart').innerHTML = sorted.map(c => `
       <div class="bar-row"><span class="bar-l" title="${c.name}">${c.name}</span>
       <div class="bar-t"><div class="bar-f" style="width:${c.match}%"></div></div>
       <span class="bar-v">${c.match}</span></div>`).join('');
 
-    const filters = [['all','全社'],['yes','ぜひ選考'],['maybe','興味はある'],['no','見送り']];
+    const filters = [['all','全社'],['yes','ぜひ選考'],['maybe','興味はある'],['entered','エントリー済']];
     document.getElementById('filters').innerHTML = filters.map(([k,l]) =>
       `<button class="btn ${filter===k?'on':''}" onclick="setF('${k}')">${l}</button>`).join('');
 
