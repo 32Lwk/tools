@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>サポーターズ提案14社 — 企業研究</title>
+  <script src="../theme-boot.js"></script>
+  <link rel="stylesheet" href="../theme.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 0 auto; padding: 1rem 1.25rem 3rem; line-height: 1.65; }
+    h1 { font-size: 1.35rem; margin: 0 0 .25rem; }
+    h2 { font-size: 1.05rem; margin: 2rem 0 .75rem; padding-bottom: .35rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: .95rem; margin: 1rem 0 .5rem; color: var(--muted); }
+    .meta { color: var(--muted); font-size: .85rem; margin-bottom: 1.25rem; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: .6rem; margin-bottom: 1.25rem; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: .65rem .8rem; }
+    .stat-l { font-size: .72rem; color: var(--muted); }
+    .stat-v { font-size: 1.15rem; font-weight: 600; }
+    .filters { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+    .btn { border: 1px solid var(--border); background: var(--surface); color: var(--fg); padding: .35rem .75rem; border-radius: 6px; cursor: pointer; font-size: .82rem; }
+    .btn.on { background: var(--link); border-color: var(--link); color: #fff; }
+  .btn-sm { padding: .2rem .5rem; font-size: .75rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .8rem; margin-bottom: 1.5rem; }
+    th, td { border: 1px solid var(--border); padding: .45rem .55rem; text-align: left; vertical-align: top; }
+    th { background: var(--surface); position: sticky; top: 0; z-index: 1; }
+    tr[data-id] { cursor: pointer; }
+    tr[data-id]:hover, tr.sel { background: var(--surface-2); }
+    .badge { display: inline-block; padding: .1rem .45rem; border-radius: 4px; font-size: .72rem; font-weight: 600; white-space: nowrap; }
+    .b-yes { background: #1a3d2a; color: #3dba6a; }
+    .b-maybe { background: #1a2d4d; color: #58a6ff; }
+    .b-no { background: #3d1a1a; color: #f85149; }
+    .b-s { background: #1a3d2a; color: #3dba6a; }
+    .b-a { background: #1a2d4d; color: #58a6ff; }
+    .b-b { background: #3d3018; color: #e6a23c; }
+    .b-c { background: var(--surface-2); color: var(--muted); }
+    .card { border: 1px solid var(--border); border-radius: 8px; margin-bottom: .75rem; overflow: hidden; }
+    .card-h { padding: .75rem 1rem; background: var(--surface); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .card-h:hover { background: var(--surface-2); }
+    .card-b { padding: 0 1rem 1rem; display: none; }
+    .card.open .card-b { display: block; }
+    .card.open .chev { transform: rotate(90deg); }
+    .chev { transition: transform .15s; color: var(--muted); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+    .kv { font-size: .82rem; margin: .15rem 0; }
+    .kv strong { color: var(--muted); font-weight: 500; min-width: 5em; display: inline-block; }
+    .flow { font-family: ui-monospace, monospace; font-size: .78rem; background: var(--code-bg); padding: .6rem .75rem; border-radius: 6px; margin: .5rem 0; overflow-x: auto; border: 1px solid var(--border); }
+    .comment { background: var(--surface); border-left: 3px solid var(--link); padding: .65rem .85rem; margin: .5rem 0; font-size: .85rem; }
+    .ow { width: 100%; font-size: .78rem; margin: .5rem 0; }
+    .ow td:first-child { width: 55%; }
+    ul.sm { margin: .35rem 0; padding-left: 1.2rem; font-size: .85rem; }
+    .bar-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .35rem; font-size: .78rem; }
+    .bar-l { width: 7rem; text-align: right; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; }
+    .bar-t { flex: 1; height: 14px; background: var(--track); border-radius: 3px; overflow: hidden; }
+    .bar-f { height: 100%; background: var(--link); border-radius: 3px; }
+    .bar-v { width: 1.8rem; font-size: .72rem; color: var(--muted); }
+    .login-wrap { min-height: 70vh; display: flex; align-items: center; justify-content: center; }
+    .login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; width: 100%; max-width: 320px; }
+    .login-box input { width: 100%; padding: .55rem .7rem; margin: .5rem 0; border: 1px solid var(--input-border); border-radius: 6px; background: var(--input-bg); color: var(--fg); font-size: 1rem; }
+    .login-err { color: var(--error-fg); font-size: .82rem; min-height: 1.2em; }
+    .hidden { display: none !important; }
+    .note { font-size: .78rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .match-num { font-weight: 700; font-size: 1.1rem; }
+    .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .5rem; }
+    @media (max-width: 500px) { .pros-cons { grid-template-columns: 1fr; } }
+    .pros, .cons { font-size: .82rem; padding: .5rem .65rem; border-radius: 6px; }
+    .pros { background: rgba(61,186,106,.08); border: 1px solid rgba(61,186,106,.25); }
+    .cons { background: rgba(248,81,73,.08); border: 1px solid rgba(248,81,73,.25); }
+    .pros h4, .cons h4 { margin: 0 0 .35rem; font-size: .78rem; }
+  </style>
+</head>
+<body>
+  <div id="gate" class="login-wrap">
+    <div class="login-box">
+      <h1 style="font-size:1.1rem;margin-bottom:.25rem">企業研究（限定公開）</h1>
+      <p class="meta" style="margin:0 0 .75rem">パスワードを入力してください</p>
+      <input type="password" id="pwd" placeholder="パスワード" autocomplete="current-password">
+      <p class="login-err" id="pwd-err"></p>
+      <button class="btn on" style="width:100%;margin-top:.25rem;padding:.55rem" id="pwd-btn">開く</button>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <h1>サポーターズ提案14社 — 企業研究</h1>
+    <p class="meta">川嶋宥翔（名大物理・28卒）/ 調査日 2026-09-02 / OpenWork・有報・採用サイト</p>
+
+    <div class="stats" id="stats"></div>
+
+    <h2>マッチ度ランキング</h2>
+    <div id="chart"></div>
+
+    <h2>一覧比較</h2>
+    <div class="filters" id="filters"></div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>#</th><th>企業</th><th>マッチ</th><th>興味度</th><th>年収</th><th>OW</th><th>難易度</th><th>面接</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <h2>企業詳細（クリックで展開）</h2>
+    <div id="cards"></div>
+
+    <h2>軸別おすすめ</h2>
+    <ul class="sm">
+      <li><strong>医療・社会課題:</strong> SMS → エクサウィザーズ → LITALICO → Sansan → フィックスターズ</li>
+      <li><strong>新卒年収:</strong> Sansan → DeNA → エクサウィザーズ → タイミー → フィックスターズ</li>
+      <li><strong>AI駆動開発:</strong> ログラス → タイミー → ファインディ → DeNA → ギブリー</li>
+      <li><strong>安定性:</strong> ウイングアーク1st → LITALICO → Sansan → フィックスターズ → オープンワーク</li>
+    </ul>
+
+    <h2>直近アクション</h2>
+    <ul class="sm">
+      <li><strong>最優先:</strong> Sansan プレエントリー・DeNA 早期選考（8/31締切確認）</li>
+      <li><strong>高:</strong> SMS 9月本選考OPEN / 就業型ISエントリー</li>
+      <li><strong>中:</strong> タイミー説明会予約、LITALICO paiza説明会</li>
+    </ul>
+
+    <p class="note">一時公開 · tools.yutok.dev/supporterz/ · 調査は公開情報ベース。応募前に各社で最新情報を確認してください。</p>
+  </div>
+
+  <script src="../theme.js"></script>
+  <script>
+  const PASS_HASH = 'a73060afb61efe1b7c817645d00c342df02407f65435a64c88d251d56150ff42';
+  const AUTH_KEY = 'supporterz_auth_v1';
+
+  async function sha256(s) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function tryLogin() {
+    const pwd = document.getElementById('pwd').value;
+    const err = document.getElementById('pwd-err');
+    if (await sha256(pwd) === PASS_HASH) {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      document.getElementById('gate').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      init();
+    } else {
+      err.textContent = 'パスワードが違います';
+    }
+  }
+
+  document.getElementById('pwd-btn').onclick = tryLogin;
+  document.getElementById('pwd').onkeydown = e => { if (e.key === 'Enter') tryLogin(); };
+  if (sessionStorage.getItem(AUTH_KEY) === '1') {
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+  }
+
+  const companies = [
+    { id:'sms', name:'エス・エム・エス', tier:'S', match:92, ic:'yes', interest:'ぜひ選考を受けたい',
+      domain:'医療・介護・シニアライフ HR Tech / SaaS', listed:'東証プライム（2175）', emp:'連結4,528名',
+      salary:'非公表（参考500〜542万）', ow:3.68, diff:'中', interviews:'2〜3回', remote:'リモート中心',
+      financial:'プライム上場・22期連続増収（2026/3減損あり）',
+      mission:'高齢社会に適した情報インフラを構築し、人々の生活の質を向上',
+      business:['40以上のサービス（カイポケ、履歴書できるくん等）','医療・介護・シニアライフの情報インフラ'],
+      eng:['開発組織約130名、DeNA・クックパッド出身約6割','Ruby, Java/Kotlin, TS/React/Next.js','Cursor, Claude Code, Copilot活用','4〜6名アジャイル、リモート中心'],
+      wlb:['フレックス（コア12:00–16:00）','有給消化78.6%','残業30.1h/月','スキルアップ手当15万/年'],
+      owScores:[['20代成長',3.7],['法令順守',4.7],['待遇満足',2.9],['長期育成',2.4]],
+      hiring:['新卒75名/年（全職種）、エンジニア少数','中途比率90%','28卒本選考9月OPEN予定'],
+      flow:'カジュアル面談 → 技術面接 → 配属候補チーム面接 → 技術/事業責任者面接 → 内定',
+      flowNote:'エントリー: careers.bm-sms.co.jp / paiza。応募〜内定約1ヶ月。就業型IS（1ヶ月〜）実施中',
+      comment:'登録販売者としてドラッグストアで勤務し、現場の課題を体感したうえで医薬品相談AIを個人開発・運用。LLMに丸投げせずルールと制約で安全性を担保する設計を重視。SMSの医療・介護情報インフラに強く共感し、カイポケ等で止めてはいけないシステムを支えるエンジニアとして成長したい。',
+      pros:['医療×ITドメイン最適','OTC相談ツール実績と直結','Cursor等AI開発文化'],
+      cons:['新卒年収非公表','中途90%','残業30h・職種差大'] },
+    { id:'sansan', name:'Sansan', tier:'S', match:88, ic:'yes', interest:'ぜひ選考を受けたい',
+      domain:'B2B SaaS / AX', listed:'東証プライム（4443）', emp:'2,064名',
+      salary:'586〜640万円', ow:4.14, diff:'高', interviews:'2〜4回', remote:'週3ハイブリッド',
+      financial:'売上432億（+27%）、調整後営業利益率8.2%',
+      mission:'出会いからイノベーションを生み出す',
+      business:['Sansan, Eight, Bill One, Contract One','名刺SaaS国内シェア85.8%','GENIAC採択（Viola/Cello）'],
+      eng:['技術本部360名規模','NineOCR, VLM, Web/iOS/Android/ML','AI-Driven開発全社推進'],
+      wlb:['有給消化77.4%','残業24.2h/月','平均勤続3.1年'],
+      owScores:[['20代成長',4.6],['社員士気',4.5],['風通し',4.2],['待遇満足',3.4]],
+      hiring:['27卒170名計画（エンジニア20名）','中途比率77%','履歴書・ES準備済み'],
+      flow:'本選考: 書類 → CT → エンジニア面接（複数） → 内定 / IS: スキルシート&CT → 面接',
+      flowNote:'newgradsevents.corp-sansan.com。プレエントリー8/31、有給IS12/31',
+      comment:'B2Bデータ基盤とAI-OCRに関心。履歴書・ES準備済み。医薬品ツールで培ったデータの正確性・安全性をビジネスデータのデジタル化に活かしたい。新卒投資と成長環境（OW上位1%）に惹かれ積極的に選考を受けたい。',
+      pros:['新卒年収業界最高クラス','履歴書準備済','AI-OCR・データ基盤'],
+      cons:['選考難易度高','中途77%','週3出社'] },
+    { id:'exawizards', name:'エクサウィザーズ', tier:'A', match:85, ic:'yes', interest:'ぜひ選考を受けたい',
+      domain:'AI×社会課題（医療・介護）', listed:'東証グロース（4259）', emp:'624名（連結）',
+      salary:'540万円〜', ow:3.37, diff:'高', interviews:'1〜3回', remote:'PJによる',
+      financial:'FY2026初通期黒字（売上120億、営業利益16億）',
+      mission:'AIを用いた社会課題解決を通じて、幸せな社会を実現する',
+      business:['exaBase生成AI（法人向け国内No.1）','CareWiz, トルト等の医療・介護プロダクト','AI駆動開発子会社Exa Frontier Edge'],
+      eng:['ML/数理最適化/ソフトウェア複数コース','コンサル・PMと三位一体','社会実装重視'],
+      wlb:['有給消化65.3%','残業42h/月'],
+      owScores:[['20代成長',3.5],['待遇満足',2.9],['風通し',3.7],['長期育成',2.6]],
+      hiring:['年40名超採用（FY2026:45名）','CT・アセスメント必須'],
+      flow:'IS: エントリー→CT→書類→面接→オファー / Goodfind: DXアセスメント→面接1-2回',
+      flowNote:'recruit.exawizards.com。Goodfind早期でES免除ルートあり',
+      comment:'医療・介護AI社会実装に強い関心。ハイブリッドAI（ルール+LLM）で安全性を担保する設計を実践。exaBaseやCareWizで社会課題解決エンジニアとして挑戦したい。',
+      pros:['医療AI社会実装','ハイブリッドAI設計が活きる','新卒枠大きい・初通期黒字'],
+      cons:['待遇満足2.9','残業42h','選考難易度高'] },
+    { id:'litalico', name:'LITALICO', tier:'A', match:82, ic:'maybe', interest:'興味はある',
+      domain:'福祉・教育 SaaS', listed:'東証プライム（7366）', emp:'グループ5,339名',
+      salary:'450万円〜', ow:3.71, diff:'中〜高', interviews:'3回', remote:'テレワーク可',
+      financial:'売上382億（+18%）、営業利益45.8億',
+      mission:'障害のない社会をつくる',
+      business:['福祉事業所200店舗以上','SaaS・マッチングプラットフォーム','BtoC/BtoB/BtoBtoC/BtoG'],
+      eng:['フルスタック志向','Ruby on Rails, TS, React/Vue, AWS, BigQuery','新卒は小チームでFE/BE'],
+      wlb:['有給消化83.5%','残業16.7h','副業OK'],
+      owScores:[['社員士気',4.0],['風通し',4.0],['相互尊重',4.3],['待遇満足',2.3]],
+      hiring:['エンジニア若干名','28新卒エンジニア明示募集'],
+      flow:'説明会/カジュアル → 一次 → 二次 → 最終 → 内定',
+      flowNote:'paiza / HERP。説明会参加必須。通年採用',
+      comment:'障害のない社会というビジョンと店舗×データ基盤の独自性に共感。福祉SaaSのドメイン複雑性とフルスタック開発に興味。',
+      pros:['社会課題×テクノロジー','店舗×データの独自資産','WLB良好'],
+      cons:['エンジニア若干名','待遇満足2.3','競争率高い'] },
+    { id:'dena', name:'DeNA', tier:'A', match:78, ic:'maybe', interest:'興味はある',
+      domain:'エンタメ＋社会課題・AI', listed:'東証プライム（2432）', emp:'約1,448名',
+      salary:'500〜1000万円', ow:4.19, diff:'最高', interviews:'3〜5回', remote:'ハイブリッド',
+      financial:'売上1,477億（減益）、AIオールイン投資継続',
+      mission:'一人ひとりに想像を超えるDelightを',
+      business:['ゲーム・ライブ・スポーツ・ヘルスケア','AIオールイン全社戦略','28卒早期選考は既卒可'],
+      eng:['4軸キャリア（サービスリード/エキスパート/マネジメント/ビジネスリード）','KPI共有・ビジネス貢献重視'],
+      wlb:['有給消化71.5%','残業27h','離職率7.4%'],
+      owScores:[['20代成長',4.7],['風通し',4.5],['待遇満足',3.6],['総合',4.19]],
+      hiring:['年50-100名（全職種）','倍率150-200倍推定','AI系600-700万〜'],
+      flow:'マイページ → Webテスト(CT) → 書類 → 面接複数 → 人事 → 最終 → 内定',
+      flowNote:'student.dena.com。早期選考8/31。インターン参加者に選考優遇',
+      comment:'社会課題・ヘルスケア領域に関心。AIオールイン戦略の中で医療・福祉系プロジェクトに携われる可能性に惹かれる。社会課題軸で深掘りしたい。',
+      pros:['OW4.19・成長環境最高','高待遇・既卒可','多様な事業選択肢'],
+      cons:['選考倍率極高','ゲーム依存の業績変動','社会課題以外はミスマッチ'] },
+    { id:'timee', name:'タイミー', tier:'A', match:75, ic:'maybe', interest:'興味はある',
+      domain:'労働マッチング toC', listed:'東証グロース（215A）', emp:'連結1,268名',
+      salary:'500万円〜', ow:3.54, diff:'中〜高', interviews:'2〜3回', remote:'フルリモート可',
+      financial:'売上343億、営業利益率19.7%',
+      mission:'一人ひとりの時間を豊かに / 働くインフラをつくる',
+      business:['ワーカー1,420万人、事業者238,000社','第二創業期','Ruby/TS/Go、AI駆動開発'],
+      eng:['Team Topologies準拠','Cursor/Claude Code/Devin','VPoE体制、ポストモーテム文化'],
+      wlb:['フルリモート・フレックス','残業21h'],
+      owScores:[['20代成長',4.1],['風通し',4.0],['待遇満足',2.5],['相互尊重',4.3]],
+      hiring:['エンジニア採用はインターン中心','IS完了者は最終面接のみ'],
+      flow:'説明会（必須）→書類→CT→面接→就業型IS(1ヶ月)→最終→内定',
+      flowNote:'newgrads.timee.co.jp。CTはHireRoo・AI利用可',
+      comment:'1,420万人規模のリアルタイムマッチングとAI駆動開発文化に技術的魅力。ドメインは医療より労働寄りだが社会インフラとして価値があると考える。',
+      pros:['社会インフラ規模','AI駆動開発','フルリモート・高利益率'],
+      cons:['ドメインは医療と離れる','待遇満足2.5','労務論点'] },
+    { id:'findy', name:'ファインディ', tier:'B', match:74, ic:'maybe', interest:'興味はある',
+      domain:'HR Tech / 開発生産性SaaS', listed:'非上場', emp:'478名',
+      salary:'非公表', ow:3.34, diff:'中〜高', interviews:'3〜4回', remote:'基本リモート可',
+      financial:'累計調達43億、赤字縮小中',
+      mission:'挑戦するエンジニアのプラットフォームをつくる',
+      business:['Findy転職、Team+、Freelance','累計会員26.7万人','AI SaaS・海外展開'],
+      eng:['エンジニア約57名（拡大中）','GitHub解析・スキル可視化','Claude Code/AI Agent活用'],
+      wlb:['フレックス','有給消化67.9%','残業22.4h'],
+      owScores:[['風通し',3.9],['20代成長',3.7],['待遇満足',2.6]],
+      hiring:['27卒全体約10名','28卒本選考未公開'],
+      flow:'書類→面接3-4回→内定 / IS: 説明選考会→個別面接→2days→本選考',
+      flowNote:'recruit.findy.co.jp。新卒枠極小',
+      comment:'エンジニア向けサービス自社開発とFindy Team+に関心。エンジニア文化とAI活用の実践環境は学びたい領域。',
+      pros:['エンジニア文化','開発生産性SaaS','AI活用'],
+      cons:['新卒枠極小','未上場・赤字','医療ドメインなし'] },
+    { id:'loglass', name:'ログラス', tier:'B', match:72, ic:'maybe', interest:'興味はある',
+      domain:'B2B SaaS（経営管理）', listed:'非上場', emp:'312名（開発100名）',
+      salary:'450〜750万円', ow:3.27, diff:'中〜高', interviews:'3〜4回', remote:'週3リモート',
+      financial:'シリーズB70億、累積赤字・調達100億',
+      mission:'良い景気を作ろう',
+      business:['経営管理SaaS国内No.1','AI ERP構想','Claude Code/Cursor全員配布'],
+      eng:['Kotlin/Spring, TS/React/Next, AWS','AI駆動開発標準','ドメインモデリング重視'],
+      wlb:['リモート週3','有給75.7%','残業31h'],
+      owScores:[['20代成長',3.4],['※回答者4人のみ','—']],
+      hiring:['新卒少数精鋭','ビジネスリードエンジニア候補'],
+      flow:'書類→CT(90分)→技術面接→モチベグラフ→最終→内定',
+      flowNote:'paiza / Goodfind。IS優秀者に早期内定優遇',
+      comment:'Cursor/Claude Code配布とAI駆動開発文化に強く惹かれる。設計品質へのこだわりも自分のスタイルと近い。',
+      pros:['AI駆動開発（Cursor配布）','設計重視文化','経営管理SaaSNo.1'],
+      cons:['非上場・累積赤字','新卒少数','OWデータ極少'] },
+    { id:'wingarc', name:'ウイングアーク1st', tier:'B', match:71, ic:'maybe', interest:'興味はある',
+      domain:'BI・帳票ミドルウェア', listed:'東証プライム（4432）', emp:'連結1,126名',
+      salary:'450万円（初任）', ow:3.88, diff:'普通', interviews:'4〜5回', remote:'原則フルリモート',
+      financial:'売上309億、営業利益89.9億・黒字安定',
+      mission:'Empower Data, Innovate the Business',
+      business:['SVF帳票国内シェア70%','Dr.Sum, MotionBoard','生成AI機能強化'],
+      eng:['従業員約半数が開発職','内製開発（営業・開発・サポート一体）','D.E.BASE秋葉原'],
+      wlb:['フルリモート','6ヶ月研修','離職率5.2%','有給70.8%'],
+      owScores:[['風通し',4.3],['20代成長',3.7],['待遇満足',3.2]],
+      hiring:['年15-20名','28卒は情報収集フェーズ'],
+      flow:'説明会→ES→一次→Webテスト→二次→三次→最終→内定',
+      flowNote:'LabBase個別面談。カジュアル面談中心',
+      comment:'安定性とフルリモート、6ヶ月研修に魅力。インフラ・基盤系志向と親和性があり堅実にミドルウェア/BIを学びたい。',
+      pros:['上場安定・フルリモート','6ヶ月研修','離職率5%台'],
+      cons:['初任給450万は低め','医療ドメイン薄い','B2Bエンタープライズ'] },
+    { id:'fixstars', name:'フィックスターズ', tier:'B', match:70, ic:'maybe', interest:'興味はある',
+      domain:'高速化・組み込み・医療AI', listed:'東証プライム（3687）', emp:'334名（エンジニア90%超）',
+      salary:'496〜720万円', ow:3.73, diff:'高', interviews:'3〜4回', remote:'週2まで',
+      financial:'売上96億、営業利益率26.8%',
+      mission:'Speed up your AI',
+      business:['ソフトウェア高速化受託','METIS Eye（医療AI）','Amplify（量子）、AIBooster'],
+      eng:['C/C++中心、HPC・組込み','修士57%・博士17%','ライブコーディング選考'],
+      wlb:['有給83%','残業16.2h','客先常駐あり'],
+      owScores:[['20代成長',4.4],['風通し',4.2],['待遇満足',3.2]],
+      hiring:['2025年度23名','院卒620万〜','説明会9/30・10/27'],
+      flow:'paiza CT→説明会→書類→面接(研究発表+ライブコーディング)×2→最終→内定',
+      flowNote:'C/C++必須。paiza経由が実質必須',
+      comment:'物理学科背景とMETIS Eye（医療AI）に接点。高速化の技術深度は高い。C/C++中心でWeb経験とのギャップはあるが技術力を極めたい選択肢。',
+      pros:['物理背景と親和','医療AI（METIS Eye）','高年収・技術深度'],
+      cons:['C/C++必須','客先常駐','Web経験とのギャップ'] },
+    { id:'givery', name:'ギブリー', tier:'B', match:68, ic:'maybe', interest:'興味はある',
+      domain:'HR Tech / 生成AI', listed:'非上場', emp:'グループ581名',
+      salary:'360〜600万円', ow:3.56, diff:'中〜高', interviews:'3〜4回', remote:'要相談',
+      financial:'上場準備中、7期連続最高売上',
+      mission:'世界で最も必要とされるテクノロジー企業群をつくる',
+      business:['Track（累計100万人超）','MANA Studio等生成AI','28卒10名明示募集'],
+      eng:['社員50%がエンジニア','AI Lab','Track Testを選考に使用'],
+      wlb:['年間休日120日','有給11.3日/年','残業30.3h'],
+      owScores:[['社員士気',4.4],['20代成長',3.9],['待遇満足',2.5]],
+      hiring:['新卒4割・中途6割','28卒各10名'],
+      flow:'ES→カジュアル→適性→一次→(技術課題)→最終→内定',
+      flowNote:'Track Test使用。IS優秀者は最短8月内定',
+      comment:'28卒10名明示とTrack・AI Labに関心。自社Trackを選考に使う点は本職と直結。生成AI×HRの実務を学びたい。',
+      pros:['28卒枠明示','Track選考と相性','士気4.4'],
+      cons:['HRドメイン中心','待遇満足2.5','医療とは離れる'] },
+    { id:'openwork', name:'オープンワーク', tier:'B', match:65, ic:'maybe', interest:'興味はある',
+      domain:'toCクチコミ＋toB採用', listed:'東証グロース（5139）', emp:'148名',
+      salary:'非公表', ow:3.73, diff:'中', interviews:'2〜3回', remote:'リモートメイン',
+      financial:'営業収益46.5億（+31%）、利益率25.8%',
+      mission:'ひとりひとりが輝く、ジョブマーケットを創る',
+      business:['OpenWork（ユーザー775万人）','OpenWorkリクルーティング','28卒大募集'],
+      eng:['正社員14名規模','PHP/Symfony, TS/Vue/Next, Go','内定者IS最大6ヶ月'],
+      wlb:['リモートメイン','フレックス','自己啓発支援12万/年'],
+      owScores:[['自社IR総合',3.73]],
+      hiring:['エンジニア組織極小','28卒積極募集'],
+      flow:'書類→一次→二次→内定→内定者IS(最大6ヶ月)',
+      flowNote:'openwork.co.jp/recruit/new_graduate/',
+      comment:'自社toCプロダクト開発の小規模精鋭環境とデータ駆動文化に興味。28卒積極募集とリモートも魅力。',
+      pros:['自社プロダクト開発','データ駆動','上場・高収益'],
+      cons:['エンジニア14名','医療ドメインなし','年収非公表'] },
+    { id:'digitalio', name:'DIGITALIO', tier:'C', match:58, ic:'no', interest:'選考は受けたくない',
+      domain:'ポイントメディア・デジタルギフト', listed:'非上場子会社', emp:'約60名',
+      salary:'516万〜（CARTA経由）', ow:3.09, diff:'中', interviews:'4〜5回', remote:'リモート88%',
+      financial:'2026年親会社変更・事業再編',
+      mission:'デジタルを軸としてサービスを創造・提供し、社会を前進させる',
+      business:['ECナビ、PeX、デジコ、コトバンク','メディア事業に集中','CARTA一括採用'],
+      eng:['エンジニア比率35%','大規模Webサービス運用'],
+      wlb:['リモート88%','フルフレックス'],
+      owScores:[['※回答者4人','—']],
+      hiring:['DIGITALIO配属は保証されない','28卒本選考未オープン'],
+      flow:'CARTA: 書類→エンジニア面接→責任者→人事→最終',
+      flowNote:'carta-recruit.snar.jpプレエントリー',
+      comment:'ポイントメディア領域は医療・社会課題ドメインと距離がある。2026年の親会社変更・配属不透明さから優先度を下げたい。',
+      pros:['リモート率高','多フェーズ経験'],
+      cons:['社会貢献軸弱い','配属不透明','親会社変更'] },
+    { id:'wealthnavi', name:'ウェルスナビ', tier:'C', match:55, ic:'no', interest:'選考は受けたくない',
+      domain:'フィンテック・ロボアド', listed:'非上場（MUFG子会社）', emp:'271名',
+      salary:'400〜550万円', ow:3.56, diff:'高', interviews:'4〜5回', remote:'ハイブリッド週3',
+      financial:'営業収益111.7億（+37%）',
+      mission:'働く世代に豊かさを',
+      business:['WealthNavi（預かり資産2.1兆円）','ロボアド国内No.1','エンジニア47%'],
+      eng:['金融業界では異例の内製体制','Go, TS, React'],
+      wlb:['有給82.1%','残業16.9h','ハイブリッド週3'],
+      owScores:[['法令順守',4.5],['20代成長',3.3],['待遇満足',3.4]],
+      hiring:['本選考2027/4まで','インターン参加者に優遇'],
+      flow:'カジュアル→書類→WEBテスト→人事→現場→役員→内定',
+      flowNote:'paiza / Track Job',
+      comment:'エンジニア比率は魅力的だが金融領域への関心が低く、医療・社会課題を軸に就活を進めたい意向から見送りたい。',
+      pros:['エンジニア47%','内製開発'],
+      cons:['金融ドメイン不一致','面談で関心低いと確認済'] }
+  ];
+
+  const sorted = [...companies].sort((a,b) => b.match - a.match);
+  let filter = 'all';
+
+  function badgeClass(ic) { return ic === 'yes' ? 'b-yes' : ic === 'no' ? 'b-no' : 'b-maybe'; }
+  function tierClass(t) { return 'b-' + t.toLowerCase(); }
+
+  function init() {
+    document.getElementById('stats').innerHTML = `
+      <div class="stat"><div class="stat-l">提案企業</div><div class="stat-v">14社</div></div>
+      <div class="stat"><div class="stat-l">ぜひ選考</div><div class="stat-v">3社</div></div>
+      <div class="stat"><div class="stat-l">興味はある</div><div class="stat-v">9社</div></div>
+      <div class="stat"><div class="stat-l">見送り</div><div class="stat-v">2社</div></div>`;
+
+    document.getElementById('chart').innerHTML = sorted.map(c => `
+      <div class="bar-row"><span class="bar-l" title="${c.name}">${c.name}</span>
+      <div class="bar-t"><div class="bar-f" style="width:${c.match}%"></div></div>
+      <span class="bar-v">${c.match}</span></div>`).join('');
+
+    const filters = [['all','全社'],['yes','ぜひ選考'],['maybe','興味はある'],['no','見送り']];
+    document.getElementById('filters').innerHTML = filters.map(([k,l]) =>
+      `<button class="btn ${filter===k?'on':''}" onclick="setF('${k}')">${l}</button>`).join('');
+
+    renderTable();
+    renderCards();
+  }
+
+  window.setF = function(k) { filter = k; init(); };
+
+  function renderTable() {
+    const list = filter === 'all' ? sorted : sorted.filter(c => c.ic === filter);
+    document.getElementById('tbody').innerHTML = list.map((c,i) => `
+      <tr data-id="${c.id}" onclick="toggle('${c.id}')">
+        <td>${i+1}</td><td><strong>${c.name}</strong></td>
+        <td class="match-num">${c.match}</td>
+        <td><span class="badge ${badgeClass(c.ic)}">${c.interest}</span></td>
+        <td>${c.salary}</td><td>${c.ow}</td><td>${c.diff}</td><td>${c.interviews}</td>
+      </tr>`).join('');
+  }
+
+  function renderCards() {
+    const list = filter === 'all' ? sorted : sorted.filter(c => c.ic === filter);
+    document.getElementById('cards').innerHTML = list.map(c => `
+      <div class="card" id="card-${c.id}">
+        <div class="card-h" onclick="toggle('${c.id}')">
+          <span><span class="match-num">${c.match}</span> ${c.name}
+            <span class="badge ${badgeClass(c.ic)}" style="margin-left:.35rem">${c.interest}</span>
+            <span class="badge ${tierClass(c.tier)}" style="margin-left:.2rem">${c.tier}ランク</span></span>
+          <span class="chev">▶</span>
+        </div>
+        <div class="card-b">
+          <div class="grid2">
+            <div>
+              <h3>基本情報</h3>
+              <div class="kv"><strong>業種</strong> ${c.domain}</div>
+              <div class="kv"><strong>上場</strong> ${c.listed}</div>
+              <div class="kv"><strong>従業員</strong> ${c.emp}</div>
+              <div class="kv"><strong>新卒年収</strong> ${c.salary}</div>
+              <div class="kv"><strong>OpenWork</strong> ${c.ow}</div>
+              <div class="kv"><strong>選考難易度</strong> ${c.diff}</div>
+              <div class="kv"><strong>面接</strong> ${c.interviews}</div>
+              <div class="kv"><strong>働き方</strong> ${c.remote}</div>
+              <div class="kv"><strong>財務</strong> ${c.financial}</div>
+              <h3>ミッション</h3><p style="font-size:.85rem">${c.mission}</p>
+            </div>
+            <div>
+              <h3>選考フロー</h3>
+              <div class="flow">${c.flow}</div>
+              <p style="font-size:.78rem;color:var(--muted)">${c.flowNote}</p>
+              <h3>サポーターズコメント</h3>
+              <div class="comment">${c.comment}</div>
+            </div>
+          </div>
+          <h3>事業・プロダクト</h3><ul class="sm">${c.business.map(b=>`<li>${b}</li>`).join('')}</ul>
+          <div class="grid2">
+            <div><h3>エンジニア組織</h3><ul class="sm">${c.eng.map(b=>`<li>${b}</li>`).join('')}</ul></div>
+            <div><h3>働き方・福利</h3><ul class="sm">${c.wlb.map(b=>`<li>${b}</li>`).join('')}</ul>
+              <h3>新卒採用</h3><ul class="sm">${c.hiring.map(b=>`<li>${b}</li>`).join('')}</ul></div>
+          </div>
+          <h3>OpenWorkスコア</h3>
+          <table class="ow"><tbody>${c.owScores.map(([k,v])=>`<tr><td>${k}</td><td><strong>${v}</strong></td></tr>`).join('')}</tbody></table>
+          <div class="pros-cons">
+            <div class="pros"><h4>マッチ理由 / 強み</h4><ul class="sm">${c.pros.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+            <div class="cons"><h4>懸念点</h4><ul class="sm">${c.cons.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  window.toggle = function(id) {
+    const el = document.getElementById('card-' + id);
+    if (el) el.classList.toggle('open');
+    document.querySelectorAll('tr[data-id]').forEach(tr => tr.classList.toggle('sel', tr.dataset.id === id));
+  };
+
+  if (sessionStorage.getItem(AUTH_KEY) === '1') init();
+  </script>
+</body>
+</html>
