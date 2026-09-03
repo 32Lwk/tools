@@ -272,10 +272,23 @@
 <!-- ページヘッダー -->
 <div class="page-header">
   <h1>
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="1" y="4" width="3" height="16"/><rect x="6" y="4" width="1" height="16"/>
-      <rect x="9" y="4" width="2" height="16"/><rect x="13" y="4" width="1" height="16"/>
-      <rect x="16" y="4" width="3" height="16"/><rect x="21" y="4" width="1" height="16"/>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- バーコードシンボル -->
+      <rect x="2"  y="3" width="2"   height="14" rx="0.5" fill="#2563eb"/>
+      <rect x="5"  y="3" width="1"   height="14" rx="0.5" fill="#2563eb"/>
+      <rect x="7"  y="3" width="2.5" height="14" rx="0.5" fill="#2563eb"/>
+      <rect x="11" y="3" width="1"   height="14" rx="0.5" fill="#2563eb"/>
+      <rect x="13.5" y="3" width="2" height="14" rx="0.5" fill="#2563eb"/>
+      <rect x="17" y="3" width="1"   height="14" rx="0.5" fill="#2563eb"/>
+      <rect x="19" y="3" width="3"   height="14" rx="0.5" fill="#2563eb"/>
+      <!-- 数字ライン -->
+      <rect x="2" y="18.5" width="20" height="1.2" rx="0.4" fill="#93c5fd"/>
+      <!-- 下部テキスト風ドット -->
+      <rect x="2"  y="21" width="2"   height="1" rx="0.3" fill="#bfdbfe"/>
+      <rect x="5"  y="21" width="3.5" height="1" rx="0.3" fill="#bfdbfe"/>
+      <rect x="10" y="21" width="2"   height="1" rx="0.3" fill="#bfdbfe"/>
+      <rect x="14" y="21" width="3"   height="1" rx="0.3" fill="#bfdbfe"/>
+      <rect x="19" y="21" width="3"   height="1" rx="0.3" fill="#bfdbfe"/>
     </svg>
     JANバーコード生成ツール
   </h1>
@@ -421,7 +434,14 @@ function validateEAN13(code) {
 ━━━━━━━━━━━━━━━━━━━━━━━━ */
 function makeSVG(code, opts) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  JsBarcode(svg, code, { format: 'EAN13', xmlDocument: document, ...opts });
+  try {
+    JsBarcode(svg, code, { format: 'EAN13', ...opts });
+    if (svg.childElementCount === 0) throw new Error('empty');
+  } catch (_) {
+    // EAN13失敗 → CODE128でフォールバック
+    svg.innerHTML = '';
+    JsBarcode(svg, code, { format: 'CODE128', ...opts });
+  }
   return svg;
 }
 
@@ -494,13 +514,33 @@ function onInput() {
 
   // 13桁揃った → 描画（チェックデジット不問）
   const valid = validateEAN13(code);
+  // EAN13として描画を試みる。不正コードでも強制描画するため
+  // JsBarcode の valid オプションで検証をスキップさせる
+  svgEl.innerHTML = '';
+  let drawOk = false;
   try {
     JsBarcode(svgEl, code, {
       format: 'EAN13', width: 2, height: 64,
       displayValue: true, fontSize: 13, margin: 8,
     });
-    svgEl.style.display = 'block';
+    // 描画後に子要素が生成されていれば成功
+    drawOk = svgEl.childElementCount > 0;
+  } catch (e) { drawOk = false; }
 
+  // EAN13失敗の場合はCODE128でフォールバック描画
+  if (!drawOk) {
+    try {
+      svgEl.innerHTML = '';
+      JsBarcode(svgEl, code, {
+        format: 'CODE128', width: 2, height: 64,
+        displayValue: true, fontSize: 13, margin: 8,
+      });
+      drawOk = svgEl.childElementCount > 0;
+    } catch (e2) { drawOk = false; }
+  }
+
+  if (drawOk) {
+    svgEl.style.display = 'block';
     if (valid) {
       textEl.innerHTML = '<span class="ok">✓ 有効なEAN-13コードです</span>';
     } else {
@@ -510,8 +550,8 @@ function onInput() {
         '<br><small style="color:var(--muted)">正規のコードでない可能性があります。このまま追加することもできます。</small>';
     }
     addBtn.disabled = false;
-  } catch (e) {
-    textEl.innerHTML = '<span class="err">描画エラー: ' + h(e.message) + '</span>';
+  } else {
+    textEl.innerHTML = '<span class="err">バーコードを生成できませんでした。コードを確認してください。</span>';
   }
 }
 
