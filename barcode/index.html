@@ -3,432 +3,749 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JANバーコード生成ツール – tools.yutok.dev</title>
+  <title>JANバーコード生成 – tools.yutok.dev</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg:      #f0f2f5;
+      --surface: #ffffff;
+      --border:  #e2e4e9;
+      --accent:  #2563eb;
+      --accent2: #1d4ed8;
+      --ok:      #16a34a;
+      --warn:    #d97706;
+      --muted:   #6b7280;
+      --radius:  10px;
+    }
+
     body {
-      font-family: system-ui, sans-serif;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 1rem;
-      background: #f5f5f5;
-      color: #222;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: #1a1a2e;
+      margin: 0;
+      padding: 1.2rem 1rem 3rem;
     }
-    h1 { font-size: 1.35rem; margin-bottom: 0.2rem; }
-    .subtitle { color: #666; font-size: 0.88rem; margin-bottom: 1.4rem; }
 
+    /* ─── ヘッダー ─── */
+    .page-header {
+      max-width: 820px;
+      margin: 0 auto 1.4rem;
+    }
+    .page-header h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .page-header h1 svg { flex-shrink: 0; }
+    .page-header p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+
+    /* ─── カード ─── */
     .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.3rem;
+      margin: 0 auto 1rem;
+      max-width: 820px;
+    }
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin: 0 0 0.9rem;
+    }
+
+    /* ─── 入力エリア ─── */
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 0.7rem;
+      align-items: end;
+    }
+    @media (max-width: 560px) {
+      .input-row { grid-template-columns: 1fr; }
+    }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #374151;
+    }
+    .field input {
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      padding: 0.55rem 0.75rem;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fafafa;
+      transition: border-color .15s, box-shadow .15s;
+      width: 100%;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
       background: #fff;
+    }
+    .field input.has-warn { border-color: var(--warn); }
+
+    /* ─── バーコードプレビューエリア ─── */
+    #preview-area {
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
       border-radius: 8px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      background: #f8faff;
+      border: 1px dashed #c7d3f0;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      min-height: 90px;
     }
-    .card h2 { font-size: 0.95rem; margin: 0 0 0.75rem; color: #444; }
+    #preview-svg { display: none; flex-shrink: 0; }
+    #preview-text { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    #preview-text .ok   { color: var(--ok);   font-weight: 700; }
+    #preview-text .warn { color: var(--warn);  font-weight: 700; }
+    #preview-text .err  { color: #dc2626;      font-weight: 700; }
+    .digit-count { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
 
-    /* 入力 */
-    .input-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: flex-end; }
-    .input-group { display: flex; flex-direction: column; gap: 3px; }
-    .input-group label { font-size: 0.8rem; color: #555; }
-    input[type="text"] {
-      border: 1px solid #ccc; border-radius: 5px;
-      padding: 0.4rem 0.6rem; font-size: 0.95rem;
+    /* ─── ボタン ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 7px;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.87rem;
+      font-weight: 600;
+      font-family: inherit;
+      transition: opacity .15s, transform .1s;
+      white-space: nowrap;
     }
-    #jan-input { width: 175px; }
-    #name-input { width: 200px; }
-    input:focus { outline: 2px solid #0070f3; border-color: transparent; }
+    .btn:active:not(:disabled) { transform: scale(0.97); }
+    .btn:hover:not(:disabled)  { opacity: 0.88; }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary   { background: var(--accent); color: #fff; }
+    .btn-ghost     { background: transparent; border: 1.5px solid var(--border); color: #374151; }
+    .btn-green     { background: var(--ok); color: #fff; }
+    .btn-red-ghost { background: transparent; border: 1.5px solid #fca5a5; color: #dc2626;
+                     padding: 0.25rem 0.6rem; font-size: 0.75rem; border-radius: 5px; }
+    .btn-red-ghost:hover:not(:disabled) { background: #fef2f2; }
 
-    /* ボタン */
-    button {
-      cursor: pointer; border: none; border-radius: 5px;
-      padding: 0.42rem 0.9rem; font-size: 0.88rem; font-weight: 600;
-      transition: opacity .15s;
+    /* ─── プリセット ─── */
+    .preset-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
     }
-    button:hover:not(:disabled) { opacity: 0.82; }
-    button:disabled { opacity: 0.38; cursor: default; }
-    .btn-primary  { background: #0070f3; color: #fff; }
-    .btn-secondary{ background: #e5e7eb; color: #333; }
-    .btn-danger   { background: #ef4444; color: #fff; }
-    .btn-success  { background: #16a34a; color: #fff; }
-
-    /* バーコードプレビュー */
-    #preview-wrap { display:flex; align-items:center; gap:1rem; margin-top:0.7rem; min-height:72px; }
-    #preview-svg  { display:none; }
-    #preview-status { font-size:0.85rem; }
-    .ok  { color:#16a34a; font-weight:700; }
-    .err { color:#ef4444; font-weight:700; }
-    .muted { color:#999; }
-
-    /* プリセット */
-    .preset-section { margin-bottom: 0.6rem; }
-    .preset-section-title { font-size:0.75rem; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:0.3rem; }
-    .preset-grid { display:flex; flex-wrap:wrap; gap:0.3rem; }
-    .btn-preset {
-      font-size:0.78rem; font-weight:400;
-      background:#f3f4f6; border:1px solid #e5e7eb; color:#333;
-      padding:0.25rem 0.5rem; border-radius:4px;
+    .tab-btn {
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      transition: all .15s;
+      font-family: inherit;
     }
-    .btn-preset:hover { background:#dbeafe; }
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 0.4rem;
+    }
+    .preset-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      padding: 0.45rem 0.65rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: #fafafa;
+      cursor: pointer;
+      transition: border-color .12s, background .12s;
+      font-family: inherit;
+      text-align: left;
+    }
+    .preset-item:hover { border-color: var(--accent); background: #eff6ff; }
+    .preset-item .pi-name { font-size: 0.82rem; font-weight: 600; color: #1f2937; }
+    .preset-item .pi-code { font-size: 0.73rem; font-family: monospace; color: var(--muted); }
 
-    /* 登録リスト */
-    #item-list { list-style:none; padding:0; margin:0 0 0.8rem; }
+    /* ─── 登録リスト ─── */
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+    }
+    .list-header .card-title { margin: 0; }
+    .count-pill {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.1rem 0.55rem;
+    }
+    #item-list { list-style: none; padding: 0; margin: 0 0 0.9rem; }
     #item-list li {
-      display:flex; align-items:center; gap:0.5rem;
-      padding:0.3rem 0; border-bottom:1px solid #f0f0f0; font-size:0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 0.85rem;
     }
-    #item-list li:last-child { border-bottom:none; }
-    .li-name { flex:1; }
-    .li-code { font-family:monospace; color:#555; }
-    .actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
-    #count { font-size:0.82rem; color:#777; margin-left:0.4rem; }
+    #item-list li:last-child { border-bottom: none; }
+    .li-idx  { color: var(--muted); font-size: 0.72rem; min-width: 1.4rem; text-align: right; }
+    .li-name { flex: 1; font-weight: 500; }
+    .li-code { font-family: monospace; color: var(--muted); font-size: 0.82rem; }
+    .li-warn { font-size: 0.68rem; color: var(--warn); font-weight: 600;
+               background: #fffbeb; border-radius: 3px; padding: 0 4px; }
+    .empty-note { color: var(--muted); font-size: 0.85rem; padding: 0.4rem 0; }
 
-    /* シートプレビュー */
-    #sheet-wrap { display:flex; flex-wrap:wrap; gap:0.8rem; margin-top:0.6rem; }
+    .action-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ─── シートプレビュー ─── */
+    #sheet-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-top: 0.6rem;
+    }
     .bc-cell {
-      display:flex; flex-direction:column; align-items:center;
-      background:#fff; border:1px solid #e5e7eb; border-radius:5px;
-      padding:0.4rem 0.6rem; font-size:0.72rem; color:#444;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 0.5rem 0.7rem 0.4rem;
     }
-    .bc-cell svg { max-width:140px; }
-    .bc-label { margin-top:0.2rem; text-align:center; max-width:140px; word-break:break-all; }
+    .bc-cell svg { max-width: 145px; }
+    .bc-label {
+      margin-top: 0.25rem;
+      font-size: 0.72rem;
+      color: #374151;
+      text-align: center;
+      max-width: 145px;
+      word-break: break-all;
+      line-height: 1.3;
+    }
+    .bc-warn-label {
+      font-size: 0.65rem;
+      color: var(--warn);
+      font-weight: 600;
+    }
 
-    footer { font-size:0.78rem; color:#aaa; margin-top:1.5rem; }
-    footer a { color:#aaa; }
+    /* ─── フッター ─── */
+    footer {
+      max-width: 820px;
+      margin: 1.5rem auto 0;
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+    footer a { color: #9ca3af; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-<h1>🏷️ JANバーコード生成ツール</h1>
-<p class="subtitle">JANコード（EAN-13）を入力してバーコードを生成し、まとめシートをPDFで出力できます。</p>
 
-<!-- 入力 -->
+<!-- ページヘッダー -->
+<div class="page-header">
+  <h1>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="1" y="4" width="3" height="16"/><rect x="6" y="4" width="1" height="16"/>
+      <rect x="9" y="4" width="2" height="16"/><rect x="13" y="4" width="1" height="16"/>
+      <rect x="16" y="4" width="3" height="16"/><rect x="21" y="4" width="1" height="16"/>
+    </svg>
+    JANバーコード生成ツール
+  </h1>
+  <p>JANコード（EAN-13）を入力してバーコードを生成・まとめシートをPDF出力できます</p>
+</div>
+
+<!-- ① 入力カード -->
 <div class="card">
-  <h2>JANコードを入力</h2>
+  <p class="card-title">STEP 1 — JANコードを入力</p>
   <div class="input-row">
-    <div class="input-group">
-      <label for="jan-input">JANコード（13桁）</label>
-      <input id="jan-input" type="text" inputmode="numeric" maxlength="13" placeholder="4589694513998" autocomplete="off">
+    <div class="field">
+      <label for="jan-input">JANコード（数字13桁）</label>
+      <input id="jan-input" type="text" inputmode="numeric" maxlength="13"
+             placeholder="例: 4589694513998" autocomplete="off">
     </div>
-    <div class="input-group">
+    <div class="field">
       <label for="name-input">商品名（任意）</label>
       <input id="name-input" type="text" placeholder="例: 不織布L">
     </div>
-    <button id="add-btn" class="btn-primary" onclick="addItem()" disabled>追加</button>
+    <button id="add-btn" class="btn btn-primary" onclick="addItem()" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      リストに追加
+    </button>
   </div>
-  <div id="preview-wrap">
+
+  <!-- プレビュー -->
+  <div id="preview-area">
     <svg id="preview-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="preview-status" class="muted">JANコードを入力してください</div>
+    <div id="preview-text">
+      <div>JANコードを入力するとここにプレビューが表示されます</div>
+      <div class="digit-count" id="digit-count"></div>
+    </div>
   </div>
 </div>
 
-<!-- プリセット -->
+<!-- ② プリセットカード -->
 <div class="card">
-  <h2>プリセット（既存商品）</h2>
-  <div id="presets"></div>
+  <p class="card-title">STEP 1（補助）— 既存商品から選ぶ</p>
+  <div class="preset-tabs" id="preset-tabs"></div>
+  <div class="preset-grid" id="preset-grid"></div>
 </div>
 
-<!-- 登録リスト -->
+<!-- ③ 登録リストカード -->
 <div class="card">
-  <h2>登録済み <span id="count">0件</span></h2>
-  <ul id="item-list"><li class="muted">まだ登録されていません</li></ul>
-  <div class="actions">
-    <button class="btn-secondary" onclick="clearAll()">すべてクリア</button>
-    <button id="pdf-btn"  class="btn-success"   onclick="generatePDF()" disabled>📄 PDF出力</button>
-    <button id="svg-btn"  class="btn-secondary" onclick="generateSVGs()" disabled>🖼️ SVG個別DL</button>
+  <div class="list-header">
+    <p class="card-title">STEP 2 — 登録済み商品</p>
+    <span class="count-pill" id="count">0</span>
+  </div>
+  <ul id="item-list">
+    <li><span class="empty-note">まだ商品が登録されていません。上から追加してください。</span></li>
+  </ul>
+  <div class="action-row">
+    <button class="btn btn-ghost" onclick="clearAll()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      すべてクリア
+    </button>
+    <button id="pdf-btn" class="btn btn-green" onclick="generatePDF()" disabled>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      まとめシートPDF出力
+    </button>
+    <button id="svg-btn" class="btn btn-ghost" onclick="generateSVGs()" disabled>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      SVG個別ダウンロード
+    </button>
   </div>
 </div>
 
-<!-- シートプレビュー -->
+<!-- ④ シートプレビュー -->
 <div class="card" id="sheet-card" style="display:none">
-  <h2>シートプレビュー</h2>
+  <p class="card-title">STEP 3 — シートプレビュー</p>
   <div id="sheet-wrap"></div>
 </div>
 
 <footer>
-  <a href="../">← tools.yutok.dev</a> &nbsp;|&nbsp;
+  <a href="../">← tools.yutok.dev</a>&nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="jan_sheet_combined.pdf">既存シート PDF</a>
 </footer>
 
-<!-- ライブラリ -->
+<!-- ─── JsBarcode ─── -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
-        onerror="loadFallbackJsBarcode()"></script>
+        onerror="loadFallback()"></script>
 <script>
-function loadFallbackJsBarcode() {
+function loadFallback() {
   const s = document.createElement('script');
   s.src = 'https://unpkg.com/jsbarcode@3.11.6/dist/JsBarcode.all.min.js';
-  s.onload = () => { if(typeof initApp === 'function') initApp(); };
-  s.onerror = () => { document.getElementById('preview-status').textContent = 'ライブラリ読み込み失敗。再読み込みしてください。'; };
+  s.onload = () => { if (typeof initApp === 'function') initApp(); };
+  s.onerror = () => { document.getElementById('preview-text').innerHTML = '<span class="err">ライブラリの読み込みに失敗しました。再読み込みしてください。</span>'; };
   document.head.appendChild(s);
 }
 </script>
+
 <script>
-/* ─── プリセットデータ ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   プリセットデータ
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 const PRESETS = {
   'ホット': [
-    {n:'アメリカーノ S',  c:'6013000000480'},{n:'アメリカーノ M',  c:'6013000000471'},
-    {n:'ホットラテ S',   c:'6010400002658'},{n:'ホットラテ M',   c:'6013000000476'},
-    {n:'カプチーノ S',   c:'6013000000481'},{n:'カプチーノ M',   c:'6013000000474'},
-    {n:'[栄]あんバターラテ',c:'6013500003408'},{n:'[栄]フレンチプレス',c:'6013500003422'},
-    {n:'[栄]抹茶ラテ',   c:'6013500003407'},{n:'ほうじ茶ラテ',   c:'6013000000521'},
+    {n:'アメリカーノ S',     c:'6013000000480'},{n:'アメリカーノ M',     c:'6013000000471'},
+    {n:'ホットラテ S',       c:'6010400002658'},{n:'ホットラテ M',       c:'6013000000476'},
+    {n:'カプチーノ S',       c:'6013000000481'},{n:'カプチーノ M',       c:'6013000000474'},
+    {n:'[栄]あんバターラテ', c:'6013500003408'},{n:'[栄]フレンチプレス', c:'6013500003422'},
+    {n:'[栄]抹茶ラテ',       c:'6013500003407'},{n:'ほうじ茶ラテ',       c:'6013000000521'},
   ],
   'アイス': [
     {n:'アイスアメリカーノ S',c:'6010400002664'},{n:'アイスアメリカーノ M',c:'6013000000479'},
-    {n:'アイスラテ S',   c:'6013000000477'},{n:'アイスラテ M',   c:'6013000000478'},
-    {n:'[栄]あんバターラテ',c:'6013500003408'},{n:'信州産リンゴジュース',c:'6088888000953'},
+    {n:'アイスラテ S',        c:'6013000000477'},{n:'アイスラテ M',        c:'6013000000478'},
+    {n:'[栄]あんバターラテ',  c:'6013500003408'},{n:'信州産リンゴジュース',c:'6088888000953'},
     {n:'ソフトモカ フルサイズ',c:'6013000000625'},
   ],
   '包装': [
-    {n:'不織布M',   c:'4589694514001'},{n:'不織布L',   c:'4589694513998'},
-    {n:'ギフト包装', c:'2499000000017'},{n:'簡易包装',  c:'2499000000024'},
-    {n:'10個スリーブ',c:'2071284041650'},{n:'20個スリーブ',c:'2071284041643'},
-    {n:'新紙袋（小）',c:'4589694501087'},{n:'新紙袋（中）',c:'4589694501070'},
-    {n:'軽井沢Dセット',c:'6010400003488'},{n:'軽井沢アイスセット',c:'6010400003479'},
+    {n:'不織布M',       c:'4589694514001'},{n:'不織布L',       c:'4589694513998'},
+    {n:'ギフト包装',    c:'2499000000017'},{n:'簡易包装',      c:'2499000000024'},
+    {n:'10個スリーブ',  c:'2071284041650'},{n:'20個スリーブ',  c:'2071284041643'},
+    {n:'新紙袋（小）',  c:'4589694501087'},{n:'新紙袋（中）',  c:'4589694501070'},
+    {n:'軽井沢Dセット', c:'6010400003488'},{n:'軽井沢アイスセット',c:'6010400003479'},
   ],
   'デザート': [
-    {n:'コーヒーソフトクリーム',c:'4589694513073'},
-    {n:'SOゼリー ケニア',     c:'4589694509373'},{n:'SOゼリー エチオピア',c:'4589694509366'},
-    {n:'SOゼリー ブラジル',   c:'4589694509380'},{n:'SOゼリー 6個入り', c:'4589694509328'},
-    {n:'ゼリー＆プリンセット', c:'4589694509335'},
+    {n:'コーヒーソフトクリーム',  c:'4589694513073'},
+    {n:'SOゼリー ケニア',         c:'4589694509373'},{n:'SOゼリー エチオピア',c:'4589694509366'},
+    {n:'SOゼリー ブラジル',       c:'4589694509380'},{n:'SOゼリー 6個入り',   c:'4589694509328'},
+    {n:'ゼリー＆プリンセット',    c:'4589694509335'},
   ],
 };
 
-/* ─── 状態 ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   状態
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 let items = [];
+let activeTab = Object.keys(PRESETS)[0];
 
-/* ─── EAN-13 検証 ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   EAN-13 チェックデジット検証
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function validateEAN13(code) {
   if (!/^\d{13}$/.test(code)) return false;
   let s = 0;
-  for (let i = 0; i < 12; i++) s += +code[i] * (i%2===0 ? 1 : 3);
-  return (10 - s%10)%10 === +code[12];
+  for (let i = 0; i < 12; i++) s += +code[i] * (i % 2 === 0 ? 1 : 3);
+  return (10 - s % 10) % 10 === +code[12];
 }
 
-/* ─── JsBarcode SVG 生成ヘルパー ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   SVG生成ヘルパー
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function makeSVG(code, opts) {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  JsBarcode(svg, code, { format:'EAN13', xmlDocument: document, ...opts });
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  JsBarcode(svg, code, { format: 'EAN13', xmlDocument: document, ...opts });
   return svg;
 }
 
-/* ─── プリセット描画 ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   プリセット描画
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function renderPresets() {
-  const wrap = document.getElementById('presets');
-  wrap.innerHTML = '';
-  for (const [sec, rows] of Object.entries(PRESETS)) {
-    const div = document.createElement('div');
-    div.className = 'preset-section';
-    div.innerHTML = `<div class="preset-section-title">${sec}</div>`;
-    const grid = document.createElement('div');
-    grid.className = 'preset-grid';
-    rows.forEach(r => {
-      const b = document.createElement('button');
-      b.className = 'btn-preset';
-      b.textContent = `${r.n}  ${r.c}`;
-      b.onclick = () => {
-        document.getElementById('jan-input').value = r.c;
-        document.getElementById('name-input').value = r.n;
-        onInput();
-        window.scrollTo({top:0, behavior:'smooth'});
-      };
-      grid.appendChild(b);
-    });
-    div.appendChild(grid);
-    wrap.appendChild(div);
-  }
+  // タブ
+  const tabsEl = document.getElementById('preset-tabs');
+  tabsEl.innerHTML = '';
+  Object.keys(PRESETS).forEach(sec => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (sec === activeTab ? ' active' : '');
+    btn.textContent = sec;
+    btn.onclick = () => { activeTab = sec; renderPresets(); };
+    tabsEl.appendChild(btn);
+  });
+
+  // グリッド
+  const grid = document.getElementById('preset-grid');
+  grid.innerHTML = '';
+  (PRESETS[activeTab] || []).forEach(r => {
+    const btn = document.createElement('button');
+    btn.className = 'preset-item';
+    btn.innerHTML = `<span class="pi-name">${h(r.n)}</span><span class="pi-code">${r.c}</span>`;
+    btn.onclick = () => {
+      document.getElementById('jan-input').value = r.c;
+      document.getElementById('name-input').value = r.n;
+      onInput();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    grid.appendChild(btn);
+  });
 }
 
-/* ─── 入力ハンドラ ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   入力ハンドラ
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function onInput() {
-  const code = document.getElementById('jan-input').value.trim();
-  const svgEl = document.getElementById('preview-svg');
-  const status = document.getElementById('preview-status');
-  const addBtn = document.getElementById('add-btn');
+  const code    = document.getElementById('jan-input').value.trim();
+  const svgEl   = document.getElementById('preview-svg');
+  const textEl  = document.getElementById('preview-text');
+  const countEl = document.getElementById('digit-count');
+  const addBtn  = document.getElementById('add-btn');
+  const inp     = document.getElementById('jan-input');
 
   svgEl.style.display = 'none';
   svgEl.innerHTML = '';
-  status.className = 'muted';
+  inp.classList.remove('has-warn');
   addBtn.disabled = true;
 
-  if (!code) { status.textContent = 'JANコードを入力してください'; return; }
-  if (!/^\d+$/.test(code)) { status.className='err'; status.textContent='数字のみ入力してください'; return; }
-  if (code.length !== 13) { status.textContent = `${code.length}/13桁`; return; }
-  if (!validateEAN13(code)) { status.className='err'; status.textContent='✗ チェックデジットが不正'; return; }
+  if (!code) {
+    textEl.innerHTML = 'JANコードを入力するとここにプレビューが表示されます';
+    countEl.textContent = '';
+    return;
+  }
 
+  if (!/^\d+$/.test(code)) {
+    textEl.innerHTML = '<span class="err">数字のみ入力してください</span>';
+    countEl.textContent = '';
+    return;
+  }
+
+  countEl.textContent = `${code.length} / 13桁`;
+
+  if (code.length !== 13) {
+    textEl.innerHTML = 'あと <strong>' + (13 - code.length) + '</strong> 桁入力してください';
+    return;
+  }
+
+  // 13桁揃った → 描画（チェックデジット不問）
+  const valid = validateEAN13(code);
   try {
-    JsBarcode(svgEl, code, {format:'EAN13', width:2, height:60, displayValue:true, fontSize:13, margin:8});
+    JsBarcode(svgEl, code, {
+      format: 'EAN13', width: 2, height: 64,
+      displayValue: true, fontSize: 13, margin: 8,
+    });
     svgEl.style.display = 'block';
-    status.className = 'ok';
-    status.textContent = '✓ 有効なEAN-13';
+
+    if (valid) {
+      textEl.innerHTML = '<span class="ok">✓ 有効なEAN-13コードです</span>';
+    } else {
+      inp.classList.add('has-warn');
+      textEl.innerHTML =
+        '<span class="warn">⚠ チェックデジットが不一致ですが生成できます</span>' +
+        '<br><small style="color:var(--muted)">正規のコードでない可能性があります。このまま追加することもできます。</small>';
+    }
     addBtn.disabled = false;
-  } catch(e) {
-    status.className='err'; status.textContent='描画エラー: '+e.message;
+  } catch (e) {
+    textEl.innerHTML = '<span class="err">描画エラー: ' + h(e.message) + '</span>';
   }
 }
 
-/* ─── 商品追加 ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   追加 / 削除 / クリア
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function addItem() {
-  const code = document.getElementById('jan-input').value.trim();
-  const name = document.getElementById('name-input').value.trim() || code;
-  if (!validateEAN13(code)) return;
-  items.push({name, code});
+  const code  = document.getElementById('jan-input').value.trim();
+  const name  = document.getElementById('name-input').value.trim() || code;
+  if (!/^\d{13}$/.test(code)) return;
+  const warn = !validateEAN13(code);
+  items.push({ name, code, warn });
+
   document.getElementById('jan-input').value = '';
   document.getElementById('name-input').value = '';
-  document.getElementById('preview-svg').style.display='none';
-  document.getElementById('preview-svg').innerHTML='';
-  document.getElementById('preview-status').className='muted';
-  document.getElementById('preview-status').textContent='JANコードを入力してください';
-  document.getElementById('add-btn').disabled=true;
+  document.getElementById('jan-input').classList.remove('has-warn');
+  document.getElementById('preview-svg').style.display = 'none';
+  document.getElementById('preview-svg').innerHTML = '';
+  document.getElementById('preview-text').innerHTML = 'JANコードを入力するとここにプレビューが表示されます';
+  document.getElementById('digit-count').textContent = '';
+  document.getElementById('add-btn').disabled = true;
+
   renderList();
   renderSheet();
 }
 
-function removeItem(i) { items.splice(i,1); renderList(); renderSheet(); }
+function removeItem(i) { items.splice(i, 1); renderList(); renderSheet(); }
 
 function clearAll() {
-  if(items.length && !confirm('登録済みをすべて削除しますか？')) return;
-  items=[]; renderList(); renderSheet();
+  if (items.length && !confirm('登録済みの商品をすべて削除しますか？')) return;
+  items = []; renderList(); renderSheet();
 }
 
-/* ─── リスト描画 ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   リスト描画
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function renderList() {
-  const ul=document.getElementById('item-list');
-  const empty=items.length===0;
-  document.getElementById('count').textContent=`${items.length}件`;
-  document.getElementById('pdf-btn').disabled=empty;
-  document.getElementById('svg-btn').disabled=empty;
-  if(empty){ul.innerHTML='<li class="muted">まだ登録されていません</li>';return;}
-  ul.innerHTML='';
-  items.forEach((it,i)=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<span class="li-name">${h(it.name)}</span><span class="li-code">${h(it.code)}</span>`;
-    const btn=document.createElement('button');
-    btn.className='btn-danger'; btn.textContent='削除'; btn.style.fontSize='0.75rem'; btn.style.padding='0.2rem 0.45rem';
-    btn.onclick=()=>removeItem(i);
-    li.appendChild(btn); ul.appendChild(li);
+  const ul    = document.getElementById('item-list');
+  const empty = items.length === 0;
+  document.getElementById('count').textContent = items.length;
+  document.getElementById('pdf-btn').disabled  = empty;
+  document.getElementById('svg-btn').disabled  = empty;
+
+  if (empty) {
+    ul.innerHTML = '<li><span class="empty-note">まだ商品が登録されていません。上から追加してください。</span></li>';
+    return;
+  }
+  ul.innerHTML = '';
+  items.forEach((it, i) => {
+    const li = document.createElement('li');
+    li.innerHTML =
+      `<span class="li-idx">${i + 1}</span>` +
+      `<span class="li-name">${h(it.name)}</span>` +
+      `<span class="li-code">${h(it.code)}</span>` +
+      (it.warn ? '<span class="li-warn">要確認</span>' : '');
+    const del = document.createElement('button');
+    del.className = 'btn btn-red-ghost';
+    del.textContent = '削除';
+    del.onclick = () => removeItem(i);
+    li.appendChild(del);
+    ul.appendChild(li);
   });
 }
-function h(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-/* ─── シートプレビュー ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   シートプレビュー
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function renderSheet() {
-  const card=document.getElementById('sheet-card');
-  const wrap=document.getElementById('sheet-wrap');
-  if(items.length===0){card.style.display='none';return;}
-  card.style.display='block'; wrap.innerHTML='';
-  items.forEach(it=>{
-    const cell=document.createElement('div');
-    cell.className='bc-cell';
+  const card = document.getElementById('sheet-card');
+  const wrap = document.getElementById('sheet-wrap');
+  if (items.length === 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  wrap.innerHTML = '';
+  items.forEach(it => {
+    const cell = document.createElement('div');
+    cell.className = 'bc-cell';
     try {
-      const svg=makeSVG(it.code,{width:1.4,height:48,displayValue:true,fontSize:11,margin:6});
+      const svg = makeSVG(it.code, { width: 1.5, height: 50, displayValue: true, fontSize: 11, margin: 6 });
       cell.appendChild(svg);
-    } catch(e){}
-    const lbl=document.createElement('div');
-    lbl.className='bc-label'; lbl.textContent=it.name;
-    cell.appendChild(lbl); wrap.appendChild(cell);
+    } catch (e) {}
+    const lbl = document.createElement('div');
+    lbl.className = 'bc-label';
+    lbl.textContent = it.name;
+    cell.appendChild(lbl);
+    if (it.warn) {
+      const w = document.createElement('div');
+      w.className = 'bc-warn-label';
+      w.textContent = '⚠ 要確認';
+      cell.appendChild(w);
+    }
+    wrap.appendChild(cell);
   });
 }
 
-/* ─── PDF 出力 ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   PDF 出力
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 async function generatePDF() {
-  if(!items.length) return;
+  if (!items.length) return;
 
-  // jsPDF 動的ロード
-  if(typeof window.jspdf === 'undefined') {
-    await new Promise((res,rej)=>{
-      const s=document.createElement('script');
-      s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-      s.onload=res; s.onerror=()=>{
-        // fallback
-        const s2=document.createElement('script');
-        s2.src='https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js';
-        s2.onload=res; s2.onerror=rej;
-        document.head.appendChild(s2);
+  const pdfBtn = document.getElementById('pdf-btn');
+  pdfBtn.disabled = true;
+  pdfBtn.textContent = '生成中…';
+
+  try {
+    if (typeof window.jspdf === 'undefined') {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
+        .catch(() => loadScript('https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js'));
+    }
+
+    const { jsPDF } = window.jspdf;
+    const COLS = 3, CW = 62, CH = 38, MX = 10, MY = 10, PW = 210, PH = 297;
+    const TOP = MY + 14;
+    const rowsPerPage = Math.floor((PH - MY - TOP) / CH);
+
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    doc.setFontSize(13);
+    doc.text('JANバーコードまとめシート', MX, MY + 5);
+    doc.setFontSize(8);
+    doc.setTextColor(140);
+    doc.text(
+      new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }),
+      PW - MX, MY + 5, { align: 'right' }
+    );
+    doc.setTextColor(0);
+
+    const svgToCanvas = svgEl => new Promise(res => {
+      const xml  = new XMLSerializer().serializeToString(svgEl);
+      const blob = new Blob([xml], { type: 'image/svg+xml' });
+      const url  = URL.createObjectURL(blob);
+      const img  = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width  = img.naturalWidth  || 300;
+        c.height = img.naturalHeight || 150;
+        c.getContext('2d').drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        res(c);
       };
-      document.head.appendChild(s);
+      img.src = url;
     });
+
+    let currentPage = 0;
+    for (let i = 0; i < items.length; i++) {
+      const col     = i % COLS;
+      const row     = Math.floor(i / COLS);
+      const pageRow = row % rowsPerPage;
+
+      if (row > 0 && pageRow === 0 && col === 0) {
+        doc.addPage();
+        currentPage++;
+        doc.setFontSize(13);
+        doc.text('JANバーコードまとめシート', MX, MY + 5);
+        doc.setFontSize(8); doc.setTextColor(140);
+        doc.text(
+          new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }),
+          PW - MX, MY + 5, { align: 'right' }
+        );
+        doc.setTextColor(0);
+      }
+
+      const svg = makeSVG(items[i].code, { width: 2, height: 80, displayValue: true, fontSize: 13, margin: 10 });
+      document.body.appendChild(svg);
+      const canvas = await svgToCanvas(svg);
+      document.body.removeChild(svg);
+
+      const imgW = CW - 4;
+      const imgH = imgW * (canvas.height / canvas.width);
+      const cx   = MX + col * (CW + 3);
+      const cy   = TOP + pageRow * CH;
+
+      doc.addImage(canvas.toDataURL('image/png'), 'PNG', cx, cy, imgW, imgH);
+      doc.setFontSize(7.5);
+      doc.text(items[i].name, cx + imgW / 2, cy + imgH + 3.5, { align: 'center', maxWidth: imgW });
+      if (items[i].warn) {
+        doc.setFontSize(6.5);
+        doc.setTextColor(180, 100, 0);
+        doc.text('⚠ 要確認', cx + imgW / 2, cy + imgH + 7, { align: 'center' });
+        doc.setTextColor(0);
+      }
+    }
+
+    doc.save('jan_sheet.pdf');
+  } finally {
+    pdfBtn.disabled = false;
+    pdfBtn.innerHTML =
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> まとめシートPDF出力';
+    document.getElementById('pdf-btn').disabled = items.length === 0;
   }
-
-  const {jsPDF} = window.jspdf;
-  const COLS=3, CW=62, CH=36, MX=10, MY=10, PW=210, PH=297;
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-
-  doc.setFontSize(13);
-  doc.text('JANバーコードまとめシート', MX, MY+5);
-  doc.setFontSize(8); doc.setTextColor(130);
-  doc.text(new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'}), PW-MX, MY+5, {align:'right'});
-  doc.setTextColor(0);
-
-  const TOP = MY + 13;
-  const svgToCanvas = (svgEl) => new Promise(res=>{
-    const xml = new XMLSerializer().serializeToString(svgEl);
-    const blob = new Blob([xml],{type:'image/svg+xml'});
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      const c=document.createElement('canvas');
-      c.width=img.naturalWidth||img.width; c.height=img.naturalHeight||img.height;
-      c.getContext('2d').drawImage(img,0,0);
-      URL.revokeObjectURL(url); res(c);
-    };
-    img.src=url;
-  });
-
-  for(let i=0;i<items.length;i++){
-    const col=i%COLS, row=Math.floor(i/COLS);
-    const x=MX+col*(CW+3);
-    const y=TOP+row*CH;
-    if(y>PH-MY-CH && col===0) { doc.addPage(); }
-
-    // ページ計算し直し
-    const page = Math.floor(i/COLS/Math.floor((PH-MY-TOP)/CH));
-    // 単純化: 1ページ内に収まる行数
-    const rowsPerPage = Math.floor((PH-MY-TOP)/CH);
-    const pageRow = row % rowsPerPage;
-    const curY = TOP + pageRow*CH;
-    if(i>0 && pageRow===0 && col===0 && row>0) doc.addPage();
-
-    const svg = makeSVG(items[i].code,{width:2,height:80,displayValue:true,fontSize:13,margin:10});
-    document.body.appendChild(svg);
-    const canvas = await svgToCanvas(svg);
-    document.body.removeChild(svg);
-
-    const imgW=CW-4;
-    const imgH=imgW*(canvas.height/canvas.width);
-    const cx=MX+col*(CW+3);
-    const cy=TOP+pageRow*CH;
-
-    doc.addImage(canvas.toDataURL('image/png'),'PNG',cx,cy,imgW,imgH);
-    doc.setFontSize(7.5);
-    doc.text(items[i].name, cx+imgW/2, cy+imgH+3.5, {align:'center', maxWidth:imgW});
-  }
-
-  doc.save('jan_sheet.pdf');
 }
 
-/* ─── SVG 個別ダウンロード ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   SVG 個別ダウンロード
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function generateSVGs() {
-  items.forEach(it=>{
-    const svg=makeSVG(it.code,{width:3,height:100,displayValue:true,fontSize:16,margin:12});
+  items.forEach(it => {
+    const svg = makeSVG(it.code, { width: 3, height: 100, displayValue: true, fontSize: 16, margin: 12 });
     document.body.appendChild(svg);
-    const xml=new XMLSerializer().serializeToString(svg);
+    const xml = new XMLSerializer().serializeToString(svg);
     document.body.removeChild(svg);
-    const a=document.createElement('a');
-    a.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
-    a.download=`${it.name}_${it.code}.svg`;
+    const a = document.createElement('a');
+    a.href     = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+    a.download = `${it.name}_${it.code}.svg`;
     a.click();
   });
 }
 
-/* ─── 起動 ─── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   ユーティリティ
+━━━━━━━━━━━━━━━━━━━━━━━━ */
+function h(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━
+   起動
+━━━━━━━━━━━━━━━━━━━━━━━━ */
 function initApp() {
   document.getElementById('jan-input').addEventListener('input', onInput);
-  document.getElementById('jan-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addItem(); });
-  document.getElementById('name-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addItem(); });
+  document.getElementById('jan-input').addEventListener('keydown',  e => { if (e.key === 'Enter') addItem(); });
+  document.getElementById('name-input').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
   renderPresets();
   renderList();
 }
 
-// JsBarcode がすでに読み込まれていれば即起動（通常ここで呼ばれる）
-if(typeof JsBarcode !== 'undefined') initApp();
+if (typeof JsBarcode !== 'undefined') initApp();
 </script>
 </body>
 </html>
