@@ -347,7 +347,7 @@
     </button>
     <button id="pdf-btn" class="btn btn-green" onclick="generatePDF()" disabled>
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-      まとめシートPDF出力
+      まとめシートをプレビュー
     </button>
     <button id="svg-btn" class="btn btn-ghost" onclick="generateSVGs()" disabled>
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -360,6 +360,26 @@
 <div class="card" id="sheet-card" style="display:none">
   <p class="card-title">STEP 3 — シートプレビュー</p>
   <div id="sheet-wrap"></div>
+</div>
+
+<!-- ⑤ PDFプレビュー -->
+<div class="card" id="pdf-preview-card" style="display:none">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+    <p class="card-title" style="margin:0">STEP 4 — PDFプレビュー</p>
+    <div style="display:flex; gap:0.5rem;">
+      <button class="btn btn-green" id="pdf-dl-btn" onclick="downloadPDF()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        PDFをダウンロード
+      </button>
+      <button class="btn btn-ghost" onclick="closePDFPreview()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        閉じる
+      </button>
+    </div>
+  </div>
+  <iframe id="pdf-iframe"
+    style="width:100%; height:75vh; border:1px solid var(--border); border-radius:6px; background:#525659;"
+    title="PDFプレビュー"></iframe>
 </div>
 
 <footer>
@@ -649,8 +669,25 @@ function renderSheet() {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━
-   PDF 出力
+   PDF プレビュー・ダウンロード
 ━━━━━━━━━━━━━━━━━━━━━━━━ */
+let _pdfBlobUrl = null;  // 現在のPDF BlobURL を保持
+
+function downloadPDF() {
+  if (!_pdfBlobUrl) return;
+  const a = document.createElement('a');
+  a.href = _pdfBlobUrl;
+  a.download = 'jan_sheet.pdf';
+  a.click();
+}
+
+function closePDFPreview() {
+  const card = document.getElementById('pdf-preview-card');
+  card.style.display = 'none';
+  document.getElementById('pdf-iframe').src = '';
+  if (_pdfBlobUrl) { URL.revokeObjectURL(_pdfBlobUrl); _pdfBlobUrl = null; }
+}
+
 async function generatePDF() {
   if (!items.length) return;
 
@@ -736,11 +773,20 @@ async function generatePDF() {
       }
     }
 
-    doc.save('jan_sheet.pdf');
+    // ダウンロードせずにページ内プレビュー表示
+    if (_pdfBlobUrl) URL.revokeObjectURL(_pdfBlobUrl);
+    _pdfBlobUrl = doc.output('bloburl');
+
+    const previewCard = document.getElementById('pdf-preview-card');
+    const iframe      = document.getElementById('pdf-iframe');
+    iframe.src = _pdfBlobUrl;
+    previewCard.style.display = 'block';
+    previewCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   } finally {
     pdfBtn.disabled = false;
     pdfBtn.innerHTML =
-      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> まとめシートPDF出力';
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> まとめシートをプレビュー';
     document.getElementById('pdf-btn').disabled = items.length === 0;
   }
 }
