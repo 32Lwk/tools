@@ -35,67 +35,6 @@
       opacity: 0.28;
       background: var(--muted);
     }
-    .secret-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: color-mix(in srgb, var(--bg) 55%, transparent);
-      backdrop-filter: blur(4px);
-    }
-    .secret-modal.hidden { display: none; }
-    .secret-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem 1.35rem;
-      width: calc(100% - 2rem);
-      max-width: 280px;
-    }
-    .secret-box input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0.55rem 0.7rem;
-      margin: 0 0 0.45rem;
-      border: 1px solid var(--input-border);
-      border-radius: 6px;
-      background: var(--input-bg);
-      color: var(--fg);
-      font-size: 1rem;
-    }
-    .secret-err {
-      color: var(--error-fg);
-      font-size: 0.82rem;
-      min-height: 1.2em;
-      margin: 0 0 0.35rem;
-    }
-    .secret-go {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid var(--link);
-      border-radius: 6px;
-      background: var(--link);
-      color: #fff;
-      cursor: pointer;
-      font-size: 0.88rem;
-    }
-    .full-index {
-      margin-top: 2rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-    .full-index.hidden { display: none; }
-    .full-index h2 {
-      font-size: 1.05rem;
-      margin: 0 0 0.35rem;
-    }
-    .full-index h3 {
-      font-size: 0.92rem;
-      color: var(--muted);
-      margin: 1.1rem 0 0.35rem;
-    }
   </style>
 </head>
 <body>
@@ -123,113 +62,11 @@
   <p class="note">
     ソース: <a href="https://github.com/32Lwk/tools">github.com/32Lwk/tools</a><button type="button" class="secret-btn" id="secret-btn" aria-hidden="true" tabindex="-1"></button>
   </p>
-  <section id="full-index" class="full-index hidden" hidden></section>
-  <div id="secret-modal" class="secret-modal hidden" aria-hidden="true">
-    <form class="secret-box" id="secret-form" autocomplete="off">
-      <input type="password" id="secret-pwd" placeholder="パスワード" autocomplete="current-password">
-      <p class="secret-err" id="secret-err"></p>
-      <button type="submit" class="secret-go" id="secret-go">開く</button>
-    </form>
-  </div>
   <script src="theme.js"></script>
-  <script src="gate.js"></script>
   <script>
-    (function () {
-      var modal = document.getElementById('secret-modal');
-      var pwd = document.getElementById('secret-pwd');
-      var err = document.getElementById('secret-err');
-      var panel = document.getElementById('full-index');
-
-      var CATALOG = [
-        {
-          heading: '公開ツール',
-          items: [
-            { href: './laue/', title: 'X-ray Laue Backscattering Simulator', note: '円筒 IP / Cylindrical' },
-            { href: './equiv-concrete/', title: '等価コンクリート換算', note: '組成→λ、KEK土壌→等価厚' },
-            { href: './tunnel-ceiling-d200/', title: 'トンネル天井深さ 200 cm（PHITS）', note: '床中央 vs 壁際スペクトル' }
-          ]
-        },
-        {
-          heading: 'KEK MCA',
-          items: [
-            { href: './kek-mca/', title: '生データ（2026-08-18〜24）', note: '.mca / .csv' },
-            { href: './kek-mca/熱中性子管理棟/', title: '熱中性子管理棟', note: '校正・Gain 試験' },
-            { href: './kek-mca/figures/', title: '図ギャラリー', note: '地点別プロット' },
-            { href: './kek-mca/検出器稼働帯.html', title: '検出器稼働帯', note: 'スケジュール' },
-            { href: './kek-mca/3D/', title: '3D — He-3 / SUS304 4dtrack', note: '' },
-            { href: './kek-mca/3D/tunnel/', title: '3D — トンネル宇宙線 0–1000 m', note: '' },
-            { href: './kek-mca/3D/tunnel-d200/', title: '3D — 天井 200 cm Center vs Corner', note: '' },
-            { href: './kek-mca/3D/proton-5m/', title: '3D — 陽子影響 5 m', note: '' }
-          ]
-        },
-        {
-          heading: '限定公開',
-          items: [
-            { href: './supporterz/', title: 'サポーターズ提案14社 — 企業研究', note: 'このセッションでは再入力不要' }
-          ]
-        }
-      ];
-
-      function li(item) {
-        var note = item.note ? ' <span class="note">— ' + item.note + '</span>' : '';
-        return '<li><a href="' + item.href + '">' + item.title + '</a>' + note + '</li>';
-      }
-
-      function showCatalog() {
-        var html = '<h2>全ページ</h2><p class="note">このセッション中は限定公開ページも開けます。</p>';
-        CATALOG.forEach(function (group) {
-          html += '<h3>' + group.heading + '</h3><ul>';
-          group.items.forEach(function (item) {
-            html += li(item);
-          });
-          html += '</ul>';
-        });
-        panel.innerHTML = html;
-        panel.hidden = false;
-        panel.classList.remove('hidden');
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
-      function showModal() {
-        if (ToolsGate.isAuthed()) {
-          showCatalog();
-          return;
-        }
-        err.textContent = '';
-        pwd.value = '';
-        modal.classList.remove('hidden');
-        modal.setAttribute('aria-hidden', 'false');
-        setTimeout(function () { pwd.focus(); }, 0);
-      }
-
-      function hideModal() {
-        modal.classList.add('hidden');
-        modal.setAttribute('aria-hidden', 'true');
-      }
-
-      document.getElementById('secret-btn').addEventListener('click', showModal);
-
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) hideModal();
-      });
-
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) hideModal();
-      });
-
-      document.getElementById('secret-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        ToolsGate.sha256(pwd.value).then(function (hash) {
-          if (hash === ToolsGate.PASS_HASH) {
-            ToolsGate.setAuthed();
-            hideModal();
-            showCatalog();
-          } else {
-            err.textContent = 'パスワードが違います';
-          }
-        });
-      });
-    })();
+    document.getElementById('secret-btn').addEventListener('click', function () {
+      location.href = 'https://jobs.yutok.dev/';
+    });
   </script>
 </body>
 </html>
