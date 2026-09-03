@@ -124,20 +124,13 @@
   </div>
 
   <script src="../theme.js"></script>
+  <script src="../gate.js"></script>
   <script>
-  const PASS_HASH = 'a73060afb61efe1b7c817645d00c342df02407f65435a64c88d251d56150ff42';
-  const AUTH_KEY = 'supporterz_auth_v1';
-
-  async function sha256(s) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
   async function tryLogin() {
     const pwd = document.getElementById('pwd').value;
     const err = document.getElementById('pwd-err');
-    if (await sha256(pwd) === PASS_HASH) {
-      sessionStorage.setItem(AUTH_KEY, '1');
+    if (await ToolsGate.sha256(pwd) === ToolsGate.PASS_HASH) {
+      ToolsGate.setAuthed();
       document.getElementById('gate').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
       init();
@@ -148,7 +141,7 @@
 
   document.getElementById('pwd-btn').onclick = tryLogin;
   document.getElementById('pwd').onkeydown = e => { if (e.key === 'Enter') tryLogin(); };
-  if (sessionStorage.getItem(AUTH_KEY) === '1') {
+  if (ToolsGate.isAuthed()) {
     document.getElementById('gate').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
   }
@@ -461,7 +454,7 @@
     document.querySelectorAll('tr[data-id]').forEach(tr => tr.classList.toggle('sel', tr.dataset.id === id));
   };
 
-  if (sessionStorage.getItem(AUTH_KEY) === '1') init();
+  if (ToolsGate.isAuthed()) init();
   </script>
 </body>
 </html>
