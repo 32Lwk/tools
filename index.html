@@ -17,6 +17,70 @@
     h1 { font-size: 1.4rem; }
     ul { padding-left: 1.2rem; }
     .note { font-size: 0.9rem; }
+    .secret-btn {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-left: 0.4rem;
+      padding: 0;
+      vertical-align: middle;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      cursor: default;
+      opacity: 0;
+    }
+    .secret-btn:hover,
+    .secret-btn:focus-visible {
+      opacity: 0.28;
+      background: var(--muted);
+    }
+    .secret-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--bg) 55%, transparent);
+      backdrop-filter: blur(4px);
+    }
+    .secret-modal.hidden { display: none; }
+    .secret-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.35rem;
+      width: calc(100% - 2rem);
+      max-width: 280px;
+    }
+    .secret-box input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.55rem 0.7rem;
+      margin: 0 0 0.45rem;
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      background: var(--input-bg);
+      color: var(--fg);
+      font-size: 1rem;
+    }
+    .secret-err {
+      color: var(--error-fg);
+      font-size: 0.82rem;
+      min-height: 1.2em;
+      margin: 0 0 0.35rem;
+    }
+    .secret-go {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--link);
+      border-radius: 6px;
+      background: var(--link);
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.88rem;
+    }
   </style>
 </head>
 <body>
@@ -40,14 +104,78 @@
       <a href="./tunnel-ceiling-d200/">トンネル天井深さ 200&nbsp;cm（PHITS）</a>
       <span class="note">— 床中央 vs 壁際スペクトル · <a href="./kek-mca/3D/tunnel-d200/">3D</a></span>
     </li>
-    <li>
-      <a href="./supporterz/">サポーターズ提案14社 — 企業研究</a>
-      <span class="note">— パスワード保護 · 一時公開</span>
-    </li>
   </ul>
   <p class="note">
-    ソース: <a href="https://github.com/32Lwk/tools">github.com/32Lwk/tools</a>
+    ソース: <a href="https://github.com/32Lwk/tools">github.com/32Lwk/tools</a><button type="button" class="secret-btn" id="secret-btn" aria-hidden="true" tabindex="-1"></button>
   </p>
+  <div id="secret-modal" class="secret-modal hidden" aria-hidden="true">
+    <form class="secret-box" id="secret-form" autocomplete="off">
+      <input type="password" id="secret-pwd" placeholder="パスワード" autocomplete="current-password">
+      <p class="secret-err" id="secret-err"></p>
+      <button type="submit" class="secret-go" id="secret-go">開く</button>
+    </form>
+  </div>
   <script src="theme.js"></script>
+  <script>
+    (function () {
+      var PASS_HASH = 'a73060afb61efe1b7c817645d00c342df02407f65435a64c88d251d56150ff42';
+      var AUTH_KEY = 'supporterz_auth_v1';
+      var DEST = './supporterz/';
+      var modal = document.getElementById('secret-modal');
+      var pwd = document.getElementById('secret-pwd');
+      var err = document.getElementById('secret-err');
+
+      function sha256(s) {
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (buf) {
+          return Array.from(new Uint8Array(buf)).map(function (b) {
+            return b.toString(16).padStart(2, '0');
+          }).join('');
+        });
+      }
+
+      function openDest() {
+        sessionStorage.setItem(AUTH_KEY, '1');
+        location.href = DEST;
+      }
+
+      function showModal() {
+        if (sessionStorage.getItem(AUTH_KEY) === '1') {
+          location.href = DEST;
+          return;
+        }
+        err.textContent = '';
+        pwd.value = '';
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        setTimeout(function () { pwd.focus(); }, 0);
+      }
+
+      function hideModal() {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+
+      document.getElementById('secret-btn').addEventListener('click', showModal);
+
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) hideModal();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) hideModal();
+      });
+
+      document.getElementById('secret-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        sha256(pwd.value).then(function (hash) {
+          if (hash === PASS_HASH) {
+            openDest();
+          } else {
+            err.textContent = 'パスワードが違います';
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
