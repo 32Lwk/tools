@@ -702,21 +702,23 @@ async function generatePDF() {
     }
 
     const { jsPDF } = window.jspdf;
-    const COLS = 3, CW = 62, CH = 38, MX = 10, MY = 10, PW = 210, PH = 297;
-    const TOP = MY + 14;
+
+    // ── A4サイズ定数（px @144dpi で Canvas 描画） ──
+    const DPI    = 144;
+    const MM2PX  = DPI / 25.4;           // 1mm → px
+    const PW_MM  = 210, PH_MM = 297;     // A4mm
+    const PW     = Math.round(PW_MM * MM2PX);
+    const PH     = Math.round(PH_MM * MM2PX);
+
+    const MX     = Math.round(10 * MM2PX);  // 左右マージン
+    const MY     = Math.round(10 * MM2PX);  // 上マージン
+    const COLS   = 3;
+    const CW     = Math.round(62 * MM2PX);  // セル幅
+    const CH     = Math.round(40 * MM2PX);  // セル高さ
+    const TOP    = MY + Math.round(14 * MM2PX); // タイトル下
     const rowsPerPage = Math.floor((PH - MY - TOP) / CH);
 
-    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    doc.setFontSize(13);
-    doc.text('JANバーコードまとめシート', MX, MY + 5);
-    doc.setFontSize(8);
-    doc.setTextColor(140);
-    doc.text(
-      new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }),
-      PW - MX, MY + 5, { align: 'right' }
-    );
-    doc.setTextColor(0);
-
+    // SVG → Canvas 変換
     const svgToCanvas = svgEl => new Promise(res => {
       const xml  = new XMLSerializer().serializeToString(svgEl);
       const blob = new Blob([xml], { type: 'image/svg+xml' });
@@ -724,8 +726,8 @@ async function generatePDF() {
       const img  = new Image();
       img.onload = () => {
         const c = document.createElement('canvas');
-        c.width  = img.naturalWidth  || 300;
-        c.height = img.naturalHeight || 150;
+        c.width  = img.naturalWidth  || 400;
+        c.height = img.naturalHeight || 200;
         c.getContext('2d').drawImage(img, 0, 0);
         URL.revokeObjectURL(url);
         res(c);
@@ -733,47 +735,123 @@ async function generatePDF() {
       img.src = url;
     });
 
-    let currentPage = 0;
-    for (let i = 0; i < items.length; i++) {
-      const col     = i % COLS;
-      const row     = Math.floor(i / COLS);
-      const pageRow = row % rowsPerPage;
+    // ── 1ページ分の Canvas を描画する関数 ──
+    const drawPage = async (pageItems) => {
+      const canvas = document.createElement('canvas');
+      canvas.width  = PW;
+      canvas.height = PH;
+      const ctx = canvas.getContext('2d');
 
-      if (row > 0 && pageRow === 0 && col === 0) {
-        doc.addPage();
-        currentPage++;
-        doc.setFontSize(13);
-        doc.text('JANバーコードまとめシート', MX, MY + 5);
-        doc.setFontSize(8); doc.setTextColor(140);
-        doc.text(
-          new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }),
-          PW - MX, MY + 5, { align: 'right' }
-        );
-        doc.setTextColor(0);
+      // 白背景
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, PW, PH);
+
+      // タイトル
+      ctx.fillStyle = '#1a1a2e';
+      ctx.font = `bold ${Math.round(13 * MM2PX / 3.78)}px sans-serif`;
+      ctx.fillText('JANバーコードまとめシート', MX, MY + Math.round(5 * MM2PX));
+
+      // 日付（右寄せ）
+      const dateStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+      ctx.fillStyle = '#888888';
+      ctx.font = `${Math.round(8 * MM2PX / 3.78)}px sans-serif`;
+      ctx.textAlign = 'right';
+      ctx.fillText(dateStr, PW - MX, MY + Math.round(5 * MM2PX));
+      ctx.textAlign = 'left';
+
+      // 区切り線
+      ctx.strokeStyle = '#e2e4e9';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(MX, MY + Math.round(8 * MM2PX));
+      ctx.lineTo(PW - MX, MY + Math.round(8 * MM2PX));
+      ctx.stroke();
+
+      // 各バーコードセル
+      for (let i = 0; i < pageItems.length; i++) {
+        const it  = pageItems[i];
+        const col = i % COLS;
+        const row = Math.floor(i / COLS);
+        const cx  = MX + col * CW;
+        const cy  = TOP + row * CH;
+
+        // バーコードSVG → Canvas
+        const bcSvg = makeSVG(it.code, {
+          width: 2.2, height: 90, displayValue: true, fontSize: 14, margin: 10,
+        });
+        document.body.appendChild(bcSvg);
+        const bcCanvas = await svgToCanvas(bcSvg);
+        document.body.removeChild(bcSvg);
+
+        // バーコード画像を収める幅・高さ
+        const maxW = CW - Math.round(6 * MM2PX);
+        const scale = maxW / bcCanvas.width;
+        const bh    = Math.round(bcCanvas.height * scale);
+        const bx    = cx + Math.round(3 * MM2PX);
+        const by    = cy + Math.round(2 * MM2PX);
+
+        ctx.drawImage(bcCanvas, bx, by, maxW, bh);
+
+        // 商品名テキスト（Canvas 描画 → 文字化けしない）
+        ctx.fillStyle = '#1a1a2e';
+        ctx.font = `${Math.round(7.5 * MM2PX / 3.78)}px sans-serif`;
+        ctx.textAlign = 'center';
+        // 長い名前を折り返し
+        const maxTextW = maxW;
+        const centerX  = cx + CW / 2;
+        wrapText(ctx, it.name, centerX, by + bh + Math.round(4 * MM2PX), maxTextW, Math.round(3.8 * MM2PX / 3.78) * 3.78 * 1.3);
+
+        // 要確認バッジ
+        if (it.warn) {
+          ctx.fillStyle = '#d97706';
+          ctx.font = `bold ${Math.round(6 * MM2PX / 3.78)}px sans-serif`;
+          ctx.fillText('⚠ 要確認', centerX, by + bh + Math.round(11 * MM2PX));
+          ctx.fillStyle = '#1a1a2e';
+        }
+        ctx.textAlign = 'left';
       }
+      return canvas;
+    };
 
-      const svg = makeSVG(items[i].code, { width: 2, height: 80, displayValue: true, fontSize: 13, margin: 10 });
-      document.body.appendChild(svg);
-      const canvas = await svgToCanvas(svg);
-      document.body.removeChild(svg);
-
-      const imgW = CW - 4;
-      const imgH = imgW * (canvas.height / canvas.width);
-      const cx   = MX + col * (CW + 3);
-      const cy   = TOP + pageRow * CH;
-
-      doc.addImage(canvas.toDataURL('image/png'), 'PNG', cx, cy, imgW, imgH);
-      doc.setFontSize(7.5);
-      doc.text(items[i].name, cx + imgW / 2, cy + imgH + 3.5, { align: 'center', maxWidth: imgW });
-      if (items[i].warn) {
-        doc.setFontSize(6.5);
-        doc.setTextColor(180, 100, 0);
-        doc.text('⚠ 要確認', cx + imgW / 2, cy + imgH + 7, { align: 'center' });
-        doc.setTextColor(0);
+    // テキスト折り返しヘルパー
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      if (ctx.measureText(text).width <= maxWidth) {
+        ctx.fillText(text, x, y);
+        return;
       }
+      // 1文字ずつ区切り
+      let line = '';
+      let lineY = y;
+      for (const ch of text) {
+        const test = line + ch;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          ctx.fillText(line, x, lineY);
+          line  = ch;
+          lineY += lineHeight;
+        } else {
+          line = test;
+        }
+      }
+      if (line) ctx.fillText(line, x, lineY);
     }
 
-    // ダウンロードせずにページ内プレビュー表示
+    // ── ページ分割してPDF生成 ──
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const totalItems    = items.length;
+    const itemsPerPage  = rowsPerPage * COLS;
+    const totalPages    = Math.ceil(totalItems / itemsPerPage);
+
+    for (let p = 0; p < totalPages; p++) {
+      const pageItems = items.slice(p * itemsPerPage, (p + 1) * itemsPerPage);
+      const pageCanvas = await drawPage(pageItems);
+
+      if (p > 0) doc.addPage();
+      // Canvas を PNG として A4 全面に貼る
+      doc.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, 0, PW_MM, PH_MM);
+    }
+
+    // ページ内プレビュー表示
     if (_pdfBlobUrl) URL.revokeObjectURL(_pdfBlobUrl);
     _pdfBlobUrl = doc.output('bloburl');
 
@@ -783,6 +861,8 @@ async function generatePDF() {
     previewCard.style.display = 'block';
     previewCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+  } catch (err) {
+    alert('PDF生成エラー: ' + err.message);
   } finally {
     pdfBtn.disabled = false;
     pdfBtn.innerHTML =
