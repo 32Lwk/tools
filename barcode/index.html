@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JANバーコード生成ツール – tools.yutok.dev</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 1rem;
+      background: #f5f5f5;
+      color: #222;
+    }
+    h1 { font-size: 1.35rem; margin-bottom: 0.2rem; }
+    .subtitle { color: #666; font-size: 0.88rem; margin-bottom: 1.4rem; }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    .card h2 { font-size: 0.95rem; margin: 0 0 0.75rem; color: #444; }
+
+    /* 入力 */
+    .input-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: flex-end; }
+    .input-group { display: flex; flex-direction: column; gap: 3px; }
+    .input-group label { font-size: 0.8rem; color: #555; }
+    input[type="text"] {
+      border: 1px solid #ccc; border-radius: 5px;
+      padding: 0.4rem 0.6rem; font-size: 0.95rem;
+    }
+    #jan-input { width: 175px; }
+    #name-input { width: 200px; }
+    input:focus { outline: 2px solid #0070f3; border-color: transparent; }
+
+    /* ボタン */
+    button {
+      cursor: pointer; border: none; border-radius: 5px;
+      padding: 0.42rem 0.9rem; font-size: 0.88rem; font-weight: 600;
+      transition: opacity .15s;
+    }
+    button:hover:not(:disabled) { opacity: 0.82; }
+    button:disabled { opacity: 0.38; cursor: default; }
+    .btn-primary  { background: #0070f3; color: #fff; }
+    .btn-secondary{ background: #e5e7eb; color: #333; }
+    .btn-danger   { background: #ef4444; color: #fff; }
+    .btn-success  { background: #16a34a; color: #fff; }
+
+    /* バーコードプレビュー */
+    #preview-wrap { display:flex; align-items:center; gap:1rem; margin-top:0.7rem; min-height:72px; }
+    #preview-svg  { display:none; }
+    #preview-status { font-size:0.85rem; }
+    .ok  { color:#16a34a; font-weight:700; }
+    .err { color:#ef4444; font-weight:700; }
+    .muted { color:#999; }
+
+    /* プリセット */
+    .preset-section { margin-bottom: 0.6rem; }
+    .preset-section-title { font-size:0.75rem; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:0.3rem; }
+    .preset-grid { display:flex; flex-wrap:wrap; gap:0.3rem; }
+    .btn-preset {
+      font-size:0.78rem; font-weight:400;
+      background:#f3f4f6; border:1px solid #e5e7eb; color:#333;
+      padding:0.25rem 0.5rem; border-radius:4px;
+    }
+    .btn-preset:hover { background:#dbeafe; }
+
+    /* 登録リスト */
+    #item-list { list-style:none; padding:0; margin:0 0 0.8rem; }
+    #item-list li {
+      display:flex; align-items:center; gap:0.5rem;
+      padding:0.3rem 0; border-bottom:1px solid #f0f0f0; font-size:0.85rem;
+    }
+    #item-list li:last-child { border-bottom:none; }
+    .li-name { flex:1; }
+    .li-code { font-family:monospace; color:#555; }
+    .actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    #count { font-size:0.82rem; color:#777; margin-left:0.4rem; }
+
+    /* シートプレビュー */
+    #sheet-wrap { display:flex; flex-wrap:wrap; gap:0.8rem; margin-top:0.6rem; }
+    .bc-cell {
+      display:flex; flex-direction:column; align-items:center;
+      background:#fff; border:1px solid #e5e7eb; border-radius:5px;
+      padding:0.4rem 0.6rem; font-size:0.72rem; color:#444;
+    }
+    .bc-cell svg { max-width:140px; }
+    .bc-label { margin-top:0.2rem; text-align:center; max-width:140px; word-break:break-all; }
+
+    footer { font-size:0.78rem; color:#aaa; margin-top:1.5rem; }
+    footer a { color:#aaa; }
+  </style>
+</head>
+<body>
+<h1>🏷️ JANバーコード生成ツール</h1>
+<p class="subtitle">JANコード（EAN-13）を入力してバーコードを生成し、まとめシートをPDFで出力できます。</p>
+
+<!-- 入力 -->
+<div class="card">
+  <h2>JANコードを入力</h2>
+  <div class="input-row">
+    <div class="input-group">
+      <label for="jan-input">JANコード（13桁）</label>
+      <input id="jan-input" type="text" inputmode="numeric" maxlength="13" placeholder="4589694513998" autocomplete="off">
+    </div>
+    <div class="input-group">
+      <label for="name-input">商品名（任意）</label>
+      <input id="name-input" type="text" placeholder="例: 不織布L">
+    </div>
+    <button id="add-btn" class="btn-primary" onclick="addItem()" disabled>追加</button>
+  </div>
+  <div id="preview-wrap">
+    <svg id="preview-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="preview-status" class="muted">JANコードを入力してください</div>
+  </div>
+</div>
+
+<!-- プリセット -->
+<div class="card">
+  <h2>プリセット（既存商品）</h2>
+  <div id="presets"></div>
+</div>
+
+<!-- 登録リスト -->
+<div class="card">
+  <h2>登録済み <span id="count">0件</span></h2>
+  <ul id="item-list"><li class="muted">まだ登録されていません</li></ul>
+  <div class="actions">
+    <button class="btn-secondary" onclick="clearAll()">すべてクリア</button>
+    <button id="pdf-btn"  class="btn-success"   onclick="generatePDF()" disabled>📄 PDF出力</button>
+    <button id="svg-btn"  class="btn-secondary" onclick="generateSVGs()" disabled>🖼️ SVG個別DL</button>
+  </div>
+</div>
+
+<!-- シートプレビュー -->
+<div class="card" id="sheet-card" style="display:none">
+  <h2>シートプレビュー</h2>
+  <div id="sheet-wrap"></div>
+</div>
+
+<footer>
+  <a href="../">← tools.yutok.dev</a> &nbsp;|&nbsp;
+  <a href="jan_sheet_combined.pdf">既存シート PDF</a>
+</footer>
+
+<!-- ライブラリ -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
+        onerror="loadFallbackJsBarcode()"></script>
+<script>
+function loadFallbackJsBarcode() {
+  const s = document.createElement('script');
+  s.src = 'https://unpkg.com/jsbarcode@3.11.6/dist/JsBarcode.all.min.js';
+  s.onload = () => { if(typeof initApp === 'function') initApp(); };
+  s.onerror = () => { document.getElementById('preview-status').textContent = 'ライブラリ読み込み失敗。再読み込みしてください。'; };
+  document.head.appendChild(s);
+}
+</script>
+<script>
+/* ─── プリセットデータ ─── */
+const PRESETS = {
+  'ホット': [
+    {n:'アメリカーノ S',  c:'6013000000480'},{n:'アメリカーノ M',  c:'6013000000471'},
+    {n:'ホットラテ S',   c:'6010400002658'},{n:'ホットラテ M',   c:'6013000000476'},
+    {n:'カプチーノ S',   c:'6013000000481'},{n:'カプチーノ M',   c:'6013000000474'},
+    {n:'[栄]あんバターラテ',c:'6013500003408'},{n:'[栄]フレンチプレス',c:'6013500003422'},
+    {n:'[栄]抹茶ラテ',   c:'6013500003407'},{n:'ほうじ茶ラテ',   c:'6013000000521'},
+  ],
+  'アイス': [
+    {n:'アイスアメリカーノ S',c:'6010400002664'},{n:'アイスアメリカーノ M',c:'6013000000479'},
+    {n:'アイスラテ S',   c:'6013000000477'},{n:'アイスラテ M',   c:'6013000000478'},
+    {n:'[栄]あんバターラテ',c:'6013500003408'},{n:'信州産リンゴジュース',c:'6088888000953'},
+    {n:'ソフトモカ フルサイズ',c:'6013000000625'},
+  ],
+  '包装': [
+    {n:'不織布M',   c:'4589694514001'},{n:'不織布L',   c:'4589694513998'},
+    {n:'ギフト包装', c:'2499000000017'},{n:'簡易包装',  c:'2499000000024'},
+    {n:'10個スリーブ',c:'2071284041650'},{n:'20個スリーブ',c:'2071284041643'},
+    {n:'新紙袋（小）',c:'4589694501087'},{n:'新紙袋（中）',c:'4589694501070'},
+    {n:'軽井沢Dセット',c:'6010400003488'},{n:'軽井沢アイスセット',c:'6010400003479'},
+  ],
+  'デザート': [
+    {n:'コーヒーソフトクリーム',c:'4589694513073'},
+    {n:'SOゼリー ケニア',     c:'4589694509373'},{n:'SOゼリー エチオピア',c:'4589694509366'},
+    {n:'SOゼリー ブラジル',   c:'4589694509380'},{n:'SOゼリー 6個入り', c:'4589694509328'},
+    {n:'ゼリー＆プリンセット', c:'4589694509335'},
+  ],
+};
+
+/* ─── 状態 ─── */
+let items = [];
+
+/* ─── EAN-13 検証 ─── */
+function validateEAN13(code) {
+  if (!/^\d{13}$/.test(code)) return false;
+  let s = 0;
+  for (let i = 0; i < 12; i++) s += +code[i] * (i%2===0 ? 1 : 3);
+  return (10 - s%10)%10 === +code[12];
+}
+
+/* ─── JsBarcode SVG 生成ヘルパー ─── */
+function makeSVG(code, opts) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  JsBarcode(svg, code, { format:'EAN13', xmlDocument: document, ...opts });
+  return svg;
+}
+
+/* ─── プリセット描画 ─── */
+function renderPresets() {
+  const wrap = document.getElementById('presets');
+  wrap.innerHTML = '';
+  for (const [sec, rows] of Object.entries(PRESETS)) {
+    const div = document.createElement('div');
+    div.className = 'preset-section';
+    div.innerHTML = `<div class="preset-section-title">${sec}</div>`;
+    const grid = document.createElement('div');
+    grid.className = 'preset-grid';
+    rows.forEach(r => {
+      const b = document.createElement('button');
+      b.className = 'btn-preset';
+      b.textContent = `${r.n}  ${r.c}`;
+      b.onclick = () => {
+        document.getElementById('jan-input').value = r.c;
+        document.getElementById('name-input').value = r.n;
+        onInput();
+        window.scrollTo({top:0, behavior:'smooth'});
+      };
+      grid.appendChild(b);
+    });
+    div.appendChild(grid);
+    wrap.appendChild(div);
+  }
+}
+
+/* ─── 入力ハンドラ ─── */
+function onInput() {
+  const code = document.getElementById('jan-input').value.trim();
+  const svgEl = document.getElementById('preview-svg');
+  const status = document.getElementById('preview-status');
+  const addBtn = document.getElementById('add-btn');
+
+  svgEl.style.display = 'none';
+  svgEl.innerHTML = '';
+  status.className = 'muted';
+  addBtn.disabled = true;
+
+  if (!code) { status.textContent = 'JANコードを入力してください'; return; }
+  if (!/^\d+$/.test(code)) { status.className='err'; status.textContent='数字のみ入力してください'; return; }
+  if (code.length !== 13) { status.textContent = `${code.length}/13桁`; return; }
+  if (!validateEAN13(code)) { status.className='err'; status.textContent='✗ チェックデジットが不正'; return; }
+
+  try {
+    JsBarcode(svgEl, code, {format:'EAN13', width:2, height:60, displayValue:true, fontSize:13, margin:8});
+    svgEl.style.display = 'block';
+    status.className = 'ok';
+    status.textContent = '✓ 有効なEAN-13';
+    addBtn.disabled = false;
+  } catch(e) {
+    status.className='err'; status.textContent='描画エラー: '+e.message;
+  }
+}
+
+/* ─── 商品追加 ─── */
+function addItem() {
+  const code = document.getElementById('jan-input').value.trim();
+  const name = document.getElementById('name-input').value.trim() || code;
+  if (!validateEAN13(code)) return;
+  items.push({name, code});
+  document.getElementById('jan-input').value = '';
+  document.getElementById('name-input').value = '';
+  document.getElementById('preview-svg').style.display='none';
+  document.getElementById('preview-svg').innerHTML='';
+  document.getElementById('preview-status').className='muted';
+  document.getElementById('preview-status').textContent='JANコードを入力してください';
+  document.getElementById('add-btn').disabled=true;
+  renderList();
+  renderSheet();
+}
+
+function removeItem(i) { items.splice(i,1); renderList(); renderSheet(); }
+
+function clearAll() {
+  if(items.length && !confirm('登録済みをすべて削除しますか？')) return;
+  items=[]; renderList(); renderSheet();
+}
+
+/* ─── リスト描画 ─── */
+function renderList() {
+  const ul=document.getElementById('item-list');
+  const empty=items.length===0;
+  document.getElementById('count').textContent=`${items.length}件`;
+  document.getElementById('pdf-btn').disabled=empty;
+  document.getElementById('svg-btn').disabled=empty;
+  if(empty){ul.innerHTML='<li class="muted">まだ登録されていません</li>';return;}
+  ul.innerHTML='';
+  items.forEach((it,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="li-name">${h(it.name)}</span><span class="li-code">${h(it.code)}</span>`;
+    const btn=document.createElement('button');
+    btn.className='btn-danger'; btn.textContent='削除'; btn.style.fontSize='0.75rem'; btn.style.padding='0.2rem 0.45rem';
+    btn.onclick=()=>removeItem(i);
+    li.appendChild(btn); ul.appendChild(li);
+  });
+}
+function h(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ─── シートプレビュー ─── */
+function renderSheet() {
+  const card=document.getElementById('sheet-card');
+  const wrap=document.getElementById('sheet-wrap');
+  if(items.length===0){card.style.display='none';return;}
+  card.style.display='block'; wrap.innerHTML='';
+  items.forEach(it=>{
+    const cell=document.createElement('div');
+    cell.className='bc-cell';
+    try {
+      const svg=makeSVG(it.code,{width:1.4,height:48,displayValue:true,fontSize:11,margin:6});
+      cell.appendChild(svg);
+    } catch(e){}
+    const lbl=document.createElement('div');
+    lbl.className='bc-label'; lbl.textContent=it.name;
+    cell.appendChild(lbl); wrap.appendChild(cell);
+  });
+}
+
+/* ─── PDF 出力 ─── */
+async function generatePDF() {
+  if(!items.length) return;
+
+  // jsPDF 動的ロード
+  if(typeof window.jspdf === 'undefined') {
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload=res; s.onerror=()=>{
+        // fallback
+        const s2=document.createElement('script');
+        s2.src='https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js';
+        s2.onload=res; s2.onerror=rej;
+        document.head.appendChild(s2);
+      };
+      document.head.appendChild(s);
+    });
+  }
+
+  const {jsPDF} = window.jspdf;
+  const COLS=3, CW=62, CH=36, MX=10, MY=10, PW=210, PH=297;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+
+  doc.setFontSize(13);
+  doc.text('JANバーコードまとめシート', MX, MY+5);
+  doc.setFontSize(8); doc.setTextColor(130);
+  doc.text(new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'}), PW-MX, MY+5, {align:'right'});
+  doc.setTextColor(0);
+
+  const TOP = MY + 13;
+  const svgToCanvas = (svgEl) => new Promise(res=>{
+    const xml = new XMLSerializer().serializeToString(svgEl);
+    const blob = new Blob([xml],{type:'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const c=document.createElement('canvas');
+      c.width=img.naturalWidth||img.width; c.height=img.naturalHeight||img.height;
+      c.getContext('2d').drawImage(img,0,0);
+      URL.revokeObjectURL(url); res(c);
+    };
+    img.src=url;
+  });
+
+  for(let i=0;i<items.length;i++){
+    const col=i%COLS, row=Math.floor(i/COLS);
+    const x=MX+col*(CW+3);
+    const y=TOP+row*CH;
+    if(y>PH-MY-CH && col===0) { doc.addPage(); }
+
+    // ページ計算し直し
+    const page = Math.floor(i/COLS/Math.floor((PH-MY-TOP)/CH));
+    // 単純化: 1ページ内に収まる行数
+    const rowsPerPage = Math.floor((PH-MY-TOP)/CH);
+    const pageRow = row % rowsPerPage;
+    const curY = TOP + pageRow*CH;
+    if(i>0 && pageRow===0 && col===0 && row>0) doc.addPage();
+
+    const svg = makeSVG(items[i].code,{width:2,height:80,displayValue:true,fontSize:13,margin:10});
+    document.body.appendChild(svg);
+    const canvas = await svgToCanvas(svg);
+    document.body.removeChild(svg);
+
+    const imgW=CW-4;
+    const imgH=imgW*(canvas.height/canvas.width);
+    const cx=MX+col*(CW+3);
+    const cy=TOP+pageRow*CH;
+
+    doc.addImage(canvas.toDataURL('image/png'),'PNG',cx,cy,imgW,imgH);
+    doc.setFontSize(7.5);
+    doc.text(items[i].name, cx+imgW/2, cy+imgH+3.5, {align:'center', maxWidth:imgW});
+  }
+
+  doc.save('jan_sheet.pdf');
+}
+
+/* ─── SVG 個別ダウンロード ─── */
+function generateSVGs() {
+  items.forEach(it=>{
+    const svg=makeSVG(it.code,{width:3,height:100,displayValue:true,fontSize:16,margin:12});
+    document.body.appendChild(svg);
+    const xml=new XMLSerializer().serializeToString(svg);
+    document.body.removeChild(svg);
+    const a=document.createElement('a');
+    a.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
+    a.download=`${it.name}_${it.code}.svg`;
+    a.click();
+  });
+}
+
+/* ─── 起動 ─── */
+function initApp() {
+  document.getElementById('jan-input').addEventListener('input', onInput);
+  document.getElementById('jan-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addItem(); });
+  document.getElementById('name-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addItem(); });
+  renderPresets();
+  renderList();
+}
+
+// JsBarcode がすでに読み込まれていれば即起動（通常ここで呼ばれる）
+if(typeof JsBarcode !== 'undefined') initApp();
+</script>
+</body>
+</html>
