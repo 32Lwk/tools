@@ -318,7 +318,7 @@
   <div id="preview-area">
     <svg id="preview-svg" xmlns="http://www.w3.org/2000/svg"></svg>
     <div id="preview-text">
-      <div>JANコードを入力するとここにプレビューが表示されます</div>
+      <div id="preview-msg">JANコードを入力するとここにプレビューが表示されます</div>
       <div class="digit-count" id="digit-count"></div>
     </div>
   </div>
@@ -480,10 +480,14 @@ function renderPresets() {
 /* ━━━━━━━━━━━━━━━━━━━━━━━━
    入力ハンドラ
 ━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* preview-msg だけを更新するヘルパー（digit-count を壊さない） */
+function setMsg(html) {
+  document.getElementById('preview-msg').innerHTML = html;
+}
+
 function onInput() {
   const code    = document.getElementById('jan-input').value.trim();
   const svgEl   = document.getElementById('preview-svg');
-  const textEl  = document.getElementById('preview-text');
   const countEl = document.getElementById('digit-count');
   const addBtn  = document.getElementById('add-btn');
   const inp     = document.getElementById('jan-input');
@@ -494,13 +498,13 @@ function onInput() {
   addBtn.disabled = true;
 
   if (!code) {
-    textEl.innerHTML = 'JANコードを入力するとここにプレビューが表示されます';
+    setMsg('JANコードを入力するとここにプレビューが表示されます');
     countEl.textContent = '';
     return;
   }
 
   if (!/^\d+$/.test(code)) {
-    textEl.innerHTML = '<span class="err">数字のみ入力してください</span>';
+    setMsg('<span class="err">数字のみ入力してください</span>');
     countEl.textContent = '';
     return;
   }
@@ -508,26 +512,25 @@ function onInput() {
   countEl.textContent = `${code.length} / 13桁`;
 
   if (code.length !== 13) {
-    textEl.innerHTML = 'あと <strong>' + (13 - code.length) + '</strong> 桁入力してください';
+    setMsg('あと <strong>' + (13 - code.length) + '</strong> 桁入力してください');
     return;
   }
 
   // 13桁揃った → 描画（チェックデジット不問）
   const valid = validateEAN13(code);
-  // EAN13として描画を試みる。不正コードでも強制描画するため
-  // JsBarcode の valid オプションで検証をスキップさせる
   svgEl.innerHTML = '';
   let drawOk = false;
+
+  // まず EAN13 で試みる
   try {
     JsBarcode(svgEl, code, {
       format: 'EAN13', width: 2, height: 64,
       displayValue: true, fontSize: 13, margin: 8,
     });
-    // 描画後に子要素が生成されていれば成功
     drawOk = svgEl.childElementCount > 0;
   } catch (e) { drawOk = false; }
 
-  // EAN13失敗の場合はCODE128でフォールバック描画
+  // EAN13失敗 → CODE128 でフォールバック
   if (!drawOk) {
     try {
       svgEl.innerHTML = '';
@@ -542,16 +545,15 @@ function onInput() {
   if (drawOk) {
     svgEl.style.display = 'block';
     if (valid) {
-      textEl.innerHTML = '<span class="ok">✓ 有効なEAN-13コードです</span>';
+      setMsg('<span class="ok">✓ 有効なEAN-13コードです</span>');
     } else {
       inp.classList.add('has-warn');
-      textEl.innerHTML =
-        '<span class="warn">⚠ チェックデジットが不一致ですが生成できます</span>' +
-        '<br><small style="color:var(--muted)">正規のコードでない可能性があります。このまま追加することもできます。</small>';
+      setMsg('<span class="warn">⚠ チェックデジットが不一致ですが生成できます</span>' +
+        '<br><small style="color:var(--muted)">正規のコードでない可能性があります。このまま追加することもできます。</small>');
     }
     addBtn.disabled = false;
   } else {
-    textEl.innerHTML = '<span class="err">バーコードを生成できませんでした。コードを確認してください。</span>';
+    setMsg('<span class="err">バーコードを生成できませんでした。コードを確認してください。</span>');
   }
 }
 
@@ -570,7 +572,7 @@ function addItem() {
   document.getElementById('jan-input').classList.remove('has-warn');
   document.getElementById('preview-svg').style.display = 'none';
   document.getElementById('preview-svg').innerHTML = '';
-  document.getElementById('preview-text').innerHTML = 'JANコードを入力するとここにプレビューが表示されます';
+  setMsg('JANコードを入力するとここにプレビューが表示されます');
   document.getElementById('digit-count').textContent = '';
   document.getElementById('add-btn').disabled = true;
 
