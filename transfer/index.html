@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ファイル転送 — tools.yutok.dev</title>
+  <script src="/theme-boot.js"></script>
+  <link rel="stylesheet" href="/theme.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <p class="crumb"><a href="/">tools.yutok.dev</a> / transfer</p>
+    <h1>ファイル転送</h1>
+    <p class="lead">端末間でファイルを受け渡します。アップロードは本人のみ（Cloudflare Access）。ダウンロードはパスワード必須です。</p>
+
+    <nav class="tabs" role="tablist" aria-label="転送モード">
+      <button type="button" class="tab active" data-tab="r2" role="tab" aria-selected="true">一時（R2）</button>
+      <button type="button" class="tab" data-tab="drive" role="tab" aria-selected="false">Drive 保管</button>
+      <button type="button" class="tab" data-tab="p2p" role="tab" aria-selected="false">P2P（ネットワーク）</button>
+      <button type="button" class="tab" data-tab="offline" role="tab" aria-selected="false">P2P（オフライン）</button>
+    </nav>
+
+    <section id="panel-r2" class="panel" role="tabpanel">
+      <p class="muted">最大 15 GiB・同時 1 本・保管 24 時間。スラッグ付き URL とパスワードで共有します。</p>
+      <p id="status-line" class="muted">状態を確認中…</p>
+
+      <form id="r2-form" class="stack">
+        <label>スラッグ（フォルダ名風）
+          <input id="slug" required pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?" minlength="3" maxlength="64" placeholder="backup-laptop" autocomplete="off" />
+        </label>
+        <label>パスワード（必須・相手へ口頭などで共有）
+          <input id="password" type="password" required minlength="4" autocomplete="new-password" />
+        </label>
+        <label>ファイル
+          <input id="file" type="file" required />
+        </label>
+
+        <div id="cost-box" class="cost-box" hidden>
+          <h2>コスト確認</h2>
+          <ul id="cost-list"></ul>
+          <label class="ack">
+            <input type="checkbox" id="cost-ack" />
+            このコストで続行する
+          </label>
+        </div>
+
+        <button type="submit" id="upload-btn" disabled>アップロード開始</button>
+      </form>
+
+      <div id="progress-wrap" class="progress-wrap" hidden>
+        <div class="progress"><div id="progress-bar"></div></div>
+        <p id="progress-text" class="muted"></p>
+      </div>
+
+      <div id="result" class="result" hidden>
+        <h2>共有リンク</h2>
+        <p><a id="result-link" href="#"></a></p>
+        <p class="muted">パスワードはサイト外で相手に伝えてください。リンクは約 24 時間で無効になります。</p>
+      </div>
+
+      <p id="r2-msg" class="msg" hidden></p>
+    </section>
+
+    <section id="panel-drive" class="panel" hidden role="tabpanel">
+      <p class="muted">Google Drive 保管モードは Phase 2 で実装予定です。</p>
+    </section>
+    <section id="panel-p2p" class="panel" hidden role="tabpanel">
+      <p class="muted">WebRTC P2P（QR ペアリング）は Phase 3 で実装予定です。</p>
+    </section>
+    <section id="panel-offline" class="panel" hidden role="tabpanel">
+      <p class="muted">QR / 超音波によるオフライン小容量転送は Phase 3 で実装予定です。</p>
+    </section>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
