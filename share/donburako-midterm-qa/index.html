@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>どんぶらこ中間 — 辛口Q&amp;A（文献付き）</title>
+  <script src="../../theme-boot.js"></script>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 48rem;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+      line-height: 1.65;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    h1 { font-size: 1.35rem; margin: 0 0 .5rem; }
+    h2 { font-size: 1.1rem; margin: 2rem 0 .75rem; padding-bottom: .35rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1rem; margin: 1.25rem 0 .5rem; }
+    a { color: var(--link); }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; margin: .75rem 0 1.25rem; }
+    th, td { border: 1px solid var(--border); padding: .45rem .55rem; text-align: left; vertical-align: top; }
+    th { background: var(--surface); }
+    code, pre { background: var(--code-bg); border-radius: 6px; }
+    code { padding: .1rem .35rem; font-size: .85em; }
+    pre { padding: .75rem .9rem; overflow-x: auto; border: 1px solid var(--border); }
+    pre code { padding: 0; background: transparent; }
+    blockquote {
+      margin: .75rem 0;
+      padding: .5rem .9rem;
+      border-left: 3px solid var(--border);
+      color: var(--muted);
+      background: var(--surface);
+    }
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    ul, ol { padding-left: 1.25rem; }
+    .banner {
+      font-size: .82rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .65rem .85rem;
+      margin-bottom: 1.25rem;
+    }
+    .theme-toggle { float: right; margin-top: .15rem; }
+    .raw { font-size: .85rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="テーマ切替">🌓</button>
+  <div class="banner">Visional SOLVE Term2 / Team C どんぶらこ — 中間発表 辛口Q&amp;A（トップ未掲載・noindex）。チーム共有用。</div>
+<h1 id="どんぶらこ中間発表-辛口qa想定文献付き回答">どんぶらこ中間発表 —
+辛口Q&amp;A想定（文献付き回答）</h1>
+<p>最終更新: 2026-09-08（TikTok型媒体・社名依存の論点を追加）<br />
+発表資料: <a
+href="./Term2_C_中間講評.pdf"><code>Term2_C_中間講評.pdf</code></a><br />
+Canvas: <a
+href="#"><code>donburako-midterm-qa.canvas.tsx</code></a><br />
+方針:
+<strong>本内容で中間に挑む前提</strong>で、刺さりやすい攻撃→守り切る回答→追い詰められたときの一歩後退を用意する。</p>
+<hr />
+<h2 id="秒で握る防衛の軸全員で揃える">0.
+30秒で握る「防衛の軸」（全員で揃える）</h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr>
+<th>軸</th>
+<th>一言</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>誰の課題か</strong></td>
+<td>課金顧客＝「制度・待遇は整っているが、知名度不足で学生との出会いが作れない企業の決裁者」</td>
+</tr>
+<tr>
+<td><strong>何が壊れているか</strong></td>
+<td><strong>福利厚生を整えても、入口では社名が知られていないと比較されない</strong>（注意配分＝社名依存）</td>
+</tr>
+<tr>
+<td><strong>なぜ今か</strong></td>
+<td>規模別求人倍率が極端に開き、中小側は希望者がさらに減っている／就活情報行動はSNS・ショート動画へ</td>
+</tr>
+<tr>
+<td><strong>何を売るサービスか</strong></td>
+<td><strong>TikTok型の情報フィード＋推薦アルゴリズム</strong>（社名検索前提を壊し、属性・空気感で届ける）。課金は企業</td>
+</tr>
+<tr>
+<td><strong>AIの置き場</strong></td>
+<td>推薦（興味・属性・視聴ログ）／コンテンツ構造化。ブランド特徴の重みを意図的に下げる</td>
+</tr>
+</tbody>
+</table>
+<p>※お題は「企業メインユーザー」。学生が画面を見るサービスでも、<strong>KPIと課金は企業</strong>と毎回言い切る。</p>
+<hr />
+<h2 id="スライド口頭で足したい主張社名-tiktok">0.5
+スライド／口頭で足したい主張（社名 × TikTok）</h2>
+<h3 id="a.-福利厚生を頑張っても新卒の入口は社名依存">A.
+福利厚生を頑張っても、新卒の入口は社名依存</h3>
+<p><strong>口頭用（推奨・守りやすい言い方）</strong></p>
+<blockquote>
+<p>承諾段階では福利厚生が決め手になり得ます（マイナビで承諾理由1位37.9%）。<br />
+しかし<strong>出会いの入口</strong>では、学生はまず社名を知っている企業・SNSで社名検索できる企業から動く。<br />
+制度を整えても、社名が検討セットに入らなければ比較されない——これが「福利厚生をしっかりしても採用に繋がらない」の意味です。</p>
+</blockquote>
+<p><strong>もっと尖らせる言い方（発表トーン用・質疑では上に戻す）</strong></p>
+<blockquote>
+<p>新卒は情報を読む前に、<strong>社名で注意を配分している</strong>。福利厚生は「知ったあとの比較軸」であって、「知られていない企業を発見する手段」にはなっていない。</p>
+</blockquote>
+<p><strong>根拠（入口＝社名）</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>事実</th>
+<th>数字</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SNSで<strong>社名を検索</strong>した就活生</td>
+<td><strong>83.5%</strong></td>
+<td>リソースクリエイション「エアリク」27卒調査（n=212, 2026年3–7月）／<a
+href="https://www.itmedia.co.jp/news/article/2608/24/2000000729/">ITmedia</a></td>
+</tr>
+<tr>
+<td>社名検索チャネル（複数回答）</td>
+<td>IG <strong>65.6%</strong> / TikTok <strong>36.6%</strong> / X 19.8%
+/ YouTube 17.5%</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>300人未満への就職希望者</td>
+<td>前年比 <strong>▲33.3%</strong>（求人は▲7.9%）</td>
+<td><a
+href="https://www.works-i.com/surveys/item/250424_recruitment_saiyo_ratio.pdf">ワークス大卒求人倍率2026卒</a></td>
+</tr>
+<tr>
+<td>規模別求人倍率</td>
+<td>300人未満 <strong>8.98</strong> vs 5000人以上
+<strong>0.34</strong></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><strong>根拠（福利厚生は「知られた後」に効く）</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>事実</th>
+<th>数字</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内々定承諾の決め手1位</td>
+<td>福利厚生 <strong>37.9%</strong>（給与29.1%より上）</td>
+<td>マイナビ2026卒キャリア意向調査7月</td>
+</tr>
+<tr>
+<td>情報不足感</td>
+<td>約 <strong>8割</strong>（制度の詳細も不足上位）</td>
+<td>クレオ本音調査</td>
+</tr>
+</tbody>
+</table>
+<p>→ <strong>矛盾ではなく二段構造</strong>:
+入口＝社名／出口＝制度・雰囲気。我々は入口を壊す。</p>
+<h3 id="b.-だから媒体は-tiktok-型フィード推薦へ">B. だから媒体は TikTok
+型（フィード＋推薦）へ</h3>
+<p><strong>プロダクト方向（中間で言ってよい範囲）</strong></p>
+<ol type="1">
+<li><strong>検索前提をやめる</strong> —
+「社名を打つ」から入ると無名企業は永遠に出てこない<br />
+</li>
+<li><strong>ショート動画／カードのフィード</strong> —
+仕事風景・1日の流れなど、すでに学生が「意欲が上がる」と答える形式<br />
+</li>
+<li><strong>推薦アルゴリズム</strong> —
+興味・業界・働き方属性・視聴完了で次を出す。<strong>社名の先行印象を弱め、中身の類似で届ける</strong><br />
+</li>
+<li><strong>企業側KPI</strong> —
+社名非開示（または後出し）状態での保存・詳細・応募導線</li>
+</ol>
+<p><strong>根拠（媒体・コンテンツ）</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>事実</th>
+<th>数字</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>企業SNSは必要</td>
+<td><strong>84.0%</strong></td>
+<td>エアリク27卒（n=212）</td>
+</tr>
+<tr>
+<td>SNS閲覧で入社意欲↑</td>
+<td><strong>85.8%</strong></td>
+<td>同上</td>
+</tr>
+<tr>
+<td>きっかけになったコンテンツ1位</td>
+<td><strong>仕事風景の動画 27.8%</strong>（上位は動画ばかり）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>SNSがきっかけで<strong>知らなかった企業</strong>に興味</td>
+<td><strong>68%</strong></td>
+<td>LIDDELL「就活×SNS」アンケート（n=100, 2026年4–6月）／<a
+href="https://www.sankei.com/pressrelease/prtimes/6EIQ7ARCQNMHFL54Q2PFTDPCSU/">産経PR</a></td>
+</tr>
+<tr>
+<td>10–20代のX/IG毎日利用</td>
+<td><strong>89.5%</strong>（加重）</td>
+<td>NTTドコモ モバイル社会研究所 2025年SNS調査／自作チャート</td>
+</tr>
+</tbody>
+</table>
+<p><strong>既存ナビとの差分（一文）</strong></p>
+<blockquote>
+<p>ナビは「社名／掲載枠」の棚。TikTok型は「まだ知らないが、中身が刺さる」推薦棚。無名でも制度・空気が強い企業の到達装置になる。</p>
+</blockquote>
+<h3 id="c.-スライドに載せやすい3行コピー">C.
+スライドに載せやすい3行コピー</h3>
+<pre><code>福利厚生を整えても、入口では社名が知られていなければ比較されない。
+就活生の83.5%がSNSで「社名」を検索している（入口＝社名依存）。
+だから我々は、社名検索前提を壊す TikTok型フィード＋推薦AI を目指す。</code></pre>
+<hr />
+<h2 id="q1.-本質課題は会社名バイアスと言い切れる根拠は-感覚では">Q1.
+「本質課題は会社名バイアス」と言い切れる根拠は？ 感覚では？</h2>
+<h3 id="攻撃の意図">攻撃の意図</h3>
+<p>課題の妥当性。一次情報なし／学生都合に聞こえる。</p>
+<h3 id="回答推奨">回答（推奨）</h3>
+<blockquote>
+<p>感覚ではなく、<strong>規模別の需給ギャップ</strong>と<strong>情報不足の調査</strong>で裏づけています。</p>
+<p>第一に、リクルートワークス研究所の大卒求人倍率（2026年卒）では、従業員300人未満が
+<strong>8.98倍</strong>、5000人以上が
+<strong>0.34倍</strong>です。同じ「大卒採用」でも、出会いの構造が全く違います。しかも300人未満では求人総数の減少（▲7.9%）以上に、<strong>就職希望者数が▲33.3%</strong>と大きく減っています。つまり「枠があるのに学生が来ない／見ない」側に偏っています。</p>
+<p>第二に、学生側も「制度の有無」だけでは足りず、比較可能な情報が足りないと感じています。クレオの調査（n=1,010）では、就活サイト／採用サイトで「情報が足りない」が約8割。不足情報の上位に社風・働き方のリアル、給与・福利厚生の詳細があります。</p>
+<p>我々の言い方「会社名バイアス」は、<strong>ブランドが注意配分と検討セット形成を支配し、同水準の制度・待遇を持つ企業が比較土俵に上がれない</strong>現象を指しています。スライドのQuality
+Softと伊藤忠の対比は、制度レベルでは近いのに、認知・検討の出発点が違う、という問題の可視化です。</p>
+</blockquote>
+<h3 id="出典">出典</h3>
+<ul>
+<li><a
+href="https://www.works-i.com/surveys/report/250424_recruitment_saiyo_ratio.html">ワークス大卒求人倍率調査（2026年卒）</a>／<a
+href="https://www.works-i.com/surveys/item/250424_recruitment_saiyo_ratio.pdf">PDF</a>（300人未満
+8.98／5000人以上 0.34、希望者▲33.3%）</li>
+<li><a
+href="https://kreo.jp/news/251202_saiyoureport">クレオ「就活生の企業選びにおける本音調査」</a>／<a
+href="https://jinjibu.jp/news/detl/25955/">日本の人事部要約</a>（情報不足約8割）</li>
+<li>企業数の構造: 中小企業白書ベースで企業数の約 <strong>99.7%</strong>
+が中小（<a
+href="https://www.nikkei.com/article/DGXZQOUA172CQ0X10C24A8000000/">日経「きょうのことば」</a>
+等）</li>
+</ul>
+<h3 id="一歩後退追い詰められたら">一歩後退（追い詰められたら）</h3>
+<blockquote>
+<p>「バイアス」という言葉が強すぎるなら、<strong>注意配分の失敗／検討セット形成の失敗</strong>と言い換えます。心理実験そのものではなく、市場の需給統計と情報不足調査からの帰納です。</p>
+</blockquote>
+<hr />
+<h2
+id="q2.-no-company調査では人気企業志望企業ではないブランドを鵜呑みにしないとある会社名バイアス仮説は古いのでは">Q2.
+No
+Company調査では「人気企業＝志望企業ではない」「ブランドを鵜呑みにしない」とある。会社名バイアス仮説は古いのでは？</h2>
+<h3 id="攻撃の意図-1">攻撃の意図</h3>
+<p>最新調査で仮説を崩す。</p>
+<h3 id="回答">回答</h3>
+<blockquote>
+<p>その調査はむしろ我々の方向を補強します。No
+Company（有効回答408）では、人気企業にエントリーしても約9割が選考途中で志望度低下・辞退を経験し、原因は「説明が抽象的で働く姿が見えない」「本音が見えない」など<strong>情報の解像度不足</strong>です。</p>
+<p>つまり現代の学生は、<strong>入口では知名度・ランキングで触れるが、意思決定はリアル情報で行う</strong>二段構えです。大手は入口に立てるが中身不足で落ちる。一方で知名度の低い優良企業は、<strong>そもそも入口（検討セット）に入れない</strong>。</p>
+<p>我々が解くのは後者——「中身はあるのに入口に立てない企業」側です。ブランド信仰を復活させたいのではなく、<strong>入口の歪みを情報設計で直す</strong>話です。</p>
+</blockquote>
+<h3 id="出典-1">出典</h3>
+<ul>
+<li><a
+href="https://prtimes.jp/main/html/rd/p/000000058.000089446.html">No
+Company PR Times（2026-06調査／新卒・第二新卒408）</a></li>
+</ul>
+<hr />
+<h2
+id="q3.-福利厚生を頑張っても採用に繋がらないの根拠は-むしろ福利厚生が承諾の決め手になっているのでは新卒は社名でしか決めないは極論では">Q3.
+福利厚生を頑張っても採用に繋がらない、の根拠は？
+むしろ福利厚生が承諾の決め手になっているのでは？／「新卒は社名でしか決めない」は極論では？</h2>
+<h3 id="攻撃の意図-2">攻撃の意図</h3>
+<p>スライド7の因果を否定。マイナビの福利厚生データで刺す。「社名だけ」の言い切りを崩す。</p>
+<h3 id="回答-1">回答</h3>
+<blockquote>
+<p>福利厚生が<strong>出口（承諾）の変数</strong>として効いていることは同意です。マイナビでは内々定承諾の決め手1位が「福利厚生の充実（37.9%）」で、給与・賞与（29.1%）を上回ります。</p>
+<p>我々が言う「社名で決める」は、<strong>最終の一点決め</strong>ではなく<strong>入口の注意配分</strong>です。エアリク調査では就活生の
+<strong>83.5%がSNSで社名を検索</strong>しています。情報行動の起点が社名である以上、社名が知られていない企業は、福利厚生がどれだけ良くても比較の土俵に上がりません。</p>
+<p>だから「福利厚生をしっかりしても採用に繋がらない」＝制度に価値がない、ではなく、<strong>入口が社名依存のままでは制度投資が成果に変換されない</strong>、という意味です。</p>
+</blockquote>
+<h3 id="出典-2">出典</h3>
+<ul>
+<li>マイナビ「2026年卒 大学生キャリア意向調査7月」要約: <a
+href="https://edenred.jp/article/hr-recruiting/345/">エデンレッド解説</a></li>
+<li>SNS社名検索83.5%: <a
+href="https://www.itmedia.co.jp/news/article/2608/24/2000000729/">ITmedia／エアリク27卒</a></li>
+</ul>
+<h3 id="一歩後退">一歩後退</h3>
+<blockquote>
+<p>「社名でしか決めない」は口語の強調です。正確には「入口の探索は社名依存／出口は制度・雰囲気」の二段です。</p>
+</blockquote>
+<hr />
+<h2 id="q3b.-tiktok型で十分か-企業snsを各社がやればよくないか">Q3b.
+TikTok型で十分か？ 企業SNSを各社がやればよくないか？</h2>
+<h3 id="攻撃の意図-3">攻撃の意図</h3>
+<p>自前プロダクト不要論。</p>
+<h3 id="回答-2">回答</h3>
+<blockquote>
+<p>各社がTikTok／IGを持つのは必要です（「企業SNSは必要」84%）。しかし<strong>フォロワーが少ない無名企業は、既存アルゴリズム上も発見されにくい</strong>。学生の社名検索は、すでに知っている名前の深掘りになりやすい。</p>
+<p>我々は企業横断のフィードで、<strong>社名を知らなくても属性・動画の類似で推薦する</strong>層を作ります。LIDDELL調査では、SNSがきっかけで「それまで知らなかった企業」に興味を持った学生が
+<strong>68%</strong>。横断推薦はその「知らなかった」を意図的に増やす装置です。課金は企業側の到達・母集団KPIです。</p>
+</blockquote>
+<h3 id="出典-3">出典</h3>
+<ul>
+<li>エアリク27卒（SNS必要84%／社名検索83.5%）</li>
+<li>LIDDELL 就活×SNS（n=100）知らなかった企業に興味68%</li>
+</ul>
+<hr />
+<h2
+id="q4.-quality-softと伊藤忠の比較は恣意的では-業種規模給与働き方が違うのに福利厚生4項目だけで同じと言えないのでは">Q4.
+Quality Softと伊藤忠の比較は恣意的では？
+業種・規模・給与・働き方が違うのに福利厚生4項目だけで「同じ」と言えないのでは？</h2>
+<h3 id="攻撃の意図-4">攻撃の意図</h3>
+<p>デモの妥当性破壊。</p>
+<h3 id="回答-3">回答</h3>
+<blockquote>
+<p>おっしゃる通り、<strong>全体としての魅力が同じ</strong>とは言いません。意図は「全要素が等価」ではなく、<strong>学生が初期に目にする制度ラベル（食堂・産育休・テレワーク・フレックス等）だけでは判別がつきにくい</strong>ことのデモンストレーションです。</p>
+<p>クレオ調査でも、不足情報は制度の有無より「詳細」と「リアル」です。我々の問題設定は、ラベル比較で終わっている現状の情報設計を疑い、<strong>比較可能な粒度に落とす</strong>ことです。最終では給与レンジ、定着、職種別働き方など軸を増やす前提です。</p>
+</blockquote>
+<h3 id="一歩後退-1">一歩後退</h3>
+<blockquote>
+<p>中間時点の比較はヒューリスティックです。講評後、比較軸の妥当性検証（学生インタビュー／企業側ヒアリング）を入れます。</p>
+</blockquote>
+<hr />
+<h2
+id="q5.-お客様は誰-学生向けpfなのにお題の企業決裁者と矛盾していないか">Q5.
+お客様は誰？
+学生向けPFなのに、お題の「企業決裁者」と矛盾していないか？</h2>
+<h3 id="攻撃の意図-5">攻撃の意図</h3>
+<p>お題制約違反。最も痛い。</p>
+<h3 id="回答必ずこの型">回答（必ずこの型）</h3>
+<blockquote>
+<p><strong>決裁者＝企業側</strong>です。クライアントターゲットは「魅力的な福利厚生がそろっているが学生に知られていない企業」。学生はリーチ先であり、課金・KPIの主語は企業です。</p>
+<p>企業側の成功指標は例えば: -
+検討セット入り率（業界関心の学生に自社カードが露出したか） -
+応募の質（業界・志向フィット） - 説明会／インターン着座、内定承諾</p>
+<p>学生UIは、企業がお金を払う「配信・比較・到達」のインターフェースです。マイナビ／ワンキャリア／OpenWorkと同じく、<strong>両面市場で企業課金</strong>の構造を取ります。</p>
+</blockquote>
+<h3 id="出典両面市場の既存">出典（両面市場の既存）</h3>
+<ul>
+<li>OpenWork: 25卒学生ユーザー約31万人＝就活生の約2/3が登録（<a
+href="https://www.openwork.co.jp/press/2025020401">OpenWork
+IR</a>）</li>
+<li>ONE CAREER: 登録学生35万人超、就活生利用率の高さ（<a
+href="https://www.neo-career.co.jp/humanresource/onecareer/date/">解説例</a>）</li>
+</ul>
+<hr />
+<h2 id="q6.-openworkワンキャリアマイナビがあるのになぜ新規-差別化は">Q6.
+OpenWork／ワンキャリア／マイナビがあるのに、なぜ新規？ 差別化は？</h2>
+<h3 id="攻撃の意図-6">攻撃の意図</h3>
+<p>解決策の妥当性・インパクト。</p>
+<h3 id="回答-4">回答</h3>
+<blockquote>
+<p>既存は強いが、役割が違います。</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr>
+<th>既存</th>
+<th>強み</th>
+<th>我々が見るギャップ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>マイナビ／リクナビ</td>
+<td>網羅・母集団の量</td>
+<td>掲載順・検索がブランド／広告力に寄りやすい</td>
+</tr>
+<tr>
+<td>ONE CAREER</td>
+<td>選考体験談</td>
+<td>「受かる情報」中心。制度比較のフラット化が主目的ではない</td>
+</tr>
+<tr>
+<td>OpenWork</td>
+<td>社員クチコミ・スコア</td>
+<td>レビュー密度は大手・有名企業に偏りやすい。無名企業はデータが薄い</td>
+</tr>
+</tbody>
+</table>
+<p>我々のコアは
+<strong>「社名を隠した／弱めた状態でも、制度・働き方の構造化データで比較・発見できる」</strong>
+ことです。クチコミの多寡ではなく、<strong>属性の比較可能性</strong>で勝負します。</p>
+<p>知名度が低いBtoB企業でも、体験談・スカウト設計で承諾まで繋げた事例はワンキャリア側にもあります。我々はその「中身を見せれば勝てる」現象を、<strong>社名依存を意図的に下げたUI</strong>としてプロダクト化します。</p>
+</blockquote>
+<h3 id="出典-4">出典</h3>
+<ul>
+<li><a
+href="https://www.openwork.co.jp/press/2025020401">OpenWork学生30万突破</a></li>
+<li><a
+href="https://service.onecareer.jp/case/item-5187">ワンキャリア導入事例（知名度が低くても接点形成）</a></li>
+</ul>
+<h3 id="一歩後退-2">一歩後退</h3>
+<blockquote>
+<p>完全新規市場ではなく、既存PFの「比較・発見レイヤ」への差し込み／連携もあり得ます。最終では自前媒体か、既存SoRへのモジュールかを決めます。</p>
+</blockquote>
+<hr />
+<h2
+id="q7.-aiはどこに使う-お題はaiを活用したサービスだがスライドにないtiktokのマネでは">Q7.
+AIはどこに使う？
+お題は「AIを活用したサービス」だがスライドにない。／TikTokのマネでは？</h2>
+<h3 id="攻撃の意図-7">攻撃の意図</h3>
+<p>お題未達。中間でも方向性は聞かれる。差別化。</p>
+<h3 id="回答中間用正直方向">回答（中間用・正直＋方向）</h3>
+<blockquote>
+<p>中間のスコープは市場・理想・本質課題の合意形成です。AIの詳細は最終に置きますが、方向は
+<strong>TikTok型フィードの推薦エンジンを採用ドメインに特化</strong>することです。</p>
+<ol type="1">
+<li><strong>コンテンツ推薦</strong>:
+視聴・保存・スキップから「働き方・業界・空気感」の興味を推定し、次カード／次動画を出す<br />
+</li>
+<li><strong>ブランド特徴の抑制</strong>:
+社名埋め込み・知名度スコアの重みを下げ、「まだ知らないが属性が近い企業」を優先（社名依存の入口を壊す）<br />
+</li>
+<li><strong>非構造→構造化</strong>:
+福利厚生・制度・動画メタデータを比較可能な属性に正規化<br />
+</li>
+<li><strong>企業側ログ</strong>:
+なぜその学生に届いたかを説明可能にする（自動合否はしない）</li>
+</ol>
+<p>一般の「マッチング精度アップ」ではなく、<strong>社名バイアス補正のための推薦AI</strong>です。</p>
+</blockquote>
+<h3 id="出典市場文脈">出典（市場文脈）</h3>
+<ul>
+<li>お題制約: <a href="./odai.md"><code>odai.md</code></a></li>
+<li>動画が意欲を上げる: エアリク（仕事風景動画27.8%がきっかけ1位）</li>
+<li><a
+href="https://rc.persol-group.co.jp/thinktank/spe/roudou2030/">パーソル×中央大「労働市場の未来推計2030」</a></li>
+</ul>
+<hr />
+<h2
+id="q8.-理想状態が魅力を学生に知ってもらうだけでは弱い企業決裁者の理想は">Q8.
+理想状態が「魅力を学生に知ってもらう」だけでは弱い。企業決裁者の理想は？</h2>
+<h3 id="攻撃の意図-8">攻撃の意図</h3>
+<p>理想が学生都合。</p>
+<h3 id="回答-5">回答</h3>
+<blockquote>
+<p>企業決裁者の理想は次です。</p>
+<p><strong>限られた採用予算で、自社の実質的な働きやすさ・制度競争力に見合った学生と出会い、ミスマッチの少ない母集団を作れる状態。</strong></p>
+<p>「知ってもらう」はその手段です。KPIは認知そのものではなく、<strong>出会いの質と採用成果（着座・承諾・早期離職の抑制）</strong>に置きます。</p>
+</blockquote>
+<h3 id="補足データ">補足データ</h3>
+<ul>
+<li>承諾段階で福利厚生が決め手になる（前述マイナビ）→制度競争力を「見える化」する投資は、決裁者にとって説明しやすい</li>
+<li>300人未満の希望者▲33.3%（ワークス）→「もっと広告費」だけでは構造が直らない可能性が高い</li>
+</ul>
+<hr />
+<h2
+id="q9.-中小企業志向は増えているのではマイナビそれなのに知られないは過剰では">Q9.
+中小企業志向は増えているのでは？（マイナビ）それなのに「知られない」は過剰では？</h2>
+<h3 id="攻撃の意図-9">攻撃の意図</h3>
+<p>トレンドで仮説を薄める。</p>
+<h3 id="回答-6">回答</h3>
+<blockquote>
+<p>志向の微増と、需給の厳しさは両立します。</p>
+<p>マイナビの就職意識調査では、大手志向がなお5割超を維持しつつ微減、中堅・中小志向が微増、という動きがあります（26卒・27卒）。一方でワークスの規模別倍率では、300人未満は
+<strong>8.98倍</strong>で希望者が大幅減。つまり「中小でもいい」学生が増えても、<strong>求人側の不足感は解消していない</strong>。</p>
+<p>我々のターゲットは「中小全般」ではなく、<strong>制度は強いが発見されていない企業</strong>に絞ります。志向の微増を取りこぼさないためのインフラ、という位置づけです。</p>
+</blockquote>
+<h3 id="出典-5">出典</h3>
+<ul>
+<li><a
+href="https://www.mynavi.jp/news/2025/04/post_48659.html">マイナビ
+2026年卒 大学生就職意識調査</a></li>
+<li><a
+href="https://www.mynavi.jp/news/2026/04/post_53187.html">マイナビ
+2027年卒 大学生就職意識調査</a>（大手50.9%／中堅・中小44.0%）</li>
+<li>ワークス2026年卒（前述）</li>
+</ul>
+<hr />
+<h2 id="q10.-なぜ新卒-人手不足の本丸は中途生産性ではパーソル644万">Q10.
+なぜ新卒？ 人手不足の本丸は中途・生産性では？（パーソル644万）</h2>
+<h3 id="攻撃の意図-10">攻撃の意図</h3>
+<p>川嶋ドラフト／市場リサーチの本線と衝突。</p>
+<h3 id="回答本内容を守る版">回答（本内容を守る版）</h3>
+<blockquote>
+<p>パーソル推計の644万不足は、供給（女性・シニア・外国人）と生産性で埋める構造で、新卒だけでは解けません。我々は「644万を新卒で埋める」とは言いません。</p>
+<p>ただし企業決裁者にとって、<strong>新卒パイプラインは将来の戦力と文化形成の投資</strong>であり、規模別ギャップが最も可視化されている市場でもあります。まずは新卒の「出会いの歪み」で課題定義をシャープにし、同じ比較・到達の仕組みを中途ブランドに拡張する、という段階設計です。</p>
+</blockquote>
+<h3
+id="一歩後退講評者が強く押したら">一歩後退（講評者が強く押したら）</h3>
+<blockquote>
+<p>中間後、ターゲットを「新卒」から「認知格差のある採用全般（中途含む）」へ広げる／または選考フィット課題へ寄せる、をチームで再検討します。</p>
+</blockquote>
+<h3 id="出典-6">出典</h3>
+<ul>
+<li><a
+href="https://rc.persol-group.co.jp/thinktank/spe/roudou2030/">労働市場の未来推計2030</a></li>
+</ul>
+<hr />
+<h2
+id="q11.-情報がフラットだと悪い企業も良く見えるのでは-逆選択では">Q11.
+「情報がフラット」だと、悪い企業も良く見えるのでは？ 逆選択では？</h2>
+<h3 id="攻撃の意図-11">攻撃の意図</h3>
+<p>プロダクト設計の欠陥。</p>
+<h3 id="回答-7">回答</h3>
+<blockquote>
+<p>フラット＝全ての情報を平等に盛る、ではありません。<strong>社名による先行印象を抑え、検証可能な属性で並べる</strong>という意味です。</p>
+<p>逆選択対策としては: -
+第三者・一次情報の混在（制度の公式データ＋検証可能な口コミ密度） -
+欠損の明示（データが薄い企業は薄いと出す） -
+企業の過剰演出を検知するルール（最終で設計）</p>
+<p>OpenWorkがクチコミで「実態」を出す役割を持つように、我々も<strong>透明性のないフラット化はしない</strong>、と明言します。</p>
+</blockquote>
+<hr />
+<h2
+id="q12.-企業は社名を隠した比較に協力するのか-採用はブランディングでもあるのでは">Q12.
+企業は社名を隠した比較に協力するのか？
+採用はブランディングでもあるのでは？</h2>
+<h3 id="回答-8">回答</h3>
+<blockquote>
+<p>常時匿名化が必須とは限りません。ユースケースは例えば: 1.
+探索フェーズだけ社名を弱め、興味後に開示<br />
+2. 同業比較で属性ソートをデフォルトにし、社名ソートを下げる</p>
+<p>企業にとってのインセンティブは、広告費で認知を買うより安く、<strong>制度投資のROIを回収できる接点</strong>が持てることです。ブランド力で勝てない企業が払う理由になります。</p>
+</blockquote>
+<hr />
+<h2 id="q13.-成功指標は-どう測る">Q13. 成功指標は？ どう測る？</h2>
+<h3 id="回答-9">回答</h3>
+<blockquote>
+<p>企業側（主）: - 対象セグメント学生への露出・保存・詳細閲覧 -
+説明会／インターン着座CPA -
+内定承諾率、入社後早期離職（半年〜1年）※最終で接続</p>
+<p>学生側（副次・品質）: - 「社名を見る前に興味を持った企業数」 -
+比較に使った属性の多様性</p>
+<p>中間時点では指標の仮説提示まで。最終でベースラインと比較実験の設計を出します。</p>
+</blockquote>
+<hr />
+<h2
+id="q14.-チーム内ヒアリング玉城熊谷では早期離職矢印ズレが重要だったのでは-方針が変わった理由は">Q14.
+チーム内ヒアリング（玉城・熊谷）では早期離職・矢印ズレが重要だったのでは？
+方針が変わった理由は？</h2>
+<h3 id="攻撃の意図-12">攻撃の意図</h3>
+<p>一貫性。メンターがDay1を覚えている場合に痛い。</p>
+<h3 id="回答-10">回答</h3>
+<blockquote>
+<p>Day1ではミスマッチ／早期離職も議論しました。中間では、まず<strong>出会いの上流（検討セット形成）</strong>に課題を置きました。矢印ズレは選考〜入社後の問題で、出会い自体が起きないと到達しません。</p>
+<p>最終に向けては、上流（発見）と中流（選考での期待合わせ）を接続する案も残しています。本日は上流の本質課題に合意を取りに来ています。</p>
+</blockquote>
+<h3 id="内部参照">内部参照</h3>
+<ul>
+<li><a
+href="./hearing-2026-09-07-tamaki.md"><code>hearing-2026-09-07-tamaki.md</code></a></li>
+<li><a
+href="./hearing-2026-09-07-kumagai.md"><code>hearing-2026-09-07-kumagai.md</code></a></li>
+<li><a
+href="./service-recommendation-day1.md"><code>service-recommendation-day1.md</code></a></li>
+</ul>
+<hr />
+<h2
+id="q15.-今の世代にあった企業を知れるサービスは抽象的z世代特化-何が世代固有">Q15.
+「今の世代にあった企業を知れるサービス」は抽象的。Z世代特化？
+何が世代固有？</h2>
+<h3 id="回答-11">回答</h3>
+<blockquote>
+<p>世代固有というより、<strong>情報収集チャネルと意思決定の変化</strong>です。クレオ調査では採用サイト・就活サイト・公式SNSが上位。約8割が情報不足を感じ、欲しいのは制度の羅列よりリアル。</p>
+<p>No
+Company調査も、建前情報では選考辞退が起きることを示します。我々の「今の世代」は、<strong>タイパ重視で、比較可能な一次情報がないと意思決定できない学生</strong>を指します。流行語ではなく、情報行動の変化です。</p>
+</blockquote>
+<hr />
+<h2
+id="即答用チートシート数値だけ暗記">即答用チートシート（数値だけ暗記）</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>数字</th>
+<th>意味</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>8.98倍 / 0.34倍</strong></td>
+<td>300人未満 vs 5000人以上の大卒求人倍率（2026卒）</td>
+<td>ワークス</td>
+</tr>
+<tr>
+<td><strong>希望者▲33.3%</strong></td>
+<td>300人未満への就職希望者減</td>
+<td>ワークス</td>
+</tr>
+<tr>
+<td><strong>99.7%</strong></td>
+<td>企業数に占める中小</td>
+<td>中小企業白書／日経</td>
+</tr>
+<tr>
+<td><strong>約8割</strong></td>
+<td>就活情報の不足感</td>
+<td>クレオ</td>
+</tr>
+<tr>
+<td><strong>37.9%</strong></td>
+<td>内々定承諾決め手1位＝福利厚生</td>
+<td>マイナビ2026卒</td>
+</tr>
+<tr>
+<td><strong>約9割</strong></td>
+<td>人気企業でも選考中に志望低下・辞退</td>
+<td>No Company</td>
+</tr>
+<tr>
+<td><strong>約2/3</strong></td>
+<td>OpenWork登録の就活生比率（25/26卒）</td>
+<td>OpenWork</td>
+</tr>
+<tr>
+<td><strong>644万人</strong></td>
+<td>2030年労働力不足推計</td>
+<td>パーソル×中央大</td>
+</tr>
+<tr>
+<td><strong>83.5%</strong></td>
+<td>SNSで社名検索した就活生</td>
+<td>エアリク27卒</td>
+</tr>
+<tr>
+<td><strong>36.6%</strong></td>
+<td>社名検索にTikTokを使用（複数回答）</td>
+<td>エアリク27卒</td>
+</tr>
+<tr>
+<td><strong>68%</strong></td>
+<td>SNSきっかけで知らなかった企業に興味</td>
+<td>LIDDELL</td>
+</tr>
+<tr>
+<td><strong>85.8%</strong></td>
+<td>企業SNS閲覧で入社意欲↑</td>
+<td>エアリク27卒</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2
+id="参考文献一覧発表後に聞かれたら渡す用">参考文献一覧（発表後に聞かれたら渡す用）</h2>
+<ol type="1">
+<li>リクルートワークス研究所「第42回
+ワークス大卒求人倍率調査（2026年卒）」
+https://www.works-i.com/surveys/report/250424_recruitment_saiyo_ratio.html<br />
+</li>
+<li>株式会社クレオ「就活生の企業選びにおける本音調査」
+https://kreo.jp/news/251202_saiyoureport<br />
+</li>
+<li>株式会社No Company「人気企業の選考辞退」調査
+https://prtimes.jp/main/html/rd/p/000000058.000089446.html<br />
+</li>
+<li>マイナビ「2026年卒
+大学生キャリア意向調査」（承諾理由・福利厚生）※要約
+https://edenred.jp/article/hr-recruiting/345/<br />
+</li>
+<li>マイナビ「2026／2027年卒 大学生就職意識調査」
+https://www.mynavi.jp/news/2025/04/post_48659.html /
+https://www.mynavi.jp/news/2026/04/post_53187.html<br />
+</li>
+<li>オープンワーク「学生ユーザー30万／32万突破」
+https://www.openwork.co.jp/press/2025020401<br />
+</li>
+<li>パーソル総合研究所×中央大学「労働市場の未来推計 2030」
+https://rc.persol-group.co.jp/thinktank/spe/roudou2030/<br />
+</li>
+<li>中小企業の企業数割合（99.7%）: 中小企業白書／<a
+href="https://www.nikkei.com/article/DGXZQOUA172CQ0X10C24A8000000/">日経</a><br />
+</li>
+<li>伊藤忠福利厚生ページ（スライド出典）
+https://www.itochu.co.jp/ja/csr/society/employee/employee_benefits/index.html<br />
+</li>
+<li>Quality Soft https://www.qualitysoft.com<br />
+</li>
+<li>リソースクリエイション（エアリク）SNS就活調査27卒／<a
+href="https://www.itmedia.co.jp/news/article/2608/24/2000000729/">ITmedia</a><br />
+</li>
+<li>LIDDELL「就活×SNS」アンケート／<a
+href="https://www.sankei.com/pressrelease/prtimes/6EIQ7ARCQNMHFL54Q2PFTDPCSU/">産経PR</a><br />
+</li>
+<li>NTTドコモ モバイル社会研究所
+2025年SNS利用者行動調査（10–20代毎日利用）</li>
+</ol>
+<hr />
+<h2 id="チーム運用メモ">チーム運用メモ</h2>
+<ul>
+<li>数値は <strong>ワークス8.98/0.34</strong> ＋
+<strong>社名検索83.5%</strong> ＋ <strong>福利厚生37.9%</strong>
+の3点セットが最強<br />
+</li>
+<li>「社名でしか決めない」は入口の強調。質疑では
+<strong>入口＝社名／出口＝制度</strong> に戻す<br />
+</li>
+<li>解決の方向は必ず
+<strong>TikTok型フィード＋推薦（社名重み↓）</strong>
+まで一言添える<br />
+</li>
+<li>「学生のため」と言われたら必ず <strong>企業決裁者KPI</strong>
+に言い換える<br />
+</li>
+<li>Day1の矢印案を否定せず「上流（発見）→中流（選考フィット）」の接続候補として残す</li>
+</ul>
+
+  <p class="raw"><a href="./source.md">source.md（生 Markdown）</a></p>
+  <script src="../../theme.js"></script>
+</body>
+</html>
