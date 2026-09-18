@@ -11,7 +11,10 @@
 <body>
   <main class="wrap">
     <p class="crumb"><a href="/">tools.yutok.dev</a> / transfer</p>
-    <h1>ファイル転送</h1>
+    <div class="title-row">
+      <h1>ファイル転送</h1>
+      <button type="button" id="settings-btn" class="icon-btn" aria-label="設定" title="設定">設定</button>
+    </div>
     <p class="lead">端末間でファイルを受け渡します。アップロードは本人のみ。ダウンロードはパスワード必須です。</p>
 
     <nav class="tabs" role="tablist" aria-label="転送モード">
@@ -76,7 +79,16 @@
         <div id="result" class="result" hidden>
           <h2>共有リンク</h2>
           <p><a id="result-link" href="#"></a></p>
+          <div class="share-row">
+            <button type="button" id="share-btn" class="secondary-btn">共有</button>
+            <button type="button" id="copy-link-btn" class="secondary-btn">リンクをコピー</button>
+          </div>
+          <div class="qr-wrap">
+            <canvas id="result-qr" width="160" height="160" aria-label="共有リンクの QR コード"></canvas>
+            <p class="muted">QR コードを読み取るとダウンロードページを開けます。</p>
+          </div>
           <p class="muted">パスワードはサイト外で相手に伝えてください。リンクは約 24 時間で無効になります。</p>
+          <p id="share-msg" class="msg" hidden></p>
         </div>
 
         <p id="r2-msg" class="msg" hidden></p>
@@ -93,6 +105,22 @@
       <p class="muted">QR / 超音波によるオフライン小容量転送は Phase 3 で実装予定です。</p>
     </section>
   </main>
+
+  <dialog id="settings-dialog" class="settings-dialog">
+    <form method="dialog" class="settings-head">
+      <h2>R2 管理</h2>
+      <button type="submit" class="icon-btn" value="close" aria-label="閉じる">閉じる</button>
+    </form>
+    <p id="settings-auth-hint" class="muted" hidden>一覧・削除には所有者認証が必要です。下のゲートでログインしてください。</p>
+    <p id="settings-summary" class="muted">読み込み中…</p>
+    <div class="settings-actions">
+      <button type="button" id="settings-refresh" class="secondary-btn">再読み込み</button>
+      <button type="button" id="settings-purge" class="danger-btn">すべて削除</button>
+    </div>
+    <p id="settings-msg" class="msg" hidden></p>
+    <div id="settings-list" class="settings-list"></div>
+  </dialog>
+
   <script type="module" src="./app.js"></script>
 </body>
 </html>

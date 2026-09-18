@@ -39,6 +39,74 @@ async function putMeta(env: Env, meta: TransferMeta): Promise<void> {
   await env.META.put(metaKey(meta.slug), JSON.stringify(meta), { expirationTtl: ttl });
 }
 
+async function deleteTransferByMeta(env: Env, meta: TransferMeta): Promise<void> {
+  if (meta.uploadId) {
+    try {
+      await env.BUCKET.resumeMultipartUpload(meta.r2Key, meta.uploadId).abort();
+    } catch {
+      /* ignore */
+    }
+  }
+  try {
+    await env.BUCKET.delete(meta.r2Key);
+  } catch {
+    /* ignore */
+  }
+  await env.META.delete(metaKey(meta.slug));
+  const slot = await env.META.get(SLOT_KEY);
+  if (slot === meta.slug) await env.META.delete(SLOT_KEY);
+}
+
+async function listTransfers(env: Env): Promise<
+  {
+    slug: string;
+    status: TransferMeta["status"];
+    size: number;
+    originalName: string;
+    contentType: string;
+    r2Key: string;
+    createdAt: number;
+    expiresAt: number;
+  }[]
+> {
+  const listed = await env.META.list({ prefix: META_PREFIX });
+  const items = [];
+  for (const key of listed.keys) {
+    const raw = await env.META.get(key.name);
+    if (!raw) continue;
+    const meta = JSON.parse(raw) as TransferMeta;
+    items.push({
+      slug: meta.slug,
+      status: meta.status,
+      size: meta.size,
+      originalName: meta.originalName,
+      contentType: meta.contentType,
+      r2Key: meta.r2Key,
+      createdAt: meta.createdAt,
+      expiresAt: meta.expiresAt,
+    });
+  }
+  items.sort((a, b) => b.createdAt - a.createdAt);
+  return items;
+}
+
+async function listR2Objects(env: Env): Promise<{ key: string; size: number; uploaded: string }[]> {
+  const out: { key: string; size: number; uploaded: string }[] = [];
+  let cursor: string | undefined;
+  do {
+    const page = await env.BUCKET.list({ prefix: "transfers/", cursor, limit: 500 });
+    for (const obj of page.objects) {
+      out.push({
+        key: obj.key,
+        size: obj.size,
+        uploaded: obj.uploaded.toISOString(),
+      });
+    }
+    cursor = page.truncated ? page.cursor : undefined;
+  } while (cursor);
+  return out;
+}
+
 async function cleanupExpired(env: Env): Promise<string[]> {
   const removed: string[] = [];
   const listed = await env.META.list({ prefix: META_PREFIX });
@@ -282,24 +350,67 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     const body = await readJson<{ slug: string }>(request);
     if (!body || !isValidSlug(body.slug)) return json({ error: "Invalid slug" }, 400);
     const meta = await getMeta(env, body.slug);
-    if (meta) {
-      if (meta.uploadId) {
-        try {
-          await env.BUCKET.resumeMultipartUpload(meta.r2Key, meta.uploadId).abort();
-        } catch {
-          /* ignore */
-        }
-      }
-      try {
-        await env.BUCKET.delete(meta.r2Key);
-      } catch {
-        /* ignore */
-      }
-      await env.META.delete(metaKey(body.slug));
-      const slot = await env.META.get(SLOT_KEY);
-      if (slot === body.slug) await env.META.delete(SLOT_KEY);
-    }
+    if (meta) await deleteTransferByMeta(env, meta);
     return json({ ok: true });
+  }
+
+  if (path === "/transfer/api/admin/r2" && request.method === "GET") {
+    const gate = await requireUploadAccess(request, env);
+    if (gate) return gate;
+    await cleanupExpired(env);
+    const transfers = await listTransfers(env);
+    const objects = await listR2Objects(env);
+    const knownKeys = new Set(transfers.map((t) => t.r2Key));
+    const orphans = objects.filter((o) => !knownKeys.has(o.key));
+    const slot = await env.META.get(SLOT_KEY);
+    return json({
+      transfers,
+      objects,
+      orphans,
+      slot,
+      totals: {
+        transferCount: transfers.length,
+        objectCount: objects.length,
+        bytes: objects.reduce((sum, o) => sum + o.size, 0),
+      },
+    });
+  }
+
+  if (path === "/transfer/api/admin/r2" && request.method === "DELETE") {
+    const gate = await requireUploadAccess(request, env);
+    if (gate) return gate;
+    const body = await readJson<{ slug?: string; key?: string; all?: boolean }>(request);
+    if (!body) return json({ error: "Invalid JSON" }, 400);
+
+    if (body.all) {
+      const transfers = await listTransfers(env);
+      for (const t of transfers) {
+        const meta = await getMeta(env, t.slug);
+        if (meta) await deleteTransferByMeta(env, meta);
+      }
+      const objects = await listR2Objects(env);
+      if (objects.length) {
+        await env.BUCKET.delete(objects.map((o) => o.key));
+      }
+      await env.META.delete(SLOT_KEY);
+      return json({ ok: true, deletedTransfers: transfers.length, deletedObjects: objects.length });
+    }
+
+    if (body.slug) {
+      if (!isValidSlug(body.slug)) return json({ error: "Invalid slug" }, 400);
+      const meta = await getMeta(env, body.slug);
+      if (!meta) return json({ error: "not found" }, 404);
+      await deleteTransferByMeta(env, meta);
+      return json({ ok: true, deleted: body.slug });
+    }
+
+    if (body.key) {
+      if (!body.key.startsWith("transfers/")) return json({ error: "Invalid key" }, 400);
+      await env.BUCKET.delete(body.key);
+      return json({ ok: true, deletedKey: body.key });
+    }
+
+    return json({ error: "slug / key / all のいずれかが必要です" }, 400);
   }
 
   const authMatch = path.match(/^\/transfer\/api\/dl\/([^/]+)\/auth$/);

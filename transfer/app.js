@@ -2,6 +2,15 @@ import { estimateR2Cost, formatBytes, MAX_BYTES, PART_SIZE } from "./cost.js";
 
 const $ = (id) => document.getElementById(id);
 
+let qrModulePromise = null;
+
+function loadQrModule() {
+  if (!qrModulePromise) {
+    qrModulePromise = import("https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm");
+  }
+  return qrModulePromise;
+}
+
 function showMsg(text, ok = false) {
   const el = $("r2-msg");
   el.hidden = !text;
@@ -16,9 +25,26 @@ function showAuthMsg(text, ok = false) {
   el.classList.toggle("ok", !!ok);
 }
 
+function showShareMsg(text, ok = false) {
+  const el = $("share-msg");
+  el.hidden = !text;
+  el.textContent = text || "";
+  el.classList.toggle("ok", !!ok);
+}
+
+function showSettingsMsg(text, ok = false) {
+  const el = $("settings-msg");
+  el.hidden = !text;
+  el.textContent = text || "";
+  el.classList.toggle("ok", !!ok);
+}
+
 function setAuthenticated(ok) {
   $("auth-gate").hidden = ok;
   $("upload-area").hidden = !ok;
+  $("settings-auth-hint").hidden = ok;
+  $("settings-purge").disabled = !ok;
+  $("settings-refresh").disabled = false;
 }
 
 function wireTabs() {
@@ -71,7 +97,7 @@ async function readJsonResponse(res) {
   const trimmed = text.trim();
   if (!trimmed || trimmed.startsWith("<!") || trimmed.startsWith("<html")) {
     const err = new Error(
-      "転送 API が HTML を返しました（Worker 未経由）。DNS を橙雲にし、ブラウザの DNS キャッシュを消して再読み込みしてください。",
+      "転送 API が HTML を返しました（Worker 未経由）。Chrome など通常ブラウザで開くか、DNS 橙雲とキャッシュを確認してください。",
     );
     err.code = "API_HTML";
     throw err;
@@ -174,6 +200,68 @@ async function uploadFile(file, slug, password) {
   return done;
 }
 
+async function renderShareResult(href) {
+  const absolute = href.startsWith("http") ? href : `${location.origin}${href}`;
+  const link = $("result-link");
+  link.href = absolute;
+  link.textContent = absolute;
+  $("result").hidden = false;
+  showShareMsg("");
+
+  try {
+    const QRCode = await loadQrModule();
+    const canvas = $("result-qr");
+    await QRCode.toCanvas(canvas, absolute, {
+      width: 160,
+      margin: 1,
+      color: { dark: "#111111", light: "#ffffff" },
+    });
+  } catch (e) {
+    showShareMsg(`QR 生成に失敗: ${e.message || e}`);
+  }
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand("copy");
+  ta.remove();
+}
+
+function wireShare() {
+  $("copy-link-btn").addEventListener("click", async () => {
+    const url = $("result-link").href;
+    try {
+      await copyText(url);
+      showShareMsg("リンクをコピーしました", true);
+    } catch (e) {
+      showShareMsg(e.message || "コピーに失敗しました");
+    }
+  });
+
+  $("share-btn").addEventListener("click", async () => {
+    const url = $("result-link").href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "ファイル転送", text: "ダウンロードリンク", url });
+        showShareMsg("共有シートを開きました", true);
+      } else {
+        await copyText(url);
+        showShareMsg("この端末では共有 API 非対応のため、リンクをコピーしました", true);
+      }
+    } catch (e) {
+      if (e?.name === "AbortError") return;
+      showShareMsg(e.message || "共有に失敗しました");
+    }
+  });
+}
+
 function wireAuth() {
   $("auth-form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
@@ -193,7 +281,7 @@ function wireAuth() {
       });
       if (res.status === 405) {
         throw new Error(
-          "POST が GitHub Pages に遮断されています（405）。tools の DNS を Cloudflare 橙雲にし、ipconfig /flushdns 後に再試行してください。",
+          "POST が GitHub Pages に遮断されています（405）。Chrome など通常ブラウザで開くか、DNS 橙雲とキャッシュを確認してください。",
         );
       }
       const data = await readJsonResponse(res);
@@ -202,6 +290,11 @@ function wireAuth() {
       setAuthenticated(true);
       showAuthMsg("");
       await refreshStatus();
+      if (!$("settings-dialog").open) {
+        /* keep dialog state */
+      } else {
+        await loadSettingsList();
+      }
     } catch (e) {
       showAuthMsg(e.message || String(e));
       setAuthenticated(false);
@@ -239,10 +332,7 @@ function wireForm() {
     try {
       const done = await uploadFile(file, slug, password);
       const href = done.downloadPath || `/transfer/d/${slug}`;
-      const link = $("result-link");
-      link.href = href;
-      link.textContent = `${location.origin}${href}`;
-      $("result").hidden = false;
+      await renderShareResult(href);
       showMsg("アップロード完了", true);
       await refreshStatus();
     } catch (e) {
@@ -263,9 +353,132 @@ function wireForm() {
   });
 }
 
+function renderSettingsList(data) {
+  const list = $("settings-list");
+  list.innerHTML = "";
+  const transfers = data.transfers || [];
+  const orphans = data.orphans || [];
+
+  if (!transfers.length && !orphans.length) {
+    list.innerHTML = `<p class="muted">R2 上に転送データはありません。</p>`;
+    return;
+  }
+
+  for (const t of transfers) {
+    const el = document.createElement("article");
+    el.className = "settings-item";
+    el.innerHTML = `
+      <h3>${t.slug} <span class="muted">(${t.status})</span></h3>
+      <p class="meta">${t.originalName} · ${formatBytes(t.size)}</p>
+      <p class="meta">作成 ${new Date(t.createdAt).toLocaleString()} / 期限 ${new Date(t.expiresAt).toLocaleString()}</p>
+      <p class="meta">${t.r2Key}</p>
+      <div class="row-actions">
+        <a class="secondary-btn" href="/transfer/d/${encodeURIComponent(t.slug)}" target="_blank" rel="noopener">DL ページ</a>
+        <button type="button" class="danger-btn" data-del-slug="${t.slug}">削除</button>
+      </div>
+    `;
+    list.appendChild(el);
+  }
+
+  for (const o of orphans) {
+    const el = document.createElement("article");
+    el.className = "settings-item";
+    el.innerHTML = `
+      <h3>孤立オブジェクト</h3>
+      <p class="meta">${o.key} · ${formatBytes(o.size)}</p>
+      <p class="meta">uploaded ${new Date(o.uploaded).toLocaleString()}</p>
+      <div class="row-actions">
+        <button type="button" class="danger-btn" data-del-key="${o.key}">削除</button>
+      </div>
+    `;
+    list.appendChild(el);
+  }
+}
+
+async function loadSettingsList() {
+  showSettingsMsg("");
+  $("settings-summary").textContent = "読み込み中…";
+  try {
+    const res = await fetch("/transfer/api/admin/r2", { credentials: "include" });
+    if (res.status === 401) {
+      setAuthenticated(false);
+      $("settings-summary").textContent = "未認証です。ゲートパスワードでログインしてください。";
+      $("settings-list").innerHTML = "";
+      return;
+    }
+    const data = await readJsonResponse(res);
+    if (!res.ok) throw new Error(data.error || res.statusText);
+    setAuthenticated(true);
+    const totals = data.totals || { transferCount: 0, objectCount: 0, bytes: 0 };
+    $("settings-summary").textContent =
+      `転送 ${totals.transferCount} 件 / オブジェクト ${totals.objectCount} 件 / 合計 ${formatBytes(totals.bytes)}` +
+      (data.slot ? ` / スロット: ${data.slot}` : " / スロット空き");
+    renderSettingsList(data);
+  } catch (e) {
+    $("settings-summary").textContent = "取得に失敗しました";
+    showSettingsMsg(e.message || String(e));
+  }
+}
+
+async function deleteAdmin({ slug, key, all }) {
+  const res = await fetch("/transfer/api/admin/r2", {
+    method: "DELETE",
+    credentials: "include",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ slug, key, all }),
+  });
+  const data = await readJsonResponse(res);
+  if (!res.ok) throw new Error(data.error || "削除に失敗しました");
+  return data;
+}
+
+function wireSettings() {
+  const dialog = $("settings-dialog");
+  $("settings-btn").addEventListener("click", async () => {
+    dialog.showModal();
+    await loadSettingsList();
+  });
+
+  $("settings-refresh").addEventListener("click", () => loadSettingsList());
+
+  $("settings-purge").addEventListener("click", async () => {
+    if (!confirm("R2 上の転送データと孤立オブジェクトをすべて削除します。よろしいですか？")) return;
+    try {
+      const result = await deleteAdmin({ all: true });
+      showSettingsMsg(
+        `すべて削除しました（転送 ${result.deletedTransfers || 0} / オブジェクト ${result.deletedObjects || 0}）`,
+        true,
+      );
+      await loadSettingsList();
+      await refreshStatus();
+    } catch (e) {
+      showSettingsMsg(e.message || String(e));
+    }
+  });
+
+  $("settings-list").addEventListener("click", async (ev) => {
+    const btn = ev.target.closest("[data-del-slug], [data-del-key]");
+    if (!btn) return;
+    const slug = btn.getAttribute("data-del-slug");
+    const key = btn.getAttribute("data-del-key");
+    const label = slug || key;
+    if (!confirm(`削除します: ${label}`)) return;
+    try {
+      await deleteAdmin(slug ? { slug } : { key });
+      showSettingsMsg("削除しました", true);
+      await loadSettingsList();
+      await refreshStatus();
+    } catch (e) {
+      showSettingsMsg(e.message || String(e));
+    }
+  });
+}
+
 wireTabs();
 wireAuth();
 wireForm();
+wireShare();
+wireSettings();
 (async () => {
   const ok = await checkAuth();
   if (ok) await refreshStatus();
