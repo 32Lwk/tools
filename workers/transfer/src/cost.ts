@@ -3,7 +3,9 @@
  * Rates mirror Cloudflare R2 Standard pricing (free tier aware).
  */
 
-export const MAX_BYTES = 15 * 1024 * 1024 * 1024; // 15 GiB
+/** Per-file and concurrent total cap = R2 free storage (10 GiB). */
+export const FREE_STORAGE_BYTES = 10 * 1024 * 1024 * 1024;
+export const MAX_BYTES = FREE_STORAGE_BYTES;
 export const RETENTION_HOURS = 24;
 export const PART_SIZE = 32 * 1024 * 1024; // 32 MiB (under Workers body limit)
 export const FREE_STORAGE_GB_MONTH = 10;
@@ -43,15 +45,10 @@ export function estimateR2Cost(sizeBytes: number, partSize = PART_SIZE): CostEst
   const withinFreeClassA = classAOps <= FREE_CLASS_A;
   const warnings: string[] = [];
   if (sizeBytes > MAX_BYTES) {
-    warnings.push(`上限 ${MAX_BYTES / 1024 ** 3} GiB を超えています`);
+    warnings.push(`上限 ${MAX_BYTES / 1024 ** 3} GiB（R2 無料枠の同時合計）を超えています`);
   }
   if (!withinFreeStorage) {
     warnings.push("このアップロード単体で R2 無料保管枠（10 GB-month）を超える見込みです");
-  }
-  if (sizeGiB > 10) {
-    warnings.push(
-      "保管中の瞬間容量が 10 GiB を超えます。月平均 GB-month は小さくても、他用途と併用する場合は枠に注意してください",
-    );
   }
   return {
     sizeBytes,

@@ -1,6 +1,6 @@
-# 転送機能の運用手順（Phase 1）
+# 転送機能の運用手順（Phase 1 + Phase 2）
 
-Cloudflare 上で `tools.yutok.dev/transfer*` を Worker に振り、R2 一時転送を有効化する手順です。
+Cloudflare 上で `tools.yutok.dev/transfer*` を Worker に振り、R2 一時転送と Google Drive 保管を有効化する手順です。
 
 ## 前提
 
@@ -13,7 +13,7 @@ Cloudflare 上で `tools.yutok.dev/transfer*` を Worker に振り、R2 一時�
 1. **Worker 未デプロイ** — `/transfer/api/*` が GitHub Pages の 404 になる
 2. **DNS が灰雲（DNS only）** — Worker Routes は橙雲（Proxied）必須。公開 DNS が `185.199.x.x`（GitHub）のままなら未 Proxied
 3. **KV / R2 未作成または ID 未記入** — multipart / メタデータが失敗する
-4. **認証未設定** — 本番は `UPLOAD_GATE`（または Cloudflare Access）必須。未設定だと upload API は 503
+4. **認証未設定** — 本番は Cloudflare Access または Google OAuth 必須。未設定だと upload API は 503
 
 ## 1. R2 / KV を作成
 
@@ -40,32 +40,88 @@ Cloudflare Dashboard → DNS → `tools` レコードの Proxy status を Proxie
 
 ## 3. アップロード認証（必須）
 
-誰でもアップロードできないよう、本番は **fail-closed** です。
+誰でもアップロードできないよう、本番は **fail-closed** です。UI は **Cloudflare Zero Trust** と **Google** のボタンのみ（ゲートパスワード入力は廃止）。
 
-### A. ゲートパスワード（推奨・即時）
+どちらか一方、または両方を設定できます。Drive 保管を使う場合は Google OAuth が必須です。
+
+### A. Cloudflare Access（Zero Trust・推奨）
+
+1. Zero Trust → Access → Applications → Add Self-hosted
+2. Domain: `tools.yutok.dev`
+3. **保護する例:** `/transfer`, `/transfer/`, `/transfer/api/auth/*`（callback 以外）, `/transfer/api/status`, `/transfer/api/r2/*`, `/transfer/api/drive/*`, `/transfer/api/admin/*`
+4. **公開 DL / OAuth は `/share*`（Access 外）** — Worker Routes に `tools.yutok.dev/share*` を追加済み。共有リンクは `https://tools.yutok.dev/share/d/{slug}`。
+5. **（任意）Access Bypass:** 旧パス `/transfer/d/*` 等を使う場合のみ Bypass を追加
+6. Policy: 自分のアカウントのみ Allow（`/transfer*` アップロード UI / mutate API）
+7. Identity providers: **Google**（または GitHub / One-time PIN）を追加可能
+8. Worker secrets:
 
 ```bash
 cd workers/transfer
-npx wrangler secret put UPLOAD_GATE
-# 強いパスワードを入力
-```
-
-`/transfer/` の「ゲートパスワード」で認証すると HttpOnly Cookie が付き、12 時間有効です。
-
-### B. Cloudflare Access（任意・追加）
-
-1. Zero Trust → Access → Applications → Add Self-hosted
-2. Domain: `tools.yutok.dev`、Path でアップロード系のみ保護
-3. **保護する例:** `/transfer`, `/transfer/`, `/transfer/api/auth/*`, `/transfer/api/status`, `/transfer/api/r2/*`
-4. **Bypass:** `/transfer/d/*`, `/transfer/api/dl/*`
-5. Policy: 自分のアカウントのみ Allow
-6. Worker secrets:
-
-```bash
 npx wrangler secret put ACCESS_AUD
 npx wrangler secret put TEAM_DOMAIN
 # 例: https://<team>.cloudflareaccess.com
 # 任意: UPLOAD_ALLOW_EMAILS=you@example.com
+```
+
+Worker は `Cf-Access-Jwt-Assertion` / `CF_Authorization` を検証します。UI の「Cloudflare Zero Trust でログイン」は Access ログイン URL へ誘導します。
+
+### B. Google OAuth（アップロード session + Drive）
+
+1. [Google Cloud Console](https://console.cloud.google.com/) でプロジェクト作成
+2. API とサービス → ライブラリ → **Google Drive API** を有効化  
+   （Drive Labels / Gmail は本機能では不要。他用途なら別途可）
+3. OAuth 同意画面:
+   - ユーザータイプ: 外部（またはテスト）
+   - テストユーザーに自分の Google アカウントを追加（公開前は必須）
+   - スコープ:
+     - `openid` / `email` / `profile`
+     - `https://www.googleapis.com/auth/drive.file`
+4. 認証情報 → OAuth クライアント ID（**ウェブアプリケーション**）
+   - 承認済みの JavaScript 生成元: `https://tools.yutok.dev`
+   - 承認済みのリダイレクト URI（**一字一句この値**）:
+     `https://tools.yutok.dev/share/api/auth/google/callback`
+5. リポジトリ直下の `.env` に値を書き、Worker へ投入:
+
+```bash
+cd workers/transfer
+# .env から投入する例（PowerShell）:
+# Get-Content ../../.env | ForEach-Object { ... }  # または下記を個別に
+npx wrangler secret put GOOGLE_CLIENT_ID
+npx wrangler secret put GOOGLE_CLIENT_SECRET
+npx wrangler secret put GOOGLE_REDIRECT_URI
+# 32 バイト鍵（例: openssl rand -base64 32）。短いパスフレーズも SHA-256 で受け付けるが非推奨:
+npx wrangler secret put TOKEN_ENC_KEY
+```
+
+6. Access は `/transfer*`（アップロード）のみ保護し、公開入口は `/share*` を使う（Worker Routes で分離）。
+   旧パスを残す場合のみ Bypass: `/transfer/d/*`, `/transfer/api/dl/*`, `/transfer/api/auth/google/*`
+
+よくある Access 症状:
+
+| 症状 | 原因 |
+|------|------|
+| `/transfer/d/...` が Cloudflare Access ログインになる | 想定どおり。公開 URL は `/share/d/...` |
+| Google が `redirect_uri_mismatch` | Cloud Console に `/share/api/auth/google/callback` が無い |
+| サイト直下 `/` は開けるが `/transfer` だけログイン | Self-hosted アプリが `tools.yutok.dev/transfer*` を保護（アップロード用） |
+
+Google ログイン成功で HttpOnly upload session Cookie（12 時間）が付き、refresh token は KV に AES-GCM 暗号化保存されます。
+
+よくある Google 側エラー:
+
+| 症状 | 原因 |
+|------|------|
+| `redirect_uri_mismatch` | Cloud Console のリダイレクト URI が上記と不一致 |
+| `access_denied` / アプリ未確認 | 同意画面がテストモードで、テストユーザー未追加 |
+| `invalid_client` | Client ID/Secret が Worker secret に未投入、または誤り |
+| ボタンを押すと Access ログインへ飛ぶ | Google パスが Access Bypass されていない |
+
+### C. ゲートパスワード（非推奨・緊急用 API のみ）
+
+UI からは削除済みです。緊急時のみ:
+
+```bash
+npx wrangler secret put UPLOAD_GATE
+# POST /transfer/api/auth/login { "password": "..." }
 ```
 
 ローカル開発のみ `.dev.vars` で `DEV_OPEN_UPLOAD=1`（コミットしない）。
@@ -81,26 +137,38 @@ npx wrangler deploy
 
 ## 5. R2 CORS（将来用）
 
-現状の multipart は Worker 経由（32 MiB パート）です。将来 presigned 直 PUT にする場合はバケット CORS を設定します。
+現状の R2 multipart は Worker 経由（32 MiB パート）です。Drive はブラウザから Google へ直接 resumable upload します。将来 R2 を presigned 直 PUT にする場合はバケット CORS を設定します。
 
 ## 6. 動作確認
 
-1. `https://tools.yutok.dev/transfer/api/status` が JSON（未認証なら 401）であること（Pages の HTML 404 / POST の 405 ではない）
-2. ブラウザの開発者ツール → Network で `Server: cloudflare` と `cf-ray` があること（`GitHub.com` / `Varnish` なら DNS が橙雲未反映）
-3. ゲートパスワードで認証後、小ファイルをアップロード
-4. `/transfer/d/{slug}` を別ブラウザで開き、ファイル用パスワードで DL
-5. 未認証・別ブラウザではアップロード UI がゲートのままであること
-6. 同時に 2 本目を上げると 409 になること
+### 共通
+
+1. `https://tools.yutok.dev/share/api/auth/methods` が JSON（`access` / `google`）であること
+2. `https://tools.yutok.dev/transfer/api/status` が未認証なら 401 であること（Pages の HTML 404 / POST の 405 ではない）
+3. ブラウザの開発者ツール → Network で `Server: cloudflare` と `cf-ray` があること
+
+### R2
+
+1. Zero Trust または Google でログイン後、小ファイルをアップロード
+2. `/share/d/{slug}` を別ブラウザ（未ログイン）で開き、ファイル用パスワードで DL / プレビュー
+3. 合計が 10 GiB を超えると 409 になること（本数制限はない）
+
+### Drive
+
+1. Google でログイン（Drive スコープ同意）
+2. 「Drive 保管」タブ → フォルダ割当（既定 `tools-transfer`）
+3. 小ファイルをアップロード → 共有リンクでパスワード DL
+4. リンク期限切れ後も Drive 上の本体は残ること（サイト側メタのみ削除）
 
 DNS を橙雲にした直後に API が HTML/405 になる場合は、OS の DNS キャッシュを消す（Windows: `ipconfig /flushdns`）か、別ブラウザ／シークレットウィンドウで再試行してください。
 
 ## 7. コスト目安（ほぼ無料）
 
 - R2 無料枠: 10 GB-month / Class A 100 万 / Class B 1000 万 / egress $0
-- 15 GiB × 1 日 ≈ 0.5 GB-month → 保管料は無料枠内
-- UI のコスト確認はアップロード前に必須
+- 同時保管は合計 10 GiB まで（無料枠）。本数は無制限。24 時間保管なら GB-month も枠内
+- Drive: ユーザーの Google ストレージを消費（サイト課金なし）
+- UI のコスト確認は R2 アップロード前に必須。Drive は同意チェックのみ
 
 ## 8. 次フェーズ
 
-- Phase 2: Google Drive 保管モード
 - Phase 3: P2P（WebRTC / QR・超音波）

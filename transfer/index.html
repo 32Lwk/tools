@@ -24,25 +24,25 @@
       <button type="button" class="tab" data-tab="offline" role="tab" aria-selected="false">P2P（オフライン）</button>
     </nav>
 
-    <section id="panel-r2" class="panel" role="tabpanel">
-      <p class="muted">最大 15 GiB・同時 1 本・保管 24 時間。スラッグ付き URL とパスワードで共有します。</p>
-      <p id="status-line" class="muted">状態を確認中…</p>
-
-      <div id="auth-gate" class="auth-gate" hidden>
-        <p class="muted">アップロードには所有者認証が必要です。</p>
-        <form id="auth-form" class="stack">
-          <label class="float-field">
-            <input id="gate-password" type="password" placeholder=" " required autocomplete="current-password" />
-            <span class="float-label">ゲートパスワード</span>
-          </label>
-          <button type="submit" id="auth-btn">認証して続行</button>
-        </form>
-        <p id="auth-msg" class="msg" hidden></p>
+    <div id="auth-gate" class="auth-gate" hidden>
+      <p class="muted">アップロードには所有者認証が必要です。</p>
+      <div id="auth-actions" class="auth-actions">
+        <a id="auth-access-btn" class="auth-btn" hidden href="#">Cloudflare Zero Trust でログイン</a>
+        <a id="auth-google-btn" class="auth-btn" hidden href="/share/api/auth/google/start">Google でログイン</a>
       </div>
+      <p id="auth-config-hint" class="muted" hidden>
+        認証が未設定です。Cloudflare Access（ACCESS_AUD / TEAM_DOMAIN）または Google OAuth を設定してください（docs/transfer-ops.md）。
+      </p>
+      <p id="auth-msg" class="msg" hidden></p>
+    </div>
+
+    <section id="panel-r2" class="panel" role="tabpanel">
+      <p class="muted">合計最大 10 GiB（R2 無料枠）・並列無制限・保管 24 時間。スラッグ付き URL とパスワードで共有します。</p>
+      <p id="status-line" class="muted">状態を確認中…</p>
 
       <div id="upload-area" hidden>
         <p class="auth-bar muted">
-          認証済み
+          <span id="auth-user-label">認証済み</span>
           <button type="button" id="logout-btn" class="linkish">ログアウト</button>
         </p>
         <form id="r2-form" class="stack">
@@ -96,8 +96,79 @@
     </section>
 
     <section id="panel-drive" class="panel" hidden role="tabpanel">
-      <p class="muted">Google Drive 保管モードは Phase 2 で実装予定です。</p>
+      <p class="muted">Google Drive に保管し、パスワード付きリンクで共有します。サイト課金はなく、Drive の容量を使います。リンクは約 24 時間で無効（本体は Drive に残ります）。</p>
+      <p id="drive-status-line" class="muted">Drive 接続を確認中…</p>
+
+      <div id="drive-connect" class="auth-gate" hidden>
+        <p class="muted">Drive 保管には Google アカウント連携が必要です。</p>
+        <a id="drive-google-btn" class="auth-btn" href="/share/api/auth/google/start?returnTo=/transfer/%23drive">Google で接続</a>
+        <p id="drive-connect-msg" class="msg" hidden></p>
+      </div>
+
+      <div id="drive-area" hidden>
+        <form id="drive-folder-form" class="stack inline-form">
+          <label class="float-field grow">
+            <input id="drive-folder-name" placeholder=" " maxlength="120" autocomplete="off" />
+            <span class="float-label">保管フォルダ名</span>
+          </label>
+          <button type="submit" id="drive-folder-btn" class="secondary-btn">フォルダを割り当て</button>
+        </form>
+        <p id="drive-folder-info" class="muted"></p>
+
+        <form id="drive-form" class="stack">
+          <label class="float-field">
+            <input id="drive-slug" required pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?" minlength="3" maxlength="64" placeholder=" " autocomplete="off" />
+            <span class="float-label">スラッグ</span>
+          </label>
+          <label>
+            パスワード
+            <input id="drive-password" type="password" required minlength="4" autocomplete="new-password" />
+          </label>
+          <label>
+            ファイル
+            <input id="drive-file" type="file" required />
+          </label>
+
+          <div class="cost-box">
+            <h2>保管について</h2>
+            <ul>
+              <li>サイト側の保管料金はかかりません（Google Drive の容量を使用）</li>
+              <li>共有リンクの有効期限は約 24 時間（ファイル本体は Drive に残ります）</li>
+              <li>最大 15 GiB / ファイル</li>
+            </ul>
+            <label class="ack">
+              <input type="checkbox" id="drive-cost-ack" />
+              上記を理解して続行する
+            </label>
+          </div>
+
+          <button type="submit" id="drive-upload-btn" disabled>Drive へアップロード</button>
+        </form>
+
+        <div id="drive-progress-wrap" class="progress-wrap" hidden>
+          <div class="progress"><div id="drive-progress-bar"></div></div>
+          <p id="drive-progress-text" class="muted"></p>
+        </div>
+
+        <div id="drive-result" class="result" hidden>
+          <h2>共有リンク</h2>
+          <p><a id="drive-result-link" href="#"></a></p>
+          <div class="share-row">
+            <button type="button" id="drive-share-btn" class="secondary-btn">共有</button>
+            <button type="button" id="drive-copy-link-btn" class="secondary-btn">リンクをコピー</button>
+          </div>
+          <div class="qr-wrap">
+            <canvas id="drive-result-qr" width="160" height="160" aria-label="共有リンクの QR コード"></canvas>
+            <p class="muted">QR コードを読み取るとダウンロードページを開けます。</p>
+          </div>
+          <p class="muted">パスワードはサイト外で相手に伝えてください。リンク期限後も Drive 上のファイルは残ります。</p>
+          <p id="drive-share-msg" class="msg" hidden></p>
+        </div>
+
+        <p id="drive-msg" class="msg" hidden></p>
+      </div>
     </section>
+
     <section id="panel-p2p" class="panel" hidden role="tabpanel">
       <p class="muted">WebRTC P2P（QR ペアリング）は Phase 3 で実装予定です。</p>
     </section>
@@ -108,10 +179,10 @@
 
   <dialog id="settings-dialog" class="settings-dialog">
     <form method="dialog" class="settings-head">
-      <h2>R2 管理</h2>
+      <h2>転送管理</h2>
       <button type="submit" class="icon-btn" value="close" aria-label="閉じる">閉じる</button>
     </form>
-    <p id="settings-auth-hint" class="muted" hidden>一覧・削除には所有者認証が必要です。下のゲートでログインしてください。</p>
+    <p id="settings-auth-hint" class="muted" hidden>一覧・削除には所有者認証が必要です。Zero Trust または Google でログインしてください。</p>
     <p id="settings-summary" class="muted">読み込み中…</p>
     <div class="settings-actions">
       <button type="button" id="settings-refresh" class="secondary-btn">再読み込み</button>

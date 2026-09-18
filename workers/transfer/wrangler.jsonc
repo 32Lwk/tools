@@ -9,6 +9,10 @@
     {
       "pattern": "tools.yutok.dev/transfer*",
       "zone_name": "yutok.dev"
+    },
+    {
+      "pattern": "tools.yutok.dev/share*",
+      "zone_name": "yutok.dev"
     }
   ],
   "assets": {
@@ -16,7 +20,7 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/transfer/api/*", "/transfer/d/*"]
+    "run_worker_first": ["/transfer/api/*", "/transfer/d/*", "/share/*"]
   },
   "r2_buckets": [
     {

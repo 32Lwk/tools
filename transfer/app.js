@@ -1,8 +1,11 @@
-import { estimateR2Cost, formatBytes, MAX_BYTES, PART_SIZE } from "./cost.js";
+import { estimateR2Cost, formatBytes, FREE_STORAGE_BYTES, MAX_BYTES, PART_SIZE } from "./cost.js";
+import { uploadToDriveResumable } from "./drive.js";
 
 const $ = (id) => document.getElementById(id);
 
 let qrModulePromise = null;
+let authState = { authenticated: false, email: null, mode: null, accessLogoutUrl: null };
+let authMethodsState = { access: false, google: false };
 
 function loadQrModule() {
   if (!qrModulePromise) {
@@ -39,25 +42,74 @@ function showSettingsMsg(text, ok = false) {
   el.classList.toggle("ok", !!ok);
 }
 
-function setAuthenticated(ok) {
+function showDriveMsg(text, ok = false) {
+  const el = $("drive-msg");
+  el.hidden = !text;
+  el.textContent = text || "";
+  el.classList.toggle("ok", !!ok);
+}
+
+function showDriveShareMsg(text, ok = false) {
+  const el = $("drive-share-msg");
+  el.hidden = !text;
+  el.textContent = text || "";
+  el.classList.toggle("ok", !!ok);
+}
+
+function showDriveConnectMsg(text, ok = false) {
+  const el = $("drive-connect-msg");
+  el.hidden = !text;
+  el.textContent = text || "";
+  el.classList.toggle("ok", !!ok);
+}
+
+function setAuthenticated(ok, identity = null) {
+  authState.authenticated = ok;
+  if (identity) {
+    authState.email = identity.email || null;
+    authState.mode = identity.mode || null;
+    authState.accessLogoutUrl = identity.accessLogoutUrl || null;
+  }
+  if (!ok) {
+    authState.email = null;
+    authState.mode = null;
+  }
+
   $("auth-gate").hidden = ok;
   $("upload-area").hidden = !ok;
   $("settings-auth-hint").hidden = ok;
   $("settings-purge").disabled = !ok;
   $("settings-refresh").disabled = false;
+
+  const label = $("auth-user-label");
+  if (ok) {
+    const who = authState.email ? `（${authState.email}）` : "";
+    const mode = authState.mode ? ` · ${authState.mode}` : "";
+    label.textContent = `認証済み${who}${mode}`;
+  }
+}
+
+function activateTab(tabName) {
+  document.querySelectorAll(".tab").forEach((t) => {
+    const on = t.dataset.tab === tabName;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  document.querySelectorAll(".panel").forEach((p) => {
+    p.hidden = p.id !== `panel-${tabName}`;
+  });
+  if (tabName === "drive") refreshDriveStatus();
 }
 
 function wireTabs() {
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach((t) => {
-        const on = t === tab;
-        t.classList.toggle("active", on);
-        t.setAttribute("aria-selected", on ? "true" : "false");
-      });
-      document.querySelectorAll(".panel").forEach((p) => {
-        p.hidden = p.id !== `panel-${tab.dataset.tab}`;
-      });
+      activateTab(tab.dataset.tab);
+      if (tab.dataset.tab === "drive") {
+        history.replaceState(null, "", "#drive");
+      } else if (location.hash === "#drive") {
+        history.replaceState(null, "", location.pathname + location.search);
+      }
     });
   });
 }
@@ -111,6 +163,44 @@ async function readJsonResponse(res) {
   }
 }
 
+async function loadAuthMethods() {
+  try {
+    const res = await fetch("/share/api/auth/methods", { credentials: "include" });
+    const data = await readJsonResponse(res);
+    authMethodsState = {
+      access: !!data.access,
+      google: !!data.google,
+    };
+
+    const accessBtn = $("auth-access-btn");
+    const googleBtn = $("auth-google-btn");
+    const hint = $("auth-config-hint");
+
+    if (data.access && data.accessLoginUrl) {
+      accessBtn.hidden = false;
+      accessBtn.href = data.accessLoginUrl;
+    } else {
+      accessBtn.hidden = true;
+    }
+
+    if (data.google) {
+      googleBtn.hidden = false;
+      googleBtn.href = `/share/api/auth/google/start?returnTo=${encodeURIComponent(`${location.origin}/transfer/`)}`;
+      $("drive-google-btn").href =
+        `/share/api/auth/google/start?returnTo=${encodeURIComponent(`${location.origin}/transfer/#drive`)}`;
+    } else {
+      googleBtn.hidden = true;
+    }
+
+    hint.hidden = !!(data.access || data.google);
+    return data;
+  } catch (e) {
+    showAuthMsg(e.message || String(e));
+    $("auth-config-hint").hidden = false;
+    return null;
+  }
+}
+
 async function refreshStatus() {
   const line = $("status-line");
   try {
@@ -122,11 +212,20 @@ async function refreshStatus() {
       return;
     }
     if (!res.ok) throw new Error(data.error || res.statusText);
-    setAuthenticated(true);
-    if (data.active) {
-      line.textContent = `現在保管中: ${data.active.slug}（${formatBytes(data.active.size)}） / 期限 ${new Date(data.active.expiresAt).toLocaleString()}`;
+    setAuthenticated(true, authState);
+    const used = typeof data.usedBytes === "number" ? data.usedBytes : 0;
+    const cap = data.limits?.maxTotalBytes || FREE_STORAGE_BYTES;
+    const actives = Array.isArray(data.actives) ? data.actives : data.active ? [data.active] : [];
+    const capLabel = `${formatBytes(used)} / ${formatBytes(cap)}`;
+    if (actives.length === 0) {
+      line.textContent = `空きあり（${capLabel}・並列無制限・保管 24 時間）`;
     } else {
-      line.textContent = "空きスロットあり（同時保管 1 本・最大 15 GiB・24 時間）";
+      const names = actives
+        .slice(0, 3)
+        .map((a) => a.slug)
+        .join(", ");
+      const more = actives.length > 3 ? ` ほか ${actives.length - 3} 本` : "";
+      line.textContent = `使用中 ${capLabel}（${actives.length} 本: ${names}${more}）`;
     }
   } catch (e) {
     line.textContent = `状態取得に失敗: ${e.message}`;
@@ -138,8 +237,9 @@ async function refreshStatus() {
 async function checkAuth() {
   try {
     const res = await fetch("/transfer/api/auth/me", { credentials: "include" });
-    if (res.ok) {
-      setAuthenticated(true);
+    const data = await readJsonResponse(res);
+    if (res.ok && data.authenticated) {
+      setAuthenticated(true, data);
       return true;
     }
   } catch {
@@ -179,8 +279,8 @@ async function uploadFile(file, slug, password) {
     const start = i * partSize;
     const blob = file.slice(start, Math.min(file.size, start + partSize));
     const partNumber = i + 1;
-    const url = `/transfer/api/r2/part?slug=${encodeURIComponent(slug)}&uploadId=${encodeURIComponent(init.uploadId)}&partNumber=${partNumber}`;
-    const partRes = await fetch(url, { method: "PUT", body: blob, credentials: "include" });
+    const partUrl = `/transfer/api/r2/part?slug=${encodeURIComponent(slug)}&uploadId=${encodeURIComponent(init.uploadId)}&partNumber=${partNumber}`;
+    const partRes = await fetch(partUrl, { method: "PUT", body: blob, credentials: "include" });
     const partJson = await readJsonResponse(partRes);
     if (!partRes.ok) throw new Error(partJson.error || `part ${partNumber} failed`);
     parts.push({ partNumber: partJson.partNumber, etag: partJson.etag });
@@ -200,24 +300,29 @@ async function uploadFile(file, slug, password) {
   return done;
 }
 
-async function renderShareResult(href) {
+async function renderShareResult(href, {
+  linkId = "result-link",
+  resultId = "result",
+  qrId = "result-qr",
+  shareMsg = showShareMsg,
+} = {}) {
   const absolute = href.startsWith("http") ? href : `${location.origin}${href}`;
-  const link = $("result-link");
+  const link = $(linkId);
   link.href = absolute;
   link.textContent = absolute;
-  $("result").hidden = false;
-  showShareMsg("");
+  $(resultId).hidden = false;
+  shareMsg("");
 
   try {
     const QRCode = await loadQrModule();
-    const canvas = $("result-qr");
+    const canvas = $(qrId);
     await QRCode.toCanvas(canvas, absolute, {
       width: 160,
       margin: 1,
       color: { dark: "#111111", light: "#ffffff" },
     });
   } catch (e) {
-    showShareMsg(`QR 生成に失敗: ${e.message || e}`);
+    shareMsg(`QR 生成に失敗: ${e.message || e}`);
   }
 }
 
@@ -260,53 +365,53 @@ function wireShare() {
       showShareMsg(e.message || "共有に失敗しました");
     }
   });
-}
 
-function wireAuth() {
-  $("auth-form").addEventListener("submit", async (ev) => {
-    ev.preventDefault();
-    showAuthMsg("");
-    const password = $("gate-password").value.trim();
-    if (!password) {
-      showAuthMsg("ゲートパスワードを入力してください");
-      return;
-    }
-    $("auth-btn").disabled = true;
+  $("drive-copy-link-btn").addEventListener("click", async () => {
     try {
-      const res = await fetch("/transfer/api/auth/login", {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      if (res.status === 405) {
-        throw new Error(
-          "POST が GitHub Pages に遮断されています（405）。Chrome など通常ブラウザで開くか、DNS 橙雲とキャッシュを確認してください。",
-        );
-      }
-      const data = await readJsonResponse(res);
-      if (!res.ok) throw new Error(data.error || "認証に失敗しました");
-      $("gate-password").value = "";
-      setAuthenticated(true);
-      showAuthMsg("");
-      await refreshStatus();
-      if (!$("settings-dialog").open) {
-        /* keep dialog state */
-      } else {
-        await loadSettingsList();
-      }
+      await copyText($("drive-result-link").href);
+      showDriveShareMsg("リンクをコピーしました", true);
     } catch (e) {
-      showAuthMsg(e.message || String(e));
-      setAuthenticated(false);
-    } finally {
-      $("auth-btn").disabled = false;
+      showDriveShareMsg(e.message || "コピーに失敗しました");
     }
   });
 
+  $("drive-share-btn").addEventListener("click", async () => {
+    const url = $("drive-result-link").href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "ファイル転送", text: "ダウンロードリンク", url });
+        showDriveShareMsg("共有シートを開きました", true);
+      } else {
+        await copyText(url);
+        showDriveShareMsg("この端末では共有 API 非対応のため、リンクをコピーしました", true);
+      }
+    } catch (e) {
+      if (e?.name === "AbortError") return;
+      showDriveShareMsg(e.message || "共有に失敗しました");
+    }
+  });
+}
+
+function wireAuth() {
   $("logout-btn").addEventListener("click", async () => {
-    await fetch("/transfer/api/auth/logout", { method: "POST", credentials: "include" });
-    setAuthenticated(false);
-    $("status-line").textContent = "ログアウトしました";
+    try {
+      const res = await fetch("/transfer/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await readJsonResponse(res).catch(() => ({}));
+      setAuthenticated(false);
+      $("status-line").textContent = "ログアウトしました";
+      $("drive-area").hidden = true;
+      $("drive-connect").hidden = false;
+      $("drive-status-line").textContent = "未認証です";
+      const accessLogout = data.accessLogoutUrl || authState.accessLogoutUrl;
+      if (accessLogout && authState.mode === "access") {
+        location.href = accessLogout;
+      }
+    } catch {
+      setAuthenticated(false);
+    }
   });
 }
 
@@ -331,7 +436,7 @@ function wireForm() {
     $("upload-btn").disabled = true;
     try {
       const done = await uploadFile(file, slug, password);
-      const href = done.downloadPath || `/transfer/d/${slug}`;
+      const href = done.downloadPath || `/share/d/${slug}`;
       await renderShareResult(href);
       showMsg("アップロード完了", true);
       await refreshStatus();
@@ -353,6 +458,181 @@ function wireForm() {
   });
 }
 
+async function refreshDriveStatus() {
+  const line = $("drive-status-line");
+  showDriveConnectMsg("");
+  try {
+    if (!authState.authenticated) {
+      const ok = await checkAuth();
+      if (!ok) {
+        line.textContent = "アップロード認証が必要です（上部のログイン）";
+        $("drive-connect").hidden = false;
+        $("drive-area").hidden = true;
+        return;
+      }
+    }
+
+    const res = await fetch("/transfer/api/drive/status", { credentials: "include" });
+    const data = await readJsonResponse(res);
+    if (res.status === 401 || data.authRequired) {
+      setAuthenticated(false);
+      line.textContent = "未認証です";
+      $("drive-connect").hidden = false;
+      $("drive-area").hidden = true;
+      return;
+    }
+    if (!res.ok) throw new Error(data.error || res.statusText);
+
+    if (!data.googleConfigured) {
+      line.textContent = "Google OAuth が未設定です（GOOGLE_CLIENT_ID 等）";
+      $("drive-connect").hidden = true;
+      $("drive-area").hidden = true;
+      return;
+    }
+
+    if (!data.connected) {
+      line.textContent = "Google Drive 未接続";
+      $("drive-connect").hidden = false;
+      $("drive-area").hidden = true;
+      return;
+    }
+
+    $("drive-connect").hidden = true;
+    $("drive-area").hidden = false;
+    line.textContent = `接続中: ${data.email}`;
+    if (data.folder) {
+      $("drive-folder-info").textContent =
+        `割当フォルダ: ${data.folder.name}（${data.folder.id}）`;
+      $("drive-folder-name").value = data.folder.name;
+    } else {
+      $("drive-folder-info").textContent =
+        "フォルダ未割当です。名前を指定して「フォルダを割り当て」するか、アップロード時に tools-transfer が作成されます。";
+      $("drive-folder-name").value = "tools-transfer";
+    }
+  } catch (e) {
+    line.textContent = `Drive 状態取得に失敗: ${e.message}`;
+    $("drive-connect").hidden = false;
+    $("drive-area").hidden = true;
+  }
+}
+
+function wireDrive() {
+  const fileInput = $("drive-file");
+  const ack = $("drive-cost-ack");
+  const btn = $("drive-upload-btn");
+
+  const update = () => {
+    const file = fileInput.files?.[0];
+    const over = file && file.size > MAX_BYTES;
+    btn.disabled = !(file && ack.checked && !over);
+  };
+  fileInput.addEventListener("change", update);
+  ack.addEventListener("change", update);
+
+  $("drive-folder-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    showDriveMsg("");
+    $("drive-folder-btn").disabled = true;
+    try {
+      const res = await fetch("/transfer/api/drive/folder", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ folderName: $("drive-folder-name").value.trim() || "tools-transfer" }),
+      });
+      const data = await readJsonResponse(res);
+      if (!res.ok) throw new Error(data.error || "folder failed");
+      $("drive-folder-info").textContent =
+        `割当フォルダ: ${data.folder.name}（${data.folder.id}）`;
+      showDriveMsg("フォルダを割り当てました", true);
+    } catch (e) {
+      showDriveMsg(e.message || String(e));
+    } finally {
+      $("drive-folder-btn").disabled = false;
+    }
+  });
+
+  $("drive-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    showDriveMsg("");
+    const file = fileInput.files?.[0];
+    const slug = $("drive-slug").value.trim();
+    const password = $("drive-password").value;
+    if (!file || !ack.checked) return;
+    btn.disabled = true;
+    $("drive-progress-wrap").hidden = false;
+    $("drive-progress-bar").style.width = "0%";
+    $("drive-progress-text").textContent = "セッション準備中…";
+
+    try {
+      const initRes = await fetch("/transfer/api/drive/init", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          slug,
+          password,
+          filename: file.name,
+          size: file.size,
+          contentType: file.type || "application/octet-stream",
+          costAck: true,
+        }),
+      });
+      const init = await readJsonResponse(initRes);
+      if (initRes.status === 401 || init.authRequired) {
+        setAuthenticated(false);
+        throw new Error(init.error || "認証が必要です");
+      }
+      if (!initRes.ok) throw new Error(init.error || "init failed");
+
+      const uploaded = await uploadToDriveResumable({
+        accessToken: init.accessToken,
+        resumableCreate: init.upload.resumableCreate,
+        metadata: init.metadata,
+        file,
+        onProgress: (pct, loaded, total) => {
+          $("drive-progress-bar").style.width = `${pct}%`;
+          $("drive-progress-text").textContent =
+            `Drive アップロード中… ${formatBytes(loaded)} / ${formatBytes(total)} (${pct}%)`;
+        },
+      });
+
+      const doneRes = await fetch("/transfer/api/drive/complete", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ slug, driveFileId: uploaded.id }),
+      });
+      const done = await readJsonResponse(doneRes);
+      if (!doneRes.ok) throw new Error(done.error || "complete failed");
+
+      const href = done.downloadPath || `/share/d/${slug}`;
+      await renderShareResult(href, {
+        linkId: "drive-result-link",
+        resultId: "drive-result",
+        qrId: "drive-result-qr",
+        shareMsg: showDriveShareMsg,
+      });
+      showDriveMsg("アップロード完了", true);
+      $("drive-progress-text").textContent = "完了";
+    } catch (e) {
+      showDriveMsg(e.message || String(e));
+      try {
+        await fetch("/transfer/api/drive/abort", {
+          method: "DELETE",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ slug }),
+        });
+      } catch {
+        /* ignore */
+      }
+    } finally {
+      update();
+    }
+  });
+}
+
 function renderSettingsList(data) {
   const list = $("settings-list");
   list.innerHTML = "";
@@ -360,20 +640,24 @@ function renderSettingsList(data) {
   const orphans = data.orphans || [];
 
   if (!transfers.length && !orphans.length) {
-    list.innerHTML = `<p class="muted">R2 上に転送データはありません。</p>`;
+    list.innerHTML = `<p class="muted">転送データはありません。</p>`;
     return;
   }
 
   for (const t of transfers) {
     const el = document.createElement("article");
     el.className = "settings-item";
+    const loc =
+      t.backend === "drive"
+        ? `Drive: ${t.driveFileId || "(pending)"}`
+        : t.r2Key || "";
     el.innerHTML = `
-      <h3>${t.slug} <span class="muted">(${t.status})</span></h3>
+      <h3>${t.slug} <span class="muted">(${t.backend || "r2"} / ${t.status})</span></h3>
       <p class="meta">${t.originalName} · ${formatBytes(t.size)}</p>
       <p class="meta">作成 ${new Date(t.createdAt).toLocaleString()} / 期限 ${new Date(t.expiresAt).toLocaleString()}</p>
-      <p class="meta">${t.r2Key}</p>
+      <p class="meta">${loc}</p>
       <div class="row-actions">
-        <a class="secondary-btn" href="/transfer/d/${encodeURIComponent(t.slug)}" target="_blank" rel="noopener">DL ページ</a>
+        <a class="secondary-btn" href="/share/d/${encodeURIComponent(t.slug)}" target="_blank" rel="noopener">DL ページ</a>
         <button type="button" class="danger-btn" data-del-slug="${t.slug}">削除</button>
       </div>
     `;
@@ -384,7 +668,7 @@ function renderSettingsList(data) {
     const el = document.createElement("article");
     el.className = "settings-item";
     el.innerHTML = `
-      <h3>孤立オブジェクト</h3>
+      <h3>孤立オブジェクト（R2）</h3>
       <p class="meta">${o.key} · ${formatBytes(o.size)}</p>
       <p class="meta">uploaded ${new Date(o.uploaded).toLocaleString()}</p>
       <div class="row-actions">
@@ -402,17 +686,18 @@ async function loadSettingsList() {
     const res = await fetch("/transfer/api/admin/r2", { credentials: "include" });
     if (res.status === 401) {
       setAuthenticated(false);
-      $("settings-summary").textContent = "未認証です。ゲートパスワードでログインしてください。";
+      $("settings-summary").textContent =
+        "未認証です。Zero Trust または Google でログインしてください。";
       $("settings-list").innerHTML = "";
       return;
     }
     const data = await readJsonResponse(res);
     if (!res.ok) throw new Error(data.error || res.statusText);
-    setAuthenticated(true);
+    setAuthenticated(true, authState);
     const totals = data.totals || { transferCount: 0, objectCount: 0, bytes: 0 };
     $("settings-summary").textContent =
-      `転送 ${totals.transferCount} 件 / オブジェクト ${totals.objectCount} 件 / 合計 ${formatBytes(totals.bytes)}` +
-      (data.slot ? ` / スロット: ${data.slot}` : " / スロット空き");
+      `転送 ${totals.transferCount} 件 / R2 オブジェクト ${totals.objectCount} 件 / 合計 ${formatBytes(totals.bytes)}` +
+      (data.slot ? ` / R2 スロット: ${data.slot}` : " / R2 スロット空き");
     renderSettingsList(data);
   } catch (e) {
     $("settings-summary").textContent = "取得に失敗しました";
@@ -442,7 +727,9 @@ function wireSettings() {
   $("settings-refresh").addEventListener("click", () => loadSettingsList());
 
   $("settings-purge").addEventListener("click", async () => {
-    if (!confirm("R2 上の転送データと孤立オブジェクトをすべて削除します。よろしいですか？")) return;
+    if (!confirm("転送メタデータと R2 オブジェクトをすべて削除します（Drive 上のファイル本体は残ります）。よろしいですか？")) {
+      return;
+    }
     try {
       const result = await deleteAdmin({ all: true });
       showSettingsMsg(
@@ -474,16 +761,36 @@ function wireSettings() {
   });
 }
 
+function handleAuthErrorQuery() {
+  const params = new URLSearchParams(location.search);
+  const err = params.get("auth_error");
+  if (!err) return;
+  showAuthMsg(`認証エラー: ${err}`);
+  $("auth-gate").hidden = false;
+  params.delete("auth_error");
+  const next = `${location.pathname}${params.toString() ? `?${params}` : ""}${location.hash}`;
+  history.replaceState(null, "", next);
+}
+
 wireTabs();
 wireAuth();
 wireForm();
+wireDrive();
 wireShare();
 wireSettings();
 (async () => {
+  handleAuthErrorQuery();
+  await loadAuthMethods();
   const ok = await checkAuth();
-  if (ok) await refreshStatus();
-  else {
+  if (ok) {
+    await refreshStatus();
+  } else {
     $("status-line").textContent = "アップロードには認証が必要です";
     $("auth-gate").hidden = false;
+  }
+  if (location.hash === "#drive") {
+    activateTab("drive");
+  } else if (ok) {
+    /* drive status lazy on tab */
   }
 })();

@@ -166,10 +166,44 @@ button[type="submit"]:disabled {
 
 .auth-gate {
   margin-top: 1rem;
+  margin-bottom: 1rem;
   padding: 1rem;
   border: 1px solid var(--border, #ccc);
   border-radius: 6px;
   background: var(--surface, #f7f7f7);
+}
+
+.auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+a.auth-btn {
+  display: inline-block;
+  border: 1px solid var(--border, #333);
+  background: var(--fg, #111);
+  color: var(--bg, #fff);
+  text-decoration: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: 4px;
+  font: inherit;
+}
+
+a.auth-btn:hover {
+  opacity: 0.9;
+}
+
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.inline-form .grow {
+  flex: 1 1 12rem;
 }
 
 .auth-bar {
@@ -328,4 +362,56 @@ button.linkish {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+}
+
+.preview-panel {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.preview-media {
+  border: 1px solid var(--border, #ccc);
+  border-radius: 6px;
+  background: var(--surface, #f7f7f7);
+  overflow: auto;
+  max-height: min(70vh, 36rem);
+}
+
+.preview-image,
+.preview-video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.preview-audio {
+  display: block;
+  width: 100%;
+  margin: 0.75rem;
+  max-width: calc(100% - 1.5rem);
+}
+
+.preview-frame {
+  display: block;
+  width: 100%;
+  min-height: min(70vh, 36rem);
+  border: 0;
+  background: #fff;
+}
+
+.preview-text {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }

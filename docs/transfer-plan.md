@@ -5,12 +5,12 @@
 | 項目 | 決定 |
 |------|------|
 | サイト目的 | 汎用 Web ツール置き場（既存物理ツールは残す） |
-| 一時転送 | R2、最大 15GB・1 本・保管 1 日、パスワード必須 |
+| 一時転送 | R2、合計最大 10GB（無料枠）・並列無制限・保管 1 日、パスワード必須 |
 | Drive | モード切替「一時（R2）」/「Drive 保管」 |
-| アップロード認証 | Cloudflare Access（GitHub またはメール OTP） |
+| アップロード認証 | Cloudflare Access（Zero Trust）および / または Google OAuth。ゲートパスワード UI は廃止（緊急 API のみ） |
 | ダウンロード | リンクを知っていれば誰でも可。ただしパスワード必須 |
 | URL | `tools.yutok.dev` 内完結（橙雲 + `/transfer*` → Worker） |
-| 同時保管 | R2 は同時 1 本（15GB）まで |
+| 同時保管 | R2 は合計 10GB（無料枠）まで本数無制限。Drive は本数制限なし（ユーザー容量依存） |
 | 予算 | ほぼ無料枠内。アップロード前にコスト確認 UI |
 | P2P | ネットワーク WebRTC（大容量）+ オフライン（カメラ QR / 超音波、小容量）。Bluetooth なし |
 | 置き場所 | 本リポジトリに `transfer/` と `workers/transfer/` |
@@ -82,7 +82,7 @@ flowchart TB
 
 1. Access 通過後、スラッグ（フォルダ名風、例 `backup-laptop`）・パスワード・ファイル選択
 2. コスト確認パネル表示 → 「このコストで続行」チェック必須
-3. 同時 1 本チェック（既存オブジェクトがあれば拒否）
+3. 合計容量チェック（既存 R2 オブジェクト合計 + 新規 ≤ 10 GiB）
 4. multipart アップロード → DL URL 表示: `https://tools.yutok.dev/transfer/d/{slug}`
 5. 24h 後に lifecycle / cron で削除
 
@@ -105,7 +105,7 @@ flowchart TB
 - 無料枠超過警告
 - 「このコストで続行」必須
 
-予算方針: **ほぼ無料**。15GB×1日 ≈ 0.5 GB-month で保管料は枠内。警告は「同時に枠を食う他用途」「異常に細かい multipart」を検知したら出す。
+予算方針: **ほぼ無料**。合計 10 GiB まで並列保管可（無料枠）。警告は「異常に細かい multipart」などを検知したら出す。
 
 #### ダウンロードページ
 
@@ -116,17 +116,24 @@ flowchart TB
 
 | メソッド | パス | Access | 内容 |
 |----------|------|--------|------|
+| GET | `/transfer/api/auth/methods` | 不要 | Access / Google の利用可否 |
+| GET | `/transfer/api/auth/google/start` | 不要 | Google OAuth 開始 |
+| GET | `/transfer/api/auth/google/callback` | 不要 | OAuth callback・session Cookie |
+| GET | `/transfer/api/auth/me` | Cookie/JWT | 認証状態 |
 | POST | `/transfer/api/r2/init` | 要 | スラッグ確保・multipart 開始・コスト試算レスポンス |
 | POST | `/transfer/api/r2/complete` | 要 | multipart 完了・メタデータ確定 |
 | DELETE | `/transfer/api/r2/abort` | 要 | 中断 |
-| GET | `/transfer/api/status` | 要 | 現在の同時 1 本状況 |
+| GET | `/transfer/api/status` | 要 | 使用容量・アクティブ一覧（合計 ≤ 10 GiB） |
+| GET | `/transfer/api/drive/status` | 要 | Drive 接続・フォルダ |
+| POST | `/transfer/api/drive/folder` | 要 | フォルダ作成/割当 |
+| POST | `/transfer/api/drive/init` | 要 | access token + メタ確保 |
+| POST | `/transfer/api/drive/complete` | 要 | driveFileId 確定 |
 | POST | `/transfer/api/dl/{slug}/auth` | 不要 | パスワード検証・短命 DL トークン |
-| GET | `/transfer/api/dl/{slug}/file` | 不要 | トークン付きストリーム |
-| GET/POST | `/transfer/api/drive/*` | 要 | OAuth・フォルダ・upload session |
+| GET | `/transfer/api/dl/{slug}/file` | 不要 | トークン付きストリーム（R2 / Drive） |
 | WS/HTTP | `/transfer/api/signal/*` | 双方 | WebRTC シグナリング（DO） |
-| 画面 | `/transfer/*` | アップロード系のみ Access | 静的 UI は Worker または Pages。DL ページは Access 外 |
+| 画面 | `/transfer/*` | アップロード系のみ Access 可 | 静的 UI。DL ページは Access 外 |
 
-メタデータ（KV）: `slug`, `backend(r2|drive)`, `passwordHash`, `size`, `expiresAt`, `r2Key` or `driveFileId`, `originalName`
+メタデータ（KV）: `slug`, `backend(r2|drive)`, `passwordHash`, `size`, `expiresAt`, `r2Key` または `driveFileId`/`driveFolderId`/`ownerEmail`, `originalName`
 
 パスワード: `scrypt` または Web Crypto PBKDF2（Worker 内）。平文保存禁止。
 
@@ -135,8 +142,9 @@ Cron: 期限切れメタデータ削除 + R2 オブジェクト削除。
 ### 4. Cloudflare Access
 
 - Application: `tools.yutok.dev/transfer` のうち **アップロード UI と mutate API**
-- Bypass: `/transfer/d/*`, `/transfer/api/dl/*`, P2P 受信側に必要な静的・signal の受け側
-- IdP: GitHub + One-time email（両方有効）
+- Bypass: `/transfer/d/*`, `/transfer/api/dl/*`, `/transfer/api/auth/methods`, `/transfer/api/auth/google/*`
+- IdP: Google / GitHub / One-time email など（ダッシュボードで設定）
+- アプリ側でも JWT 検証。加えて Google OAuth session でも upload 可
 
 ### 5. P2P
 
@@ -197,15 +205,16 @@ docs/transfer-ops.md  # DNS・Access・Secrets 手順（実装時に作成）
 2. Worker スケルトン + R2 multipart init/complete + KV メタデータ
 3. `transfer/` UI（R2・コスト確認・必須パスワード・スラッグ）
 4. DL ページ（パスワード → ストリーム）
-5. 同時 1 本ガード + 24h 削除 cron
+5. 合計 10 GiB 容量ガード + 24h 削除 cron
 6. `docs/transfer-ops.md`（橙雲・Route・Access 手順）
 
-### Phase 2 — Drive 保管モード
+### Phase 2 — Drive 保管モード（実装済み）
 
-1. OAuth フロー（個人アカウント）
-2. フォルダ割り当て
+1. OAuth フロー（個人アカウント）— `/transfer/api/auth/google/*`
+2. フォルダ割り当て — `/transfer/api/drive/folder`
 3. resumable upload + パスワード付き DL プロキシ
-4. UI モード切替
+4. UI モード切替（`transfer/` の Drive タブ）
+5. アップロード認証 UI は Cloudflare Access + Google（ゲートパスワード UI は廃止）
 
 ### Phase 3 — P2P
 
@@ -222,7 +231,7 @@ docs/transfer-ops.md  # DNS・Access・Secrets 手順（実装時に作成）
 
 | 要素 | 目安 |
 |------|------|
-| R2 15GB × 1 日 | ≈ 0.5 GB-month ≪ 10 GB-month 無料枠 |
+| R2 合計 ≤ 10 GiB × 1 日 | ≤ ≈ 0.33 GB-month ≪ 10 GB-month 無料枠 |
 | R2 egress | $0 |
 | Workers リクエスト | 個人利用なら無料枠内想定 |
 | Drive | ユーザーの Google ストレージを消費（サイト課金なし） |
@@ -239,7 +248,7 @@ docs/transfer-ops.md  # DNS・Access・Secrets 手順（実装時に作成）
 
 ## 検証方針
 
-- 小ファイル（数 MB）で R2 往復・期限・同時 1 本拒否を確認
+- 小ファイル（数 MB）で R2 往復・期限・合計容量超過（409）を確認
 - パスワード誤り拒否
 - コスト確認なしでは upload 開始できないこと
 - Drive モードはテスト用小ファイルで OAuth〜DL

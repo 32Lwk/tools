@@ -1,8 +1,21 @@
 import type { Env } from "./env";
+import { googleConfigured } from "./google";
 
 const SESSION_COOKIE = "tools_transfer_up";
 const SESSION_TTL_SEC = 12 * 3600;
 const SESSION_KV_PREFIX = "upses:";
+
+export type UploadSessionInfo = {
+  email?: string;
+  mode: "google" | "gate" | "dev" | "session";
+};
+
+export type AuthIdentity = {
+  authenticated: true;
+  email?: string;
+  mode: "access" | "google" | "gate" | "dev" | "session";
+  accessLogoutUrl?: string;
+};
 
 function b64url(buf: ArrayBuffer | Uint8Array): string {
   const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
@@ -18,7 +31,7 @@ function timingSafeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-function parseCookies(request: Request): Record<string, string> {
+export function parseCookies(request: Request): Record<string, string> {
   const raw = request.headers.get("Cookie") || "";
   const out: Record<string, string> = {};
   for (const part of raw.split(";")) {
@@ -32,16 +45,21 @@ function parseCookies(request: Request): Record<string, string> {
 }
 
 function sessionCookieHeader(token: string, maxAge = SESSION_TTL_SEC): string {
-  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/transfer; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
 }
 
 export function clearSessionCookieHeader(): string {
   return sessionCookieHeader("", 0);
 }
 
-export async function createUploadSession(env: Env): Promise<{ token: string; setCookie: string }> {
+export async function createUploadSession(
+  env: Env,
+  info: UploadSessionInfo = { mode: "session" },
+): Promise<{ token: string; setCookie: string }> {
   const token = b64url(crypto.getRandomValues(new Uint8Array(32)));
-  await env.META.put(`${SESSION_KV_PREFIX}${token}`, "1", { expirationTtl: SESSION_TTL_SEC });
+  await env.META.put(`${SESSION_KV_PREFIX}${token}`, JSON.stringify(info), {
+    expirationTtl: SESSION_TTL_SEC,
+  });
   return { token, setCookie: sessionCookieHeader(token) };
 }
 
@@ -52,11 +70,20 @@ export async function destroyUploadSession(request: Request, env: Env): Promise<
   return clearSessionCookieHeader();
 }
 
-async function hasValidUploadSession(request: Request, env: Env): Promise<boolean> {
+async function readUploadSession(
+  request: Request,
+  env: Env,
+): Promise<UploadSessionInfo | null> {
   const token = parseCookies(request)[SESSION_COOKIE];
-  if (!token || token.length < 16) return false;
+  if (!token || token.length < 16) return null;
   const hit = await env.META.get(`${SESSION_KV_PREFIX}${token}`);
-  return hit === "1";
+  if (!hit) return null;
+  if (hit === "1") return { mode: "session" };
+  try {
+    return JSON.parse(hit) as UploadSessionInfo;
+  } catch {
+    return { mode: "session" };
+  }
 }
 
 function allowlistEmails(env: Env): string[] {
@@ -66,7 +93,6 @@ function allowlistEmails(env: Env): string[] {
     .filter(Boolean);
 }
 
-/** Minimal JWT payload parse (signature verified separately when TEAM_DOMAIN is set). */
 function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
   const parts = jwt.split(".");
   if (parts.length !== 3) return null;
@@ -76,6 +102,40 @@ function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
   } catch {
     return null;
   }
+}
+
+export function accessConfigured(env: Env): boolean {
+  return !!(env.ACCESS_AUD && env.TEAM_DOMAIN);
+}
+
+export function accessLoginUrl(env: Env, returnUrl: string): string | null {
+  if (!env.TEAM_DOMAIN) return null;
+  const team = env.TEAM_DOMAIN.replace(/\/$/, "");
+  let host = "tools.yutok.dev";
+  try {
+    host = new URL(returnUrl).hostname;
+  } catch {
+    /* keep default */
+  }
+  return `${team}/cdn-cgi/access/login/${host}?redirect_url=${encodeURIComponent(returnUrl)}`;
+}
+
+export function accessLogoutUrl(env: Env): string | null {
+  if (!env.TEAM_DOMAIN) return null;
+  return `${env.TEAM_DOMAIN.replace(/\/$/, "")}/cdn-cgi/access/logout`;
+}
+
+export function authMethods(env: Env): {
+  access: boolean;
+  google: boolean;
+  gateEmergency: boolean;
+  accessLoginHint?: string;
+} {
+  return {
+    access: accessConfigured(env),
+    google: googleConfigured(env),
+    gateEmergency: !!env.UPLOAD_GATE,
+  };
 }
 
 async function verifyAccessJwt(
@@ -141,42 +201,95 @@ export async function verifyUploadGatePassword(env: Env, password: string): Prom
   return timingSafeEqual(given, expected);
 }
 
-/**
- * Fail-closed upload gate.
- * Allows only: DEV_OPEN_UPLOAD=1 (local) | valid Access JWT | valid upload session cookie.
- */
-export async function requireUploadAccess(request: Request, env: Env): Promise<Response | null> {
-  if (env.DEV_OPEN_UPLOAD === "1") return null;
+export async function resolveAuthIdentity(
+  request: Request,
+  env: Env,
+): Promise<AuthIdentity | null> {
+  if (env.DEV_OPEN_UPLOAD === "1") {
+    return { authenticated: true, mode: "dev", email: "dev@localhost" };
+  }
 
-  if (await hasValidUploadSession(request, env)) return null;
+  const session = await readUploadSession(request, env);
+  if (session) {
+    return {
+      authenticated: true,
+      mode: session.mode === "google" ? "google" : session.mode === "gate" ? "gate" : "session",
+      email: session.email,
+      accessLogoutUrl: accessLogoutUrl(env) || undefined,
+    };
+  }
 
   const jwt =
     request.headers.get("Cf-Access-Jwt-Assertion") ||
     parseCookies(request)["CF_Authorization"] ||
     "";
-  if (jwt && env.ACCESS_AUD && env.TEAM_DOMAIN) {
+  if (jwt && accessConfigured(env)) {
     const verified = await verifyAccessJwt(jwt, env);
-    if (verified.ok) return null;
-    return json(
-      { error: "Cloudflare Access 認証に失敗しました", detail: verified.reason, authRequired: true },
-      401,
-    );
+    if (verified.ok) {
+      return {
+        authenticated: true,
+        mode: "access",
+        email: verified.email,
+        accessLogoutUrl: accessLogoutUrl(env) || undefined,
+      };
+    }
   }
 
-  if (!env.UPLOAD_GATE && !(env.ACCESS_AUD && env.TEAM_DOMAIN)) {
+  return null;
+}
+
+/**
+ * Fail-closed upload gate.
+ * Allows: DEV_OPEN_UPLOAD | Access JWT | upload session (Google / emergency gate).
+ */
+export async function requireUploadAccess(request: Request, env: Env): Promise<Response | null> {
+  const identity = await resolveAuthIdentity(request, env);
+  if (identity) return null;
+
+  const jwt =
+    request.headers.get("Cf-Access-Jwt-Assertion") ||
+    parseCookies(request)["CF_Authorization"] ||
+    "";
+  if (jwt && accessConfigured(env)) {
+    const verified = await verifyAccessJwt(jwt, env);
+    if (!verified.ok) {
+      return json(
+        {
+          error: "Cloudflare Access 認証に失敗しました",
+          detail: verified.reason,
+          authRequired: true,
+        },
+        401,
+      );
+    }
+  }
+
+  const methods = authMethods(env);
+  if (!methods.access && !methods.google && !methods.gateEmergency) {
     return json(
       {
-        error: "アップロード認証が未設定です（UPLOAD_GATE または Access を設定してください）",
+        error:
+          "アップロード認証が未設定です（Cloudflare Access または Google OAuth を設定してください）",
         authRequired: true,
       },
       503,
     );
   }
 
-  return json(
-    { error: "アップロードには認証が必要です", authRequired: true },
-    401,
-  );
+  return json({ error: "アップロードには認証が必要です", authRequired: true }, 401);
+}
+
+export async function requireUploadIdentity(
+  request: Request,
+  env: Env,
+): Promise<{ identity: AuthIdentity } | { response: Response }> {
+  const gate = await requireUploadAccess(request, env);
+  if (gate) return { response: gate };
+  const identity = await resolveAuthIdentity(request, env);
+  if (!identity) {
+    return { response: json({ error: "アップロードには認証が必要です", authRequired: true }, 401) };
+  }
+  return { identity };
 }
 
 export function json(data: unknown, status = 200, extra: HeadersInit = {}): Response {

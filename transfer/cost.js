@@ -1,5 +1,6 @@
 /** Browser copy of workers/transfer/src/cost.ts (keep in sync). */
-export const MAX_BYTES = 15 * 1024 * 1024 * 1024;
+export const FREE_STORAGE_BYTES = 10 * 1024 * 1024 * 1024;
+export const MAX_BYTES = FREE_STORAGE_BYTES;
 export const RETENTION_HOURS = 24;
 export const PART_SIZE = 32 * 1024 * 1024;
 export const FREE_STORAGE_GB_MONTH = 10;
@@ -24,13 +25,10 @@ export function estimateR2Cost(sizeBytes, partSize = PART_SIZE) {
   const withinFreeStorage = gbMonth <= FREE_STORAGE_GB_MONTH;
   const withinFreeClassA = classAOps <= FREE_CLASS_A;
   const warnings = [];
-  if (sizeBytes > MAX_BYTES) warnings.push(`上限 ${MAX_BYTES / 1024 ** 3} GiB を超えています`);
-  if (!withinFreeStorage) warnings.push("このアップロード単体で R2 無料保管枠（10 GB-month）を超える見込みです");
-  if (sizeGiB > 10) {
-    warnings.push(
-      "保管中の瞬間容量が 10 GiB を超えます。月平均 GB-month は小さくても、他用途と併用する場合は枠に注意してください",
-    );
+  if (sizeBytes > MAX_BYTES) {
+    warnings.push(`上限 ${MAX_BYTES / 1024 ** 3} GiB（R2 無料枠の同時合計）を超えています`);
   }
+  if (!withinFreeStorage) warnings.push("このアップロード単体で R2 無料保管枠（10 GB-month）を超える見込みです");
   return {
     sizeBytes,
     sizeGiB,
