@@ -8,6 +8,13 @@ Cloudflare 上で `tools.yutok.dev/transfer*` を Worker に振り、R2 一時�
 - リポジトリ: `32Lwk/tools`
 - Worker ソース: [`workers/transfer/`](../workers/transfer/)
 
+## なぜ動かないか（よくある原因）
+
+1. **Worker 未デプロイ** — `/transfer/api/*` が GitHub Pages の 404 になる
+2. **DNS が灰雲（DNS only）** — Worker Routes は橙雲（Proxied）必須。公開 DNS が `185.199.x.x`（GitHub）のままなら未 Proxied
+3. **KV / R2 未作成または ID 未記入** — multipart / メタデータが失敗する
+4. **認証未設定** — 本番は `UPLOAD_GATE`（または Cloudflare Access）必須。未設定だと upload API は 503
+
 ## 1. R2 / KV を作成
 
 ```bash
@@ -25,56 +32,64 @@ npx wrangler kv namespace create TOOLS_TRANSFER_META --preview
 
 | Type | Name | Target | Proxy |
 |------|------|--------|-------|
-| CNAME | `tools` | `32lwk.github.io` | **Proxied** |
+| CNAME | `tools` | `32lwk.github.io` | **Proxied**（橙雲） |
 
-`wrangler.jsonc` の `routes` により `tools.yutok.dev/transfer*` が Worker に入り、それ以外はオリジン（GitHub Pages）へフォールバックする想定です。  
-橙雲にした直後は SSL / オリジン到達を確認してください。
+Cloudflare Dashboard → DNS → `tools` レコードの Proxy status を Proxied にする。
 
-## 3. Worker をデプロイ
+`wrangler.jsonc` の `routes` により `tools.yutok.dev/transfer*` が Worker に入り、それ以外はオリジン（GitHub Pages）へフォールバックします。
+
+## 3. アップロード認証（必須）
+
+誰でもアップロードできないよう、本番は **fail-closed** です。
+
+### A. ゲートパスワード（推奨・即時）
 
 ```bash
 cd workers/transfer
-# 開発中はアップロード Access をスキップ
-# wrangler.jsonc vars.DEV_OPEN_UPLOAD = "1"
-npx wrangler deploy
+npx wrangler secret put UPLOAD_GATE
+# 強いパスワードを入力
 ```
 
-本番では `DEV_OPEN_UPLOAD` を削除（または `"0"`）し、Access を必須にします。
+`/transfer/` の「ゲートパスワード」で認証すると HttpOnly Cookie が付き、12 時間有効です。
 
-任意で JWT の audience を Worker にも渡す場合:
+### B. Cloudflare Access（任意・追加）
+
+1. Zero Trust → Access → Applications → Add Self-hosted
+2. Domain: `tools.yutok.dev`、Path でアップロード系のみ保護
+3. **保護する例:** `/transfer`, `/transfer/`, `/transfer/api/auth/*`, `/transfer/api/status`, `/transfer/api/r2/*`
+4. **Bypass:** `/transfer/d/*`, `/transfer/api/dl/*`
+5. Policy: 自分のアカウントのみ Allow
+6. Worker secrets:
 
 ```bash
 npx wrangler secret put ACCESS_AUD
+npx wrangler secret put TEAM_DOMAIN
+# 例: https://<team>.cloudflareaccess.com
+# 任意: UPLOAD_ALLOW_EMAILS=you@example.com
 ```
 
-## 4. Cloudflare Access（Zero Trust）
+ローカル開発のみ `.dev.vars` で `DEV_OPEN_UPLOAD=1`（コミットしない）。
 
-アップロード UI / 変更系 API のみ保護します。
+## 4. Worker をデプロイ
 
-1. Zero Trust → Access → Applications → Add Self-hosted
-2. Application domain: `tools.yutok.dev`
-3. Path で保護する例:
-   - `/transfer`（アップロード UI）
-   - `/transfer/` 
-   - `/transfer/api/status`
-   - `/transfer/api/r2/*`
-4. ** Bypass / 保護しない**（ダウンロード用）:
-   - `/transfer/d/*`
-   - `/transfer/api/dl/*`
-5. Identity providers: **GitHub** および **One-time PIN（メール）**
-6. Policy: 自分のアカウントのみ Allow
+```bash
+cd workers/transfer
+npx wrangler deploy
+```
 
-## 5. R2 CORS（ブラウザ直 PUT ではないが将来用）
+リポジトリルートの [`.assetsignore`](../.assetsignore) で大容量ファイルをアセット走査から除外しています。
+
+## 5. R2 CORS（将来用）
 
 現状の multipart は Worker 経由（32 MiB パート）です。将来 presigned 直 PUT にする場合はバケット CORS を設定します。
 
 ## 6. 動作確認
 
-1. Access ログイン後に `https://tools.yutok.dev/transfer/` を開く
-2. スラッグ・パスワード・小ファイルを選び、コスト確認にチェック
-3. アップロード完了後の `/transfer/d/{slug}` を別ブラウザ（未ログイン）で開き、パスワードで DL
-4. 同時に 2 本目を上げると 409 になること
-5. 24 時間後（または cron）で削除されること
+1. `https://tools.yutok.dev/transfer/api/status` が JSON（未認証なら 401）であること（Pages の HTML 404 ではない）
+2. ゲートパスワードで認証後、小ファイルをアップロード
+3. `/transfer/d/{slug}` を別ブラウザで開き、ファイル用パスワードで DL
+4. 未認証・別ブラウザではアップロード UI がゲートのままであること
+5. 同時に 2 本目を上げると 409 になること
 
 ## 7. コスト目安（ほぼ無料）
 

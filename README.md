@@ -4,7 +4,7 @@
 
 - **公開 URL:** https://tools.yutok.dev/
 - **Pages 設定:** Custom domain `tools.yutok.dev`（branch `main` / root）
-- **転送 API:** `/transfer*` は Cloudflare Worker（R2 / Drive / P2P）。手順は [docs/transfer-ops.md](./docs/transfer-ops.md)、設計は [docs/transfer-plan.md](./docs/transfer-plan.md)
+- **転送 API:** `/transfer*` は Cloudflare Worker（R2 / Drive / P2P）。アップロードはゲート認証必須。手順は [docs/transfer-ops.md](./docs/transfer-ops.md)、設計は [docs/transfer-plan.md](./docs/transfer-plan.md)
 
 ## 収録ツール
 

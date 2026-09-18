@@ -9,6 +9,18 @@ function showMsg(text, ok = false) {
   el.classList.toggle("ok", !!ok);
 }
 
+function showAuthMsg(text, ok = false) {
+  const el = $("auth-msg");
+  el.hidden = !text;
+  el.textContent = text || "";
+  el.classList.toggle("ok", !!ok);
+}
+
+function setAuthenticated(ok) {
+  $("auth-gate").hidden = ok;
+  $("upload-area").hidden = !ok;
+}
+
 function wireTabs() {
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -57,22 +69,45 @@ function renderCost(file) {
 async function refreshStatus() {
   const line = $("status-line");
   try {
-    const res = await fetch("/transfer/api/status");
-    const data = await res.json();
+    const res = await fetch("/transfer/api/status", { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401 || data.authRequired) {
+      line.textContent = "未認証のため状態は表示しません";
+      setAuthenticated(false);
+      return;
+    }
     if (!res.ok) throw new Error(data.error || res.statusText);
+    setAuthenticated(true);
     if (data.active) {
       line.textContent = `現在保管中: ${data.active.slug}（${formatBytes(data.active.size)}） / 期限 ${new Date(data.active.expiresAt).toLocaleString()}`;
     } else {
       line.textContent = "空きスロットあり（同時保管 1 本・最大 15 GiB・24 時間）";
     }
   } catch (e) {
-    line.textContent = `状態取得に失敗（Worker 未デプロイの可能性）: ${e.message}`;
+    line.textContent = `状態取得に失敗（Worker 未接続の可能性）: ${e.message}`;
+    $("auth-gate").hidden = false;
+    $("upload-area").hidden = true;
   }
+}
+
+async function checkAuth() {
+  try {
+    const res = await fetch("/transfer/api/auth/me", { credentials: "include" });
+    if (res.ok) {
+      setAuthenticated(true);
+      return true;
+    }
+  } catch {
+    /* ignore */
+  }
+  setAuthenticated(false);
+  return false;
 }
 
 async function uploadFile(file, slug, password) {
   const initRes = await fetch("/transfer/api/r2/init", {
     method: "POST",
+    credentials: "include",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       slug,
@@ -84,6 +119,10 @@ async function uploadFile(file, slug, password) {
     }),
   });
   const init = await initRes.json();
+  if (initRes.status === 401 || init.authRequired) {
+    setAuthenticated(false);
+    throw new Error(init.error || "認証が必要です");
+  }
   if (!initRes.ok) throw new Error(init.error || "init failed");
 
   const partSize = init.partSize || PART_SIZE;
@@ -96,7 +135,7 @@ async function uploadFile(file, slug, password) {
     const blob = file.slice(start, Math.min(file.size, start + partSize));
     const partNumber = i + 1;
     const url = `/transfer/api/r2/part?slug=${encodeURIComponent(slug)}&uploadId=${encodeURIComponent(init.uploadId)}&partNumber=${partNumber}`;
-    const partRes = await fetch(url, { method: "PUT", body: blob });
+    const partRes = await fetch(url, { method: "PUT", body: blob, credentials: "include" });
     const partJson = await partRes.json();
     if (!partRes.ok) throw new Error(partJson.error || `part ${partNumber} failed`);
     parts.push({ partNumber: partJson.partNumber, etag: partJson.etag });
@@ -107,12 +146,47 @@ async function uploadFile(file, slug, password) {
 
   const doneRes = await fetch("/transfer/api/r2/complete", {
     method: "POST",
+    credentials: "include",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ slug, uploadId: init.uploadId, parts }),
   });
   const done = await doneRes.json();
   if (!doneRes.ok) throw new Error(done.error || "complete failed");
   return done;
+}
+
+function wireAuth() {
+  $("auth-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    showAuthMsg("");
+    const password = $("gate-password").value;
+    $("auth-btn").disabled = true;
+    try {
+      const res = await fetch("/transfer/api/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "認証失敗");
+      $("gate-password").value = "";
+      setAuthenticated(true);
+      showAuthMsg("");
+      await refreshStatus();
+    } catch (e) {
+      showAuthMsg(e.message || String(e));
+      setAuthenticated(false);
+    } finally {
+      $("auth-btn").disabled = false;
+    }
+  });
+
+  $("logout-btn").addEventListener("click", async () => {
+    await fetch("/transfer/api/auth/logout", { method: "POST", credentials: "include" });
+    setAuthenticated(false);
+    $("status-line").textContent = "ログアウトしました";
+  });
 }
 
 function wireForm() {
@@ -148,6 +222,7 @@ function wireForm() {
       try {
         await fetch("/transfer/api/r2/abort", {
           method: "DELETE",
+          credentials: "include",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ slug }),
         });
@@ -161,5 +236,13 @@ function wireForm() {
 }
 
 wireTabs();
+wireAuth();
 wireForm();
-refreshStatus();
+(async () => {
+  const ok = await checkAuth();
+  if (ok) await refreshStatus();
+  else {
+    $("status-line").textContent = "アップロードには認証が必要です";
+    $("auth-gate").hidden = false;
+  }
+})();

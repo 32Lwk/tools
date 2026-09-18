@@ -1,0 +1,8 @@
+.git
+.wrangler
+**/.wrangler/**
+**/node_modules/**
+workers/transfer/node_modules/**
+kek-mca/3D/tunnel/tracks_by_depth.json
+*.mp4
+*.webm

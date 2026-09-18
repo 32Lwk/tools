@@ -12,7 +12,7 @@
   <main class="wrap">
     <p class="crumb"><a href="/">tools.yutok.dev</a> / transfer</p>
     <h1>ファイル転送</h1>
-    <p class="lead">端末間でファイルを受け渡します。アップロードは本人のみ（Cloudflare Access）。ダウンロードはパスワード必須です。</p>
+    <p class="lead">端末間でファイルを受け渡します。アップロードは本人のみ。ダウンロードはパスワード必須です。</p>
 
     <nav class="tabs" role="tablist" aria-label="転送モード">
       <button type="button" class="tab active" data-tab="r2" role="tab" aria-selected="true">一時（R2）</button>
@@ -25,41 +25,62 @@
       <p class="muted">最大 15 GiB・同時 1 本・保管 24 時間。スラッグ付き URL とパスワードで共有します。</p>
       <p id="status-line" class="muted">状態を確認中…</p>
 
-      <form id="r2-form" class="stack">
-        <label>スラッグ（フォルダ名風）
-          <input id="slug" required pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?" minlength="3" maxlength="64" placeholder="backup-laptop" autocomplete="off" />
-        </label>
-        <label>パスワード（必須・相手へ口頭などで共有）
-          <input id="password" type="password" required minlength="4" autocomplete="new-password" />
-        </label>
-        <label>ファイル
-          <input id="file" type="file" required />
-        </label>
-
-        <div id="cost-box" class="cost-box" hidden>
-          <h2>コスト確認</h2>
-          <ul id="cost-list"></ul>
-          <label class="ack">
-            <input type="checkbox" id="cost-ack" />
-            このコストで続行する
+      <div id="auth-gate" class="auth-gate" hidden>
+        <p class="muted">アップロードには所有者認証が必要です。</p>
+        <form id="auth-form" class="stack">
+          <label class="float-field">
+            <input id="gate-password" type="password" placeholder=" " required autocomplete="current-password" />
+            <span class="float-label">ゲートパスワード</span>
           </label>
+          <button type="submit" id="auth-btn">認証して続行</button>
+        </form>
+        <p id="auth-msg" class="msg" hidden></p>
+      </div>
+
+      <div id="upload-area" hidden>
+        <p class="auth-bar muted">
+          認証済み
+          <button type="button" id="logout-btn" class="linkish">ログアウト</button>
+        </p>
+        <form id="r2-form" class="stack">
+          <label class="float-field">
+            <input id="slug" required pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?" minlength="3" maxlength="64" placeholder=" " autocomplete="off" />
+            <span class="float-label">スラッグ</span>
+          </label>
+          <label>
+            パスワード
+            <input id="password" type="password" required minlength="4" autocomplete="new-password" />
+          </label>
+          <label>
+            ファイル
+            <input id="file" type="file" required />
+          </label>
+
+          <div id="cost-box" class="cost-box" hidden>
+            <h2>コスト確認</h2>
+            <ul id="cost-list"></ul>
+            <label class="ack">
+              <input type="checkbox" id="cost-ack" />
+              このコストで続行する
+            </label>
+          </div>
+
+          <button type="submit" id="upload-btn" disabled>アップロード開始</button>
+        </form>
+
+        <div id="progress-wrap" class="progress-wrap" hidden>
+          <div class="progress"><div id="progress-bar"></div></div>
+          <p id="progress-text" class="muted"></p>
         </div>
 
-        <button type="submit" id="upload-btn" disabled>アップロード開始</button>
-      </form>
+        <div id="result" class="result" hidden>
+          <h2>共有リンク</h2>
+          <p><a id="result-link" href="#"></a></p>
+          <p class="muted">パスワードはサイト外で相手に伝えてください。リンクは約 24 時間で無効になります。</p>
+        </div>
 
-      <div id="progress-wrap" class="progress-wrap" hidden>
-        <div class="progress"><div id="progress-bar"></div></div>
-        <p id="progress-text" class="muted"></p>
+        <p id="r2-msg" class="msg" hidden></p>
       </div>
-
-      <div id="result" class="result" hidden>
-        <h2>共有リンク</h2>
-        <p><a id="result-link" href="#"></a></p>
-        <p class="muted">パスワードはサイト外で相手に伝えてください。リンクは約 24 時間で無効になります。</p>
-      </div>
-
-      <p id="r2-msg" class="msg" hidden></p>
     </section>
 
     <section id="panel-drive" class="panel" hidden role="tabpanel">

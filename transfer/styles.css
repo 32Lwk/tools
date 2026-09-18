@@ -54,6 +54,49 @@ label {
   font-size: 0.95rem;
 }
 
+.float-field {
+  position: relative;
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.float-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.15rem 0.55rem 0.4rem;
+  font: inherit;
+  border: 1px solid var(--border, #bbb);
+  border-radius: 4px;
+  background: var(--input-bg, #fff);
+  color: inherit;
+}
+
+.float-label {
+  position: absolute;
+  left: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  color: var(--muted, #666);
+  pointer-events: none;
+  transition: top 0.15s ease, transform 0.15s ease, font-size 0.15s ease, color 0.15s ease;
+  background: transparent;
+  padding: 0 0.15rem;
+}
+
+.float-field input:focus + .float-label,
+.float-field input:not(:placeholder-shown) + .float-label {
+  top: 0.35rem;
+  transform: none;
+  font-size: 0.72rem;
+  color: var(--fg, #222);
+}
+
+.float-field input:focus {
+  outline: 2px solid color-mix(in srgb, var(--fg, #222) 35%, transparent);
+  outline-offset: 1px;
+}
+
 input[type="text"],
 input[type="password"],
 input[type="file"] {
@@ -78,6 +121,31 @@ button[type="submit"] {
 button[type="submit"]:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.auth-gate {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border, #ccc);
+  border-radius: 6px;
+  background: var(--surface, #f7f7f7);
+}
+
+.auth-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+button.linkish {
+  font: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
 }
 
 .cost-box {

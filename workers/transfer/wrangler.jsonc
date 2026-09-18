@@ -27,15 +27,12 @@
   "kv_namespaces": [
     {
       "binding": "META",
-      "id": "00000000000000000000000000000000",
-      "preview_id": "11111111111111111111111111111111"
+      "id": "dd51b4541b294aa6864249327b9581c2",
+      "preview_id": "7e6813e030534564be4781f58de0d7f4"
     }
   ],
   "triggers": {
     "crons": ["0 * * * *"]
-  },
-  "vars": {
-    "DEV_OPEN_UPLOAD": "1"
   },
   "observability": {
     "enabled": true,

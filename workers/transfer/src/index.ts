@@ -1,5 +1,13 @@
 import { estimateR2Cost, MAX_BYTES, PART_SIZE, RETENTION_HOURS } from "./cost";
-import { corsHeaders, json, requireUploadAccess, withCors } from "./access";
+import {
+  corsHeaders,
+  createUploadSession,
+  destroyUploadSession,
+  json,
+  requireUploadAccess,
+  verifyUploadGatePassword,
+  withCors,
+} from "./access";
 import type { Env } from "./env";
 import { hashPassword, verifyPassword } from "./password";
 import {
@@ -66,6 +74,31 @@ async function cleanupExpired(env: Env): Promise<string[]> {
 async function handleApi(request: Request, env: Env, path: string): Promise<Response> {
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders(request) });
+  }
+
+  if (path === "/transfer/api/auth/login" && request.method === "POST") {
+    if (env.DEV_OPEN_UPLOAD === "1") {
+      const session = await createUploadSession(env);
+      return json({ ok: true, mode: "dev" }, 200, { "set-cookie": session.setCookie });
+    }
+    const body = await readJson<{ password?: string }>(request);
+    if (!body?.password) return json({ error: "password required", authRequired: true }, 400);
+    if (!(await verifyUploadGatePassword(env, body.password))) {
+      return json({ error: "認証に失敗しました", authRequired: true }, 401);
+    }
+    const session = await createUploadSession(env);
+    return json({ ok: true }, 200, { "set-cookie": session.setCookie });
+  }
+
+  if (path === "/transfer/api/auth/logout" && request.method === "POST") {
+    const clear = await destroyUploadSession(request, env);
+    return json({ ok: true }, 200, { "set-cookie": clear });
+  }
+
+  if (path === "/transfer/api/auth/me" && request.method === "GET") {
+    const gate = await requireUploadAccess(request, env);
+    if (gate) return gate;
+    return json({ ok: true, authenticated: true });
   }
 
   if (path === "/transfer/api/status" && request.method === "GET") {
