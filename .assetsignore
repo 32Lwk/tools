@@ -1,0 +1,9 @@
+# Assets excluded from the transfer Worker bundle (workers/transfer).
+# The Worker only serves /transfer* routes; GitHub Pages serves the rest of
+# the site, so these entries are never fetched through env.ASSETS. Excluding
+# them keeps every uploaded asset within Cloudflare's 25 MiB per-file limit
+# (node_modules ships a >100 MiB workerd binary; the file below is ~26 MiB).
+.git
+.wrangler
+node_modules
+kek-mca/3D/tunnel/tracks_by_depth.json
