@@ -85,11 +85,14 @@ npx wrangler deploy
 
 ## 6. 動作確認
 
-1. `https://tools.yutok.dev/transfer/api/status` が JSON（未認証なら 401）であること（Pages の HTML 404 ではない）
-2. ゲートパスワードで認証後、小ファイルをアップロード
-3. `/transfer/d/{slug}` を別ブラウザで開き、ファイル用パスワードで DL
-4. 未認証・別ブラウザではアップロード UI がゲートのままであること
-5. 同時に 2 本目を上げると 409 になること
+1. `https://tools.yutok.dev/transfer/api/status` が JSON（未認証なら 401）であること（Pages の HTML 404 / POST の 405 ではない）
+2. ブラウザの開発者ツール → Network で `Server: cloudflare` と `cf-ray` があること（`GitHub.com` / `Varnish` なら DNS が橙雲未反映）
+3. ゲートパスワードで認証後、小ファイルをアップロード
+4. `/transfer/d/{slug}` を別ブラウザで開き、ファイル用パスワードで DL
+5. 未認証・別ブラウザではアップロード UI がゲートのままであること
+6. 同時に 2 本目を上げると 409 になること
+
+DNS を橙雲にした直後に API が HTML/405 になる場合は、OS の DNS キャッシュを消す（Windows: `ipconfig /flushdns`）か、別ブラウザ／シークレットウィンドウで再試行してください。
 
 ## 7. コスト目安（ほぼ無料）
 

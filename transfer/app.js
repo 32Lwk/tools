@@ -66,11 +66,30 @@ function renderCost(file) {
   return estimate;
 }
 
+async function readJsonResponse(res) {
+  const text = await res.text();
+  const trimmed = text.trim();
+  if (!trimmed || trimmed.startsWith("<!") || trimmed.startsWith("<html")) {
+    const err = new Error(
+      "転送 API が HTML を返しました（Worker 未経由）。DNS を橙雲にし、ブラウザの DNS キャッシュを消して再読み込みしてください。",
+    );
+    err.code = "API_HTML";
+    throw err;
+  }
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    const err = new Error("転送 API の応答が JSON ではありません");
+    err.code = "API_NOT_JSON";
+    throw err;
+  }
+}
+
 async function refreshStatus() {
   const line = $("status-line");
   try {
     const res = await fetch("/transfer/api/status", { credentials: "include" });
-    const data = await res.json().catch(() => ({}));
+    const data = await readJsonResponse(res);
     if (res.status === 401 || data.authRequired) {
       line.textContent = "未認証のため状態は表示しません";
       setAuthenticated(false);
@@ -84,7 +103,7 @@ async function refreshStatus() {
       line.textContent = "空きスロットあり（同時保管 1 本・最大 15 GiB・24 時間）";
     }
   } catch (e) {
-    line.textContent = `状態取得に失敗（Worker 未接続の可能性）: ${e.message}`;
+    line.textContent = `状態取得に失敗: ${e.message}`;
     $("auth-gate").hidden = false;
     $("upload-area").hidden = true;
   }
@@ -118,7 +137,7 @@ async function uploadFile(file, slug, password) {
       costAck: true,
     }),
   });
-  const init = await initRes.json();
+  const init = await readJsonResponse(initRes);
   if (initRes.status === 401 || init.authRequired) {
     setAuthenticated(false);
     throw new Error(init.error || "認証が必要です");
@@ -136,7 +155,7 @@ async function uploadFile(file, slug, password) {
     const partNumber = i + 1;
     const url = `/transfer/api/r2/part?slug=${encodeURIComponent(slug)}&uploadId=${encodeURIComponent(init.uploadId)}&partNumber=${partNumber}`;
     const partRes = await fetch(url, { method: "PUT", body: blob, credentials: "include" });
-    const partJson = await partRes.json();
+    const partJson = await readJsonResponse(partRes);
     if (!partRes.ok) throw new Error(partJson.error || `part ${partNumber} failed`);
     parts.push({ partNumber: partJson.partNumber, etag: partJson.etag });
     const pct = Math.round((partNumber / totalParts) * 100);
@@ -150,7 +169,7 @@ async function uploadFile(file, slug, password) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ slug, uploadId: init.uploadId, parts }),
   });
-  const done = await doneRes.json();
+  const done = await readJsonResponse(doneRes);
   if (!doneRes.ok) throw new Error(done.error || "complete failed");
   return done;
 }
@@ -159,7 +178,11 @@ function wireAuth() {
   $("auth-form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     showAuthMsg("");
-    const password = $("gate-password").value;
+    const password = $("gate-password").value.trim();
+    if (!password) {
+      showAuthMsg("ゲートパスワードを入力してください");
+      return;
+    }
     $("auth-btn").disabled = true;
     try {
       const res = await fetch("/transfer/api/auth/login", {
@@ -168,8 +191,13 @@ function wireAuth() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ password }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "認証失敗");
+      if (res.status === 405) {
+        throw new Error(
+          "POST が GitHub Pages に遮断されています（405）。tools の DNS を Cloudflare 橙雲にし、ipconfig /flushdns 後に再試行してください。",
+        );
+      }
+      const data = await readJsonResponse(res);
+      if (!res.ok) throw new Error(data.error || "認証に失敗しました");
       $("gate-password").value = "";
       setAuthenticated(true);
       showAuthMsg("");

@@ -136,7 +136,9 @@ async function verifyAccessJwt(
 
 export async function verifyUploadGatePassword(env: Env, password: string): Promise<boolean> {
   if (!env.UPLOAD_GATE) return false;
-  return timingSafeEqual(password, env.UPLOAD_GATE);
+  const expected = env.UPLOAD_GATE.trim();
+  const given = password.trim();
+  return timingSafeEqual(given, expected);
 }
 
 /**
