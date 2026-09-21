@@ -6,11 +6,11 @@
   <title>ファイル転送 — tools.yutok.dev</title>
   <script src="/theme-boot.js"></script>
   <link rel="stylesheet" href="/theme.css" />
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="/share/styles.css" />
 </head>
 <body>
   <main class="wrap">
-    <p class="crumb"><a href="/">tools.yutok.dev</a> / transfer</p>
+    <p class="crumb"><a href="/">tools.yutok.dev</a> / <a href="/share/">transfer</a></p>
     <div class="title-row">
       <h1>ファイル転送</h1>
       <button type="button" id="settings-btn" class="icon-btn" aria-label="設定" title="設定">設定</button>
@@ -47,17 +47,22 @@
         </p>
         <form id="r2-form" class="stack">
           <label class="float-field">
-            <input id="slug" required pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?" minlength="3" maxlength="64" placeholder=" " autocomplete="off" />
-            <span class="float-label">スラッグ</span>
+            <input id="slug" pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?(/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?)*" maxlength="200" placeholder=" " autocomplete="off" />
+            <span class="float-label">スラッグ（空なら自動）</span>
           </label>
           <label>
             パスワード
             <input id="password" type="password" required minlength="4" autocomplete="new-password" />
           </label>
           <label>
-            ファイル
-            <input id="file" type="file" required />
+            ファイル / フォルダ
+            <input id="file" type="file" multiple />
           </label>
+          <label class="ack">
+            <input type="checkbox" id="folder-mode" />
+            フォルダごと選択（ディレクトリ構造をスラッグに反映）
+          </label>
+          <p id="file-summary" class="muted" hidden></p>
 
           <div id="cost-box" class="cost-box" hidden>
             <h2>コスト確認</h2>
@@ -101,7 +106,7 @@
 
       <div id="drive-connect" class="auth-gate" hidden>
         <p class="muted">Drive 保管には Google アカウント連携が必要です。</p>
-        <a id="drive-google-btn" class="auth-btn" href="/share/api/auth/google/start?returnTo=/transfer/%23drive">Google で接続</a>
+        <a id="drive-google-btn" class="auth-btn" href="/share/api/auth/google/start?returnTo=/share/%23drive">Google で接続</a>
         <p id="drive-connect-msg" class="msg" hidden></p>
       </div>
 
@@ -117,17 +122,22 @@
 
         <form id="drive-form" class="stack">
           <label class="float-field">
-            <input id="drive-slug" required pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?" minlength="3" maxlength="64" placeholder=" " autocomplete="off" />
-            <span class="float-label">スラッグ</span>
+            <input id="drive-slug" pattern="[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?(/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?)*" maxlength="200" placeholder=" " autocomplete="off" />
+            <span class="float-label">スラッグ（空なら自動）</span>
           </label>
           <label>
             パスワード
             <input id="drive-password" type="password" required minlength="4" autocomplete="new-password" />
           </label>
           <label>
-            ファイル
-            <input id="drive-file" type="file" required />
+            ファイル / フォルダ
+            <input id="drive-file" type="file" multiple />
           </label>
+          <label class="ack">
+            <input type="checkbox" id="drive-folder-mode" />
+            フォルダごと選択（ディレクトリ構造をスラッグに反映）
+          </label>
+          <p id="drive-file-summary" class="muted" hidden></p>
 
           <div class="cost-box">
             <h2>保管について</h2>
@@ -192,6 +202,6 @@
     <div id="settings-list" class="settings-list"></div>
   </dialog>
 
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="/share/app.js"></script>
 </body>
 </html>

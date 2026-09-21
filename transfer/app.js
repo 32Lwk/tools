@@ -1,11 +1,21 @@
 import { estimateR2Cost, formatBytes, FREE_STORAGE_BYTES, MAX_BYTES, PART_SIZE } from "./cost.js";
 import { uploadToDriveResumable } from "./drive.js";
+import {
+  isValidSlug,
+  rootSlugFromFiles,
+  slugFromFilename,
+  slugFromRelativePath,
+  slugToUrlPath,
+  slugifySegment,
+} from "./slug.js";
 
 const $ = (id) => document.getElementById(id);
 
 let qrModulePromise = null;
 let authState = { authenticated: false, email: null, mode: null, accessLogoutUrl: null };
 let authMethodsState = { access: false, google: false };
+let r2SlugManual = false;
+let driveSlugManual = false;
 
 function loadQrModule() {
   if (!qrModulePromise) {
@@ -114,20 +124,45 @@ function wireTabs() {
   });
 }
 
-function renderCost(file) {
+function selectedFiles(input) {
+  return Array.from(input?.files || []).filter((f) => f.size > 0 || f.name);
+}
+
+function renderCost(files) {
   const box = $("cost-box");
   const list = $("cost-list");
   const ack = $("cost-ack");
   const btn = $("upload-btn");
-  if (!file) {
+  const summary = $("file-summary");
+  const listFiles = Array.isArray(files) ? files : files ? [files] : [];
+  if (!listFiles.length) {
     box.hidden = true;
     ack.checked = false;
     btn.disabled = true;
+    summary.hidden = true;
     return null;
   }
-  const estimate = estimateR2Cost(file.size);
+  const totalSize = listFiles.reduce((s, f) => s + f.size, 0);
+  const estimate = listFiles.reduce(
+    (acc, f) => {
+      const e = estimateR2Cost(f.size);
+      return {
+        gbMonth: acc.gbMonth + e.gbMonth,
+        classAOps: acc.classAOps + e.classAOps,
+        totalUsd: acc.totalUsd + e.totalUsd,
+        withinFreeBudget: acc.withinFreeBudget && e.withinFreeBudget,
+        warnings: acc.warnings.concat(e.warnings || []),
+      };
+    },
+    { gbMonth: 0, classAOps: 0, totalUsd: 0, withinFreeBudget: true, warnings: [] },
+  );
+  // Recompute free-budget against combined storage
+  const combined = estimateR2Cost(totalSize);
+  estimate.gbMonth = combined.gbMonth;
+  estimate.withinFreeBudget = combined.withinFreeBudget && estimate.classAOps <= 1e6;
   list.innerHTML = `
-    <li>サイズ: <strong>${formatBytes(file.size)}</strong></li>
+    <li>ファイル数: <strong>${listFiles.length}</strong></li>
+    <li>合計サイズ: <strong>${formatBytes(totalSize)}</strong></li>
     <li>保管: 24 時間（約 <strong>${estimate.gbMonth.toFixed(3)} GB-month</strong>）</li>
     <li>Class A 概算: <strong>${estimate.classAOps.toLocaleString()}</strong> ops</li>
     <li>超過時の概算料金: <strong>$${estimate.totalUsd.toFixed(4)}</strong>（無料枠内なら $0）</li>
@@ -139,9 +174,48 @@ function renderCost(file) {
     list.appendChild(li);
   }
   box.hidden = false;
-  const overCap = file.size > MAX_BYTES;
+  summary.hidden = false;
+  if (listFiles.length === 1) {
+    summary.textContent = listFiles[0].name;
+  } else {
+    const sample = listFiles
+      .slice(0, 3)
+      .map((f) => f.webkitRelativePath || f.name)
+      .join(", ");
+    summary.textContent = `${listFiles.length} 件: ${sample}${listFiles.length > 3 ? " …" : ""}`;
+  }
+  const overCap = totalSize > MAX_BYTES || listFiles.some((f) => f.size > MAX_BYTES);
   btn.disabled = !(ack.checked && !overCap);
   return estimate;
+}
+
+function suggestR2Slug(files, folderMode) {
+  if (!files.length) return "";
+  if (folderMode || files.some((f) => f.webkitRelativePath?.includes("/"))) {
+    const root = $("slug").value.trim()
+      ? slugifySegment($("slug").value.trim().split("/")[0], { minLength: 3 })
+      : rootSlugFromFiles(files);
+    return root;
+  }
+  return slugFromFilename(files[0].name);
+}
+
+function buildUploadPlan(files, rootOrSlug, folderMode) {
+  const manual = (rootOrSlug || "").trim();
+  if (!files.length) return [];
+  const isFolder = folderMode || files.some((f) => f.webkitRelativePath?.includes("/"));
+  if (!isFolder) {
+    const slug = manual || slugFromFilename(files[0].name);
+    return [{ file: files[0], slug, shareRoot: slug }];
+  }
+  const root = manual
+    ? slugifySegment(manual.split("/")[0], { minLength: 3 })
+    : rootSlugFromFiles(files);
+  return files.map((file) => {
+    const rel = file.webkitRelativePath || file.name;
+    const slug = slugFromRelativePath(rel, root);
+    return { file, slug, shareRoot: root };
+  });
 }
 
 async function readJsonResponse(res) {
@@ -185,9 +259,9 @@ async function loadAuthMethods() {
 
     if (data.google) {
       googleBtn.hidden = false;
-      googleBtn.href = `/share/api/auth/google/start?returnTo=${encodeURIComponent(`${location.origin}/transfer/`)}`;
+      googleBtn.href = `/share/api/auth/google/start?returnTo=${encodeURIComponent(`${location.origin}/share/`)}`;
       $("drive-google-btn").href =
-        `/share/api/auth/google/start?returnTo=${encodeURIComponent(`${location.origin}/transfer/#drive`)}`;
+        `/share/api/auth/google/start?returnTo=${encodeURIComponent(`${location.origin}/share/#drive`)}`;
     } else {
       googleBtn.hidden = true;
     }
@@ -204,7 +278,7 @@ async function loadAuthMethods() {
 async function refreshStatus() {
   const line = $("status-line");
   try {
-    const res = await fetch("/transfer/api/status", { credentials: "include" });
+    const res = await fetch("/share/api/status", { credentials: "include" });
     const data = await readJsonResponse(res);
     if (res.status === 401 || data.authRequired) {
       line.textContent = "未認証のため状態は表示しません";
@@ -236,7 +310,7 @@ async function refreshStatus() {
 
 async function checkAuth() {
   try {
-    const res = await fetch("/transfer/api/auth/me", { credentials: "include" });
+    const res = await fetch("/share/api/auth/me", { credentials: "include" });
     const data = await readJsonResponse(res);
     if (res.ok && data.authenticated) {
       setAuthenticated(true, data);
@@ -249,8 +323,8 @@ async function checkAuth() {
   return false;
 }
 
-async function uploadFile(file, slug, password) {
-  const initRes = await fetch("/transfer/api/r2/init", {
+async function uploadFile(file, slug, password, { onPartProgress } = {}) {
+  const initRes = await fetch("/share/api/r2/init", {
     method: "POST",
     credentials: "include",
     headers: { "content-type": "application/json" },
@@ -279,17 +353,20 @@ async function uploadFile(file, slug, password) {
     const start = i * partSize;
     const blob = file.slice(start, Math.min(file.size, start + partSize));
     const partNumber = i + 1;
-    const partUrl = `/transfer/api/r2/part?slug=${encodeURIComponent(slug)}&uploadId=${encodeURIComponent(init.uploadId)}&partNumber=${partNumber}`;
+    const partUrl = `/share/api/r2/part?slug=${encodeURIComponent(slug)}&uploadId=${encodeURIComponent(init.uploadId)}&partNumber=${partNumber}`;
     const partRes = await fetch(partUrl, { method: "PUT", body: blob, credentials: "include" });
     const partJson = await readJsonResponse(partRes);
     if (!partRes.ok) throw new Error(partJson.error || `part ${partNumber} failed`);
     parts.push({ partNumber: partJson.partNumber, etag: partJson.etag });
     const pct = Math.round((partNumber / totalParts) * 100);
     $("progress-bar").style.width = `${pct}%`;
-    $("progress-text").textContent = `アップロード中… ${partNumber}/${totalParts} (${pct}%)`;
+    onPartProgress?.(partNumber, totalParts, pct);
+    if (!onPartProgress) {
+      $("progress-text").textContent = `アップロード中… ${partNumber}/${totalParts} (${pct}%)`;
+    }
   }
 
-  const doneRes = await fetch("/transfer/api/r2/complete", {
+  const doneRes = await fetch("/share/api/r2/complete", {
     method: "POST",
     credentials: "include",
     headers: { "content-type": "application/json" },
@@ -395,7 +472,7 @@ function wireShare() {
 function wireAuth() {
   $("logout-btn").addEventListener("click", async () => {
     try {
-      const res = await fetch("/transfer/api/auth/logout", {
+      const res = await fetch("/share/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -418,36 +495,91 @@ function wireAuth() {
 function wireForm() {
   const fileInput = $("file");
   const ack = $("cost-ack");
+  const folderMode = $("folder-mode");
+  const slugInput = $("slug");
 
   const update = () => {
-    renderCost(fileInput.files?.[0] || null);
+    const files = selectedFiles(fileInput);
+    if (!r2SlugManual) {
+      const suggested = suggestR2Slug(files, folderMode.checked);
+      if (suggested) slugInput.value = suggested;
+    }
+    renderCost(files);
   };
 
-  fileInput.addEventListener("change", update);
+  slugInput.addEventListener("input", () => {
+    r2SlugManual = slugInput.value.trim().length > 0;
+  });
+
+  folderMode.addEventListener("change", () => {
+    if (folderMode.checked) {
+      fileInput.setAttribute("webkitdirectory", "");
+      fileInput.removeAttribute("multiple");
+      // webkitdirectory implies multiple
+    } else {
+      fileInput.removeAttribute("webkitdirectory");
+      fileInput.setAttribute("multiple", "");
+    }
+    fileInput.value = "";
+    r2SlugManual = false;
+    slugInput.value = "";
+    update();
+  });
+
+  fileInput.addEventListener("change", () => {
+    if (!r2SlugManual) slugInput.value = "";
+    update();
+  });
   ack.addEventListener("change", update);
 
   $("r2-form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     showMsg("");
-    const file = fileInput.files?.[0];
-    const slug = $("slug").value.trim();
+    const files = selectedFiles(fileInput);
     const password = $("password").value;
-    if (!file || !ack.checked) return;
+    if (!files.length || !ack.checked) return;
+    const plan = buildUploadPlan(files, slugInput.value, folderMode.checked);
+    for (const item of plan) {
+      if (!isValidSlug(item.slug)) {
+        showMsg(`不正なスラッグ: ${item.slug}`);
+        return;
+      }
+    }
     $("upload-btn").disabled = true;
+    $("progress-wrap").hidden = false;
+    let lastSlug = plan[0]?.slug;
     try {
-      const done = await uploadFile(file, slug, password);
-      const href = done.downloadPath || `/share/d/${slug}`;
+      for (let i = 0; i < plan.length; i++) {
+        const { file, slug } = plan[i];
+        lastSlug = slug;
+        $("progress-text").textContent =
+          `アップロード中… ${i + 1}/${plan.length}: ${file.webkitRelativePath || file.name}`;
+        await uploadFile(file, slug, password, {
+          onPartProgress: (partNumber, totalParts, pct) => {
+            $("progress-bar").style.width = `${pct}%`;
+            $("progress-text").textContent =
+              `${i + 1}/${plan.length} · パート ${partNumber}/${totalParts} (${pct}%)`;
+          },
+        });
+      }
+      const root = plan[0].shareRoot;
+      const href = `/share/d/${slugToUrlPath(root)}`;
       await renderShareResult(href);
-      showMsg("アップロード完了", true);
+      showMsg(
+        plan.length > 1
+          ? `${plan.length} 件アップロード完了（共有ルート: ${root}）`
+          : "アップロード完了",
+        true,
+      );
       await refreshStatus();
     } catch (e) {
       showMsg(e.message || String(e));
       try {
-        await fetch("/transfer/api/r2/abort", {
+        await fetch("/share/api/r2/abort", {
           method: "DELETE",
           credentials: "include",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ slug }),
+          body: JSON.stringify({ slug: lastSlug }),
         });
       } catch {
         /* ignore */
@@ -472,7 +604,7 @@ async function refreshDriveStatus() {
       }
     }
 
-    const res = await fetch("/transfer/api/drive/status", { credentials: "include" });
+    const res = await fetch("/share/api/drive/status", { credentials: "include" });
     const data = await readJsonResponse(res);
     if (res.status === 401 || data.authRequired) {
       setAuthenticated(false);
@@ -520,13 +652,60 @@ function wireDrive() {
   const fileInput = $("drive-file");
   const ack = $("drive-cost-ack");
   const btn = $("drive-upload-btn");
+  const folderMode = $("drive-folder-mode");
+  const slugInput = $("drive-slug");
+  const summary = $("drive-file-summary");
 
   const update = () => {
-    const file = fileInput.files?.[0];
-    const over = file && file.size > MAX_BYTES;
-    btn.disabled = !(file && ack.checked && !over);
+    const files = selectedFiles(fileInput);
+    if (!driveSlugManual) {
+      if (!files.length) {
+        slugInput.value = "";
+      } else if (folderMode.checked || files.some((f) => f.webkitRelativePath?.includes("/"))) {
+        slugInput.value = rootSlugFromFiles(files);
+      } else {
+        slugInput.value = slugFromFilename(files[0].name);
+      }
+    }
+    if (!files.length) {
+      summary.hidden = true;
+      btn.disabled = true;
+      return;
+    }
+    summary.hidden = false;
+    summary.textContent =
+      files.length === 1
+        ? files[0].name
+        : `${files.length} 件（${files
+            .slice(0, 2)
+            .map((f) => f.webkitRelativePath || f.name)
+            .join(", ")}…）`;
+    const over = files.some((f) => f.size > MAX_BYTES);
+    btn.disabled = !(ack.checked && !over);
   };
-  fileInput.addEventListener("change", update);
+
+  slugInput.addEventListener("input", () => {
+    driveSlugManual = slugInput.value.trim().length > 0;
+  });
+
+  folderMode.addEventListener("change", () => {
+    if (folderMode.checked) {
+      fileInput.setAttribute("webkitdirectory", "");
+      fileInput.removeAttribute("multiple");
+    } else {
+      fileInput.removeAttribute("webkitdirectory");
+      fileInput.setAttribute("multiple", "");
+    }
+    fileInput.value = "";
+    driveSlugManual = false;
+    slugInput.value = "";
+    update();
+  });
+
+  fileInput.addEventListener("change", () => {
+    if (!driveSlugManual) slugInput.value = "";
+    update();
+  });
   ack.addEventListener("change", update);
 
   $("drive-folder-form").addEventListener("submit", async (ev) => {
@@ -534,7 +713,7 @@ function wireDrive() {
     showDriveMsg("");
     $("drive-folder-btn").disabled = true;
     try {
-      const res = await fetch("/transfer/api/drive/folder", {
+      const res = await fetch("/share/api/drive/folder", {
         method: "POST",
         credentials: "include",
         headers: { "content-type": "application/json" },
@@ -555,74 +734,91 @@ function wireDrive() {
   $("drive-form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     showDriveMsg("");
-    const file = fileInput.files?.[0];
-    const slug = $("drive-slug").value.trim();
+    const files = selectedFiles(fileInput);
     const password = $("drive-password").value;
-    if (!file || !ack.checked) return;
+    if (!files.length || !ack.checked) return;
+    const plan = buildUploadPlan(files, slugInput.value, folderMode.checked);
+    for (const item of plan) {
+      if (!isValidSlug(item.slug)) {
+        showDriveMsg(`不正なスラッグ: ${item.slug}`);
+        return;
+      }
+    }
     btn.disabled = true;
     $("drive-progress-wrap").hidden = false;
     $("drive-progress-bar").style.width = "0%";
-    $("drive-progress-text").textContent = "セッション準備中…";
+    let lastSlug = plan[0]?.slug;
 
     try {
-      const initRes = await fetch("/transfer/api/drive/init", {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          slug,
-          password,
-          filename: file.name,
-          size: file.size,
-          contentType: file.type || "application/octet-stream",
-          costAck: true,
-        }),
-      });
-      const init = await readJsonResponse(initRes);
-      if (initRes.status === 401 || init.authRequired) {
-        setAuthenticated(false);
-        throw new Error(init.error || "認証が必要です");
+      for (let i = 0; i < plan.length; i++) {
+        const { file, slug } = plan[i];
+        lastSlug = slug;
+        $("drive-progress-text").textContent =
+          `準備中… ${i + 1}/${plan.length}: ${file.webkitRelativePath || file.name}`;
+
+        const initRes = await fetch("/share/api/drive/init", {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            slug,
+            password,
+            filename: file.name,
+            size: file.size,
+            contentType: file.type || "application/octet-stream",
+            costAck: true,
+          }),
+        });
+        const init = await readJsonResponse(initRes);
+        if (initRes.status === 401 || init.authRequired) {
+          setAuthenticated(false);
+          throw new Error(init.error || "認証が必要です");
+        }
+        if (!initRes.ok) throw new Error(init.error || "init failed");
+
+        const uploaded = await uploadToDriveResumable({
+          accessToken: init.accessToken,
+          resumableCreate: init.upload.resumableCreate,
+          metadata: init.metadata,
+          file,
+          onProgress: (pct, loaded, total) => {
+            $("drive-progress-bar").style.width = `${pct}%`;
+            $("drive-progress-text").textContent =
+              `${i + 1}/${plan.length} · Drive ${formatBytes(loaded)} / ${formatBytes(total)} (${pct}%)`;
+          },
+        });
+
+        const doneRes = await fetch("/share/api/drive/complete", {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ slug, driveFileId: uploaded.id }),
+        });
+        const done = await readJsonResponse(doneRes);
+        if (!doneRes.ok) throw new Error(done.error || "complete failed");
       }
-      if (!initRes.ok) throw new Error(init.error || "init failed");
 
-      const uploaded = await uploadToDriveResumable({
-        accessToken: init.accessToken,
-        resumableCreate: init.upload.resumableCreate,
-        metadata: init.metadata,
-        file,
-        onProgress: (pct, loaded, total) => {
-          $("drive-progress-bar").style.width = `${pct}%`;
-          $("drive-progress-text").textContent =
-            `Drive アップロード中… ${formatBytes(loaded)} / ${formatBytes(total)} (${pct}%)`;
-        },
-      });
-
-      const doneRes = await fetch("/transfer/api/drive/complete", {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ slug, driveFileId: uploaded.id }),
-      });
-      const done = await readJsonResponse(doneRes);
-      if (!doneRes.ok) throw new Error(done.error || "complete failed");
-
-      const href = done.downloadPath || `/share/d/${slug}`;
+      const root = plan[0].shareRoot;
+      const href = `/share/d/${slugToUrlPath(root)}`;
       await renderShareResult(href, {
         linkId: "drive-result-link",
         resultId: "drive-result",
         qrId: "drive-result-qr",
         shareMsg: showDriveShareMsg,
       });
-      showDriveMsg("アップロード完了", true);
+      showDriveMsg(
+        plan.length > 1 ? `${plan.length} 件アップロード完了（共有ルート: ${root}）` : "アップロード完了",
+        true,
+      );
       $("drive-progress-text").textContent = "完了";
     } catch (e) {
       showDriveMsg(e.message || String(e));
       try {
-        await fetch("/transfer/api/drive/abort", {
+        await fetch("/share/api/drive/abort", {
           method: "DELETE",
           credentials: "include",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ slug }),
+          body: JSON.stringify({ slug: lastSlug }),
         });
       } catch {
         /* ignore */
@@ -657,7 +853,7 @@ function renderSettingsList(data) {
       <p class="meta">作成 ${new Date(t.createdAt).toLocaleString()} / 期限 ${new Date(t.expiresAt).toLocaleString()}</p>
       <p class="meta">${loc}</p>
       <div class="row-actions">
-        <a class="secondary-btn" href="/share/d/${encodeURIComponent(t.slug)}" target="_blank" rel="noopener">DL ページ</a>
+        <a class="secondary-btn" href="/share/d/${slugToUrlPath(t.slug)}" target="_blank" rel="noopener">DL ページ</a>
         <button type="button" class="danger-btn" data-del-slug="${t.slug}">削除</button>
       </div>
     `;
@@ -683,7 +879,7 @@ async function loadSettingsList() {
   showSettingsMsg("");
   $("settings-summary").textContent = "読み込み中…";
   try {
-    const res = await fetch("/transfer/api/admin/r2", { credentials: "include" });
+    const res = await fetch("/share/api/admin/r2", { credentials: "include" });
     if (res.status === 401) {
       setAuthenticated(false);
       $("settings-summary").textContent =
@@ -706,7 +902,7 @@ async function loadSettingsList() {
 }
 
 async function deleteAdmin({ slug, key, all }) {
-  const res = await fetch("/transfer/api/admin/r2", {
+  const res = await fetch("/share/api/admin/r2", {
     method: "DELETE",
     credentials: "include",
     headers: { "content-type": "application/json" },

@@ -3,6 +3,7 @@ const dlApi = window.__TRANSFER_DL_API__ || "/share/api/dl";
 const infoEl = document.getElementById("info");
 const msgEl = document.getElementById("msg");
 const form = document.getElementById("form");
+const dirList = document.getElementById("dir-list");
 const previewPanel = document.getElementById("preview-panel");
 const previewMedia = document.getElementById("preview-media");
 const previewHint = document.getElementById("preview-hint");
@@ -127,17 +128,43 @@ async function renderPreview({ token, filename, contentType, size }) {
   previewHint.textContent = "この形式はプレビュー非対応です。下のボタンからダウンロードできます。";
 }
 
+function renderDir(data) {
+  form.hidden = true;
+  dirList.hidden = false;
+  dirList.replaceChildren();
+  const exp = data.expiresAt ? ` / 期限 ${new Date(data.expiresAt).toLocaleString()}` : "";
+  infoEl.textContent = `フォルダ「${data.slug}」（${data.entries.length} 項目）${exp}`;
+  for (const e of data.entries) {
+    const a = document.createElement("a");
+    a.className = "dir-item";
+    a.href = e.path || `/share/d/${e.slug}`;
+    if (e.kind === "dir") {
+      a.textContent = `${e.name}/`;
+    } else {
+      a.textContent = `${e.originalName || e.name}（${formatBytes(e.size)}）`;
+    }
+    dirList.appendChild(a);
+  }
+}
+
 async function loadInfo() {
   try {
     const res = await fetch(`${dlApi}/${encodeURIComponent(slug)}/info`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "not found");
+    if (data.type === "dir") {
+      renderDir(data);
+      return;
+    }
+    form.hidden = false;
+    dirList.hidden = true;
     const backend = data.backend === "drive" ? "Drive" : "R2";
     const sizeLabel = formatBytes(data.size);
     infoEl.textContent = `${data.originalName}（${sizeLabel} · ${backend}） / 期限 ${new Date(data.expiresAt).toLocaleString()}`;
   } catch (e) {
     infoEl.textContent = `取得できません: ${e.message}`;
     form.hidden = true;
+    dirList.hidden = true;
   }
 }
 

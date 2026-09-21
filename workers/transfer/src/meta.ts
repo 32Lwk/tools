@@ -60,6 +60,14 @@ export function gdrivePrefsKey(email: string): string {
   return `${GDRIVE_PREFS_PREFIX}${email.toLowerCase()}`;
 }
 
-export function isValidSlug(slug: string): boolean {
-  return /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/.test(slug) && slug.length >= 3 && slug.length <= 64;
-}
+export {
+  isValidSlug,
+  isValidSlugSegment,
+  parentSlug,
+  slugFromFilename,
+  slugFromRelativePath,
+  slugLeaf,
+  slugToUrlPath,
+  slugifySegment,
+} from "./slug";
+

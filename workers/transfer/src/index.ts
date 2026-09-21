@@ -40,13 +40,26 @@ import {
   META_PREFIX,
   isValidSlug,
   metaKey,
+  slugToUrlPath,
   tokenKey,
 } from "./meta";
+import { resolveDlInfo } from "./listing";
 
 /** Public (Access-free) prefix for download + OAuth entrypoints. */
 const SHARE_PREFIX = "/share";
 const DL_PAGE_PREFIX = `${SHARE_PREFIX}/d`;
 const DL_API_PREFIX = `${SHARE_PREFIX}/api/dl`;
+
+const SLUG_RULE_ERROR =
+  "スラッグは英小文字・数字・ハイフンのセグメント（/ 区切り可、合計 200 文字以内）です";
+
+function decodeSlugParam(raw: string): string {
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
 
 async function readJson<T>(request: Request): Promise<T | null> {
   try {
@@ -208,12 +221,19 @@ async function cleanupExpired(env: Env): Promise<string[]> {
 }
 
 function safeReturnTo(raw: string | null, origin: string): string {
-  const fallback = `${origin}/transfer/`;
+  const fallback = `${origin}/share/`;
   if (!raw) return fallback;
   try {
     const u = new URL(raw, origin);
     if (u.origin !== origin) return fallback;
-    if (!u.pathname.startsWith("/transfer")) return fallback;
+    if (!(u.pathname.startsWith("/share") || u.pathname.startsWith("/transfer"))) return fallback;
+    // Prefer public /share UI (Access-free)
+    if (u.pathname === "/transfer" || u.pathname === "/transfer/") {
+      return `${origin}/share/`;
+    }
+    if (u.pathname.startsWith("/transfer/") && u.hash) {
+      return `${origin}/share/${u.hash}`;
+    }
     return u.toString();
   } catch {
     return fallback;
@@ -229,12 +249,15 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
 
   if (path === "/transfer/api/auth/methods" && request.method === "GET") {
     const methods = authMethods(env);
-    const returnTo = `${url.origin}/transfer/`;
+    const returnTo = `${url.origin}/share/`;
+    // Access login must hit a protected /transfer path so the JWT cookie is issued
+    const accessReturn = `${url.origin}/transfer/`;
     return json({
       ...methods,
-      accessLoginUrl: methods.access ? accessLoginUrl(env, returnTo) : null,
+      accessLoginUrl: methods.access ? accessLoginUrl(env, accessReturn) : null,
       googleStartUrl: methods.google ? `${SHARE_PREFIX}/api/auth/google/start` : null,
       accessLogoutUrl: accessLogoutUrl(env),
+      appPath: `${SHARE_PREFIX}/`,
     });
   }
 
@@ -255,7 +278,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     const err = url.searchParams.get("error");
     if (err) {
       return Response.redirect(
-        `${url.origin}/transfer/?auth_error=${encodeURIComponent(err)}`,
+        `${url.origin}/share/?auth_error=${encodeURIComponent(err)}`,
         302,
       );
     }
@@ -264,7 +287,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     const st = await consumeOauthState(env, state);
     if (!code || !st) {
       return Response.redirect(
-        `${url.origin}/transfer/?auth_error=${encodeURIComponent("invalid_oauth_state")}`,
+        `${url.origin}/share/?auth_error=${encodeURIComponent("invalid_oauth_state")}`,
         302,
       );
     }
@@ -282,7 +305,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     } catch (e) {
       const msg = e instanceof Error ? e.message : "oauth_failed";
       return Response.redirect(
-        `${url.origin}/transfer/?auth_error=${encodeURIComponent(msg)}`,
+        `${url.origin}/share/?auth_error=${encodeURIComponent(msg)}`,
         302,
       );
     }
@@ -429,7 +452,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     if (!body.costAck) return json({ error: "保管条件への同意（costAck）が必要です" }, 400);
     if (!isValidSlug(body.slug)) {
       return json(
-        { error: "スラッグは 3〜64 文字の英小文字・数字・ハイフン（両端は英数字）です" },
+        { error: SLUG_RULE_ERROR },
         400,
       );
     }
@@ -562,7 +585,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     if (!body.costAck) return json({ error: "コスト確認への同意（costAck）が必要です" }, 400);
     if (!isValidSlug(body.slug)) {
       return json(
-        { error: "スラッグは 3〜64 文字の英小文字・数字・ハイフン（両端は英数字）です" },
+        { error: SLUG_RULE_ERROR },
         400,
       );
     }
@@ -766,7 +789,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
 
   const authMatch = path.match(/^\/transfer\/api\/dl\/([^/]+)\/auth$/);
   if (authMatch && request.method === "POST") {
-    const slug = authMatch[1]!;
+    const slug = decodeSlugParam(authMatch[1]!);
     if (!isValidSlug(slug)) return json({ error: "Invalid slug" }, 400);
     const body = await readJson<{ password: string }>(request);
     if (!body?.password) return json({ error: "password required" }, 400);
@@ -794,7 +817,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
 
   const fileMatch = path.match(/^\/transfer\/api\/dl\/([^/]+)\/file$/);
   if (fileMatch && request.method === "GET") {
-    const slug = fileMatch[1]!;
+    const slug = decodeSlugParam(fileMatch[1]!);
     const token = url.searchParams.get("token") || "";
     if (!isValidSlug(slug) || !token) return json({ error: "token required" }, 400);
     const raw = await env.META.get(tokenKey(token));
@@ -838,18 +861,41 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
 
   const infoMatch = path.match(/^\/transfer\/api\/dl\/([^/]+)\/info$/);
   if (infoMatch && request.method === "GET") {
-    const slug = infoMatch[1]!;
-    const meta = await getMeta(env, slug);
-    if (!meta || meta.status !== "ready" || meta.expiresAt <= Date.now()) {
-      return json({ error: "not found" }, 404);
+    const slug = decodeSlugParam(infoMatch[1]!);
+    if (!isValidSlug(slug)) return json({ error: "not found" }, 404);
+    const resolved = await resolveDlInfo(env, slug);
+    if (!resolved) return json({ error: "not found" }, 404);
+    if (resolved.type === "file") {
+      const meta = resolved.meta;
+      return json({
+        type: "file",
+        slug: meta.slug,
+        originalName: meta.originalName,
+        size: meta.size,
+        contentType: meta.contentType,
+        expiresAt: meta.expiresAt,
+        backend: meta.backend,
+      });
     }
     return json({
-      slug: meta.slug,
-      originalName: meta.originalName,
-      size: meta.size,
-      contentType: meta.contentType,
-      expiresAt: meta.expiresAt,
-      backend: meta.backend,
+      type: "dir",
+      slug: resolved.slug,
+      entries: resolved.entries.map((e) =>
+        e.kind === "dir"
+          ? { kind: "dir", name: e.name, slug: e.slug, path: `${DL_PAGE_PREFIX}/${slugToUrlPath(e.slug)}` }
+          : {
+              kind: "file",
+              name: e.name,
+              slug: e.slug,
+              originalName: e.originalName,
+              size: e.size,
+              contentType: e.contentType,
+              backend: e.backend,
+              expiresAt: e.expiresAt,
+              path: `${DL_PAGE_PREFIX}/${slugToUrlPath(e.slug)}`,
+            },
+      ),
+      expiresAt: resolved.expiresAt,
     });
   }
 
@@ -857,22 +903,24 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
 }
 
 function downloadPageHtml(slug: string): string {
+  const safeSlug = slug.replace(/</g, "");
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ダウンロード — ${slug}</title>
+  <title>ダウンロード — ${safeSlug}</title>
   <script src="/theme-boot.js"></script>
   <link rel="stylesheet" href="/theme.css" />
   <link rel="stylesheet" href="${SHARE_PREFIX}/styles.css" />
 </head>
 <body>
   <main class="wrap">
-    <p class="crumb"><a href="/">tools.yutok.dev</a> / <a href="/transfer/">transfer</a> / d / ${slug}</p>
+    <p class="crumb"><a href="/">tools.yutok.dev</a> / <a href="/transfer/">transfer</a> / d / ${safeSlug}</p>
     <h1>ダウンロード</h1>
     <p id="info" class="muted">読み込み中…</p>
-    <form id="form" class="stack">
+    <nav id="dir-list" class="dir-list" hidden></nav>
+    <form id="form" class="stack" hidden>
       <label>パスワード
         <input type="password" id="password" required autocomplete="current-password" />
       </label>
@@ -896,14 +944,28 @@ function downloadPageHtml(slug: string): string {
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    // Keep trailing slash for /share/ so relative asset URLs resolve under /share/
+    if (url.pathname === "/share") {
+      return Response.redirect(`${url.origin}/share/`, 302);
+    }
     let path = url.pathname;
     if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
 
     try {
       // Public share assets (outside Cloudflare Access on /transfer*)
-      if (path === `${SHARE_PREFIX}/download.js` || path === `${SHARE_PREFIX}/styles.css`) {
-        const assetPath = path === `${SHARE_PREFIX}/download.js` ? "/transfer/download.js" : "/transfer/styles.css";
-        return env.ASSETS.fetch(new Request(new URL(assetPath, url.origin), request));
+      const shareStatic = path.match(
+        new RegExp(`^${SHARE_PREFIX}/(app|cost|drive|slug|download)\\.js$`),
+      );
+      if (shareStatic) {
+        return env.ASSETS.fetch(new URL(`/transfer/${shareStatic[1]}.js`, url.origin));
+      }
+      if (path === `${SHARE_PREFIX}/styles.css`) {
+        return env.ASSETS.fetch(new URL("/transfer/styles.css", url.origin));
+      }
+
+      // Upload UI on /share (Access-free). /transfer/ is Access bootstrap then redirect here.
+      if (path === SHARE_PREFIX || path === `${SHARE_PREFIX}/index.html`) {
+        return env.ASSETS.fetch(new URL("/transfer/index.html", url.origin));
       }
 
       if (path.startsWith(`${SHARE_PREFIX}/api/`) || path.startsWith("/transfer/api")) {
@@ -911,25 +973,39 @@ export default {
         return withCors(await handleApi(request, env, apiPath), request);
       }
 
-      const shareDl = path.match(new RegExp(`^${DL_PAGE_PREFIX}/([^/]+)$`));
-      if (shareDl && request.method === "GET") {
-        const slug = shareDl[1]!;
-        if (!isValidSlug(slug)) return new Response("Invalid slug", { status: 400 });
-        return new Response(downloadPageHtml(slug), {
+      if (path.startsWith(`${DL_PAGE_PREFIX}/`) && request.method === "GET") {
+        const raw = path.slice(DL_PAGE_PREFIX.length + 1);
+        const slugAlt = raw
+          .split("/")
+          .map((seg) => decodeSlugParam(seg))
+          .join("/");
+        const finalSlug = slugAlt;
+        if (!isValidSlug(finalSlug)) return new Response("Invalid slug", { status: 400 });
+        return new Response(downloadPageHtml(finalSlug), {
           headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
         });
       }
 
       // Legacy DL path (still Access-protected); redirect to public share URL
-      const legacyDl = path.match(/^\/transfer\/d\/([^/]+)$/);
-      if (legacyDl && request.method === "GET") {
-        const slug = legacyDl[1]!;
-        if (!isValidSlug(slug)) return new Response("Invalid slug", { status: 400 });
-        return Response.redirect(`${url.origin}${DL_PAGE_PREFIX}/${slug}`, 302);
+      if (path.startsWith("/transfer/d/") && request.method === "GET") {
+        const raw = path.slice("/transfer/d/".length);
+        const finalSlug = raw
+          .split("/")
+          .map((seg) => decodeSlugParam(seg))
+          .join("/");
+        if (!isValidSlug(finalSlug)) return new Response("Invalid slug", { status: 400 });
+        return Response.redirect(`${url.origin}${DL_PAGE_PREFIX}/${slugToUrlPath(finalSlug)}`, 302);
       }
 
-      if (path === "/transfer" || path.startsWith("/transfer/")) {
-        const assetPath = path === "/transfer" ? "/transfer/index.html" : path;
+      // After Access JWT is issued on /transfer*, send users to public /share UI
+      if ((path === "/transfer" || path === "/transfer/index.html") && request.method === "GET") {
+        const q = url.search ? `${url.search}&from=access` : "?from=access";
+        const hash = url.hash || "";
+        return Response.redirect(`${url.origin}${SHARE_PREFIX}/${q}${hash}`.replace("/?&", "/?"), 302);
+      }
+
+      if (path.startsWith("/transfer/")) {
+        const assetPath = path;
         return env.ASSETS.fetch(new Request(new URL(assetPath, url.origin), request));
       }
 

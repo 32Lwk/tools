@@ -48,12 +48,10 @@ Cloudflare Dashboard → DNS → `tools` レコードの Proxy status を Proxie
 
 1. Zero Trust → Access → Applications → Add Self-hosted
 2. Domain: `tools.yutok.dev`
-3. **保護する例:** `/transfer`, `/transfer/`, `/transfer/api/auth/*`（callback 以外）, `/transfer/api/status`, `/transfer/api/r2/*`, `/transfer/api/drive/*`, `/transfer/api/admin/*`
-4. **公開 DL / OAuth は `/share*`（Access 外）** — Worker Routes に `tools.yutok.dev/share*` を追加済み。共有リンクは `https://tools.yutok.dev/share/d/{slug}`。
-5. **（任意）Access Bypass:** 旧パス `/transfer/d/*` 等を使う場合のみ Bypass を追加
-6. Policy: 自分のアカウントのみ Allow（`/transfer*` アップロード UI / mutate API）
-7. Identity providers: **Google**（または GitHub / One-time PIN）を追加可能
-8. Worker secrets:
+3. **保護:** `/transfer*`（アップロード bootstrap）。公開 UI / DL / OAuth は `/share*`（Access 外）
+4. Policy: 自分のアカウントのみ Allow
+5. Identity providers: **Google**（または GitHub / One-time PIN）を追加可能
+6. Worker secrets（`ACCESS_AUD` は複数アプリならカンマ区切り）:
 
 ```bash
 cd workers/transfer
@@ -63,7 +61,8 @@ npx wrangler secret put TEAM_DOMAIN
 # 任意: UPLOAD_ALLOW_EMAILS=you@example.com
 ```
 
-Worker は `Cf-Access-Jwt-Assertion` / `CF_Authorization` を検証します。UI の「Cloudflare Zero Trust でログイン」は Access ログイン URL へ誘導します。
+アップロード画面は **`https://tools.yutok.dev/share/`**。Zero Trust ボタンは `/transfer/` で JWT を発行したあと `/share/` へ戻ります。
+Worker は `Cf-Access-Jwt-Assertion` / `CF_Authorization` を検証します。
 
 ### B. Google OAuth（アップロード session + Drive）
 

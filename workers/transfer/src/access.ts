@@ -93,6 +93,14 @@ function allowlistEmails(env: Env): string[] {
     .filter(Boolean);
 }
 
+/** ACCESS_AUD may be a single value or comma-separated (multiple Access apps). */
+export function accessAudList(env: Env): string[] {
+  return (env.ACCESS_AUD || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
   const parts = jwt.split(".");
   if (parts.length !== 3) return null;
@@ -105,7 +113,7 @@ function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
 }
 
 export function accessConfigured(env: Env): boolean {
-  return !!(env.ACCESS_AUD && env.TEAM_DOMAIN);
+  return accessAudList(env).length > 0 && !!env.TEAM_DOMAIN;
 }
 
 export function accessLoginUrl(env: Env, returnUrl: string): string | null {
@@ -177,7 +185,10 @@ async function verifyAccessJwt(
     const payload = decodeJwtPayload(jwt);
     if (!payload) return { ok: false, reason: "payload 不正" };
     const aud = payload.aud;
-    const audOk = Array.isArray(aud) ? aud.includes(env.ACCESS_AUD) : aud === env.ACCESS_AUD;
+    const allowed = accessAudList(env);
+    const audOk = Array.isArray(aud)
+      ? aud.some((a) => allowed.includes(String(a)))
+      : allowed.includes(String(aud));
     if (!audOk) return { ok: false, reason: "aud 不一致" };
     if (payload.iss !== team) return { ok: false, reason: "iss 不一致" };
     const exp = Number(payload.exp || 0);
