@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宅建 本試験マーク演習 — tools.yutok.dev</title>
+  <meta name="robots" content="noindex">
+  <script src="../theme-boot.js"></script>
+  <link rel="stylesheet" href="../theme.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <a class="back" href="../">← tools</a>
+      <h1>宅建 本試験マーク演習</h1>
+      <p class="lead">PDF で問題を解き、ここに解答を記入して採点します。問題本文は公式／jobs の PDF を使ってください（著作権のため本サイトでは再掲しません）。</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel">
+      <label class="field">
+        <span>年度</span>
+        <select id="exam-select"></select>
+      </label>
+      <div class="actions" id="exam-links"></div>
+      <div class="timer-row">
+        <button type="button" id="btn-timer" class="btn">120分タイマー開始</button>
+        <span id="timer" class="timer" aria-live="polite">02:00:00</span>
+        <button type="button" id="btn-clear" class="btn ghost">解答クリア</button>
+      </div>
+    </section>
+
+    <section class="panel scoreboard" id="scoreboard" hidden>
+      <div id="score-summary"></div>
+      <div id="score-detail" class="score-detail"></div>
+    </section>
+
+    <section class="panel">
+      <div class="sheet-head">
+        <h2>解答用紙（50問）</h2>
+        <div class="sheet-actions">
+          <button type="button" id="btn-grade" class="btn primary">採点する</button>
+          <button type="button" id="btn-reveal" class="btn ghost">正解を表示</button>
+        </div>
+      </div>
+      <div id="sheet" class="sheet"></div>
+    </section>
+
+    <p class="foot">
+      PDF: <a href="https://jobs.yutok.dev/takken" target="_blank" rel="noopener">jobs.yutok.dev/takken</a>
+      · 公式: <a href="https://www.retio.or.jp/exam/past_ques_ans/other/" target="_blank" rel="noopener">RETIO</a>
+      · 解説: 各年度の e-takken.tv リンク
+    </p>
+  </main>
+
+  <script src="../theme.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
