@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>オンクレ層に刺さる内容と、スマホゲームのジャンル別ユーザー層</title>
+<style>
+  :root {
+    --fg: #1f2328;
+    --fg2: #57606a;
+    --fg3: #8c959f;
+    --border: #d0d7de;
+    --bg: #ffffff;
+    --bg-sub: #f6f8fa;
+    --accent: #0969da;
+    --info-bg: #ddf4ff;
+    --info-border: #54aeff;
+    --warn-bg: #fff8c5;
+    --warn-border: #d4a72c;
+    --ok-bg: #dafbe1;
+    --mid-bg: #fff8c5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+    line-height: 1.7;
+  }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 32px; }
+  h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 8px; }
+  h2 { font-size: 1.3rem; margin: 0 0 12px; }
+  h3 { font-size: 1.05rem; margin: 0 0 8px; }
+  p { margin: 0 0 8px; }
+  .secondary { color: var(--fg2); }
+  .note { color: var(--fg3); font-size: 0.8rem; margin-top: 8px; }
+  .banner { font-size: 0.82rem; color: var(--fg2); background: var(--bg-sub); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; }
+  .callout { border-left: 4px solid; border-radius: 6px; padding: 14px 18px; }
+  .callout strong { display: block; margin-bottom: 4px; }
+  .callout.info { background: var(--info-bg); border-color: var(--info-border); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+  .grid { display: grid; gap: 16px; }
+  .grid.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid.cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid.chart { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 24px; align-items: start; }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .stat .value { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+  .stat .label { color: var(--fg2); font-size: 0.85rem; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--bg-sub); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  table.striped tbody tr:nth-child(even) { background: var(--bg-sub); }
+  tr.fit-high { background: var(--ok-bg); }
+  tr.fit-mid { background: var(--mid-bg); }
+  td.center { text-align: center; font-weight: 700; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+  .bars { position: relative; display: flex; flex-direction: column; gap: 8px; padding-top: 22px; }
+  .bar-row { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 10px; font-size: 0.85rem; }
+  .bar-track { position: relative; height: 22px; background: var(--bg-sub); border-radius: 4px; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; color: #fff; font-size: 0.75rem; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; }
+  .ref-line { position: absolute; top: 0; bottom: 0; left: calc(120px + (100% - 120px) * 0.5); border-left: 2px dashed #cf222e; pointer-events: none; }
+  .ref-label { position: absolute; top: 0; left: calc(120px + (100% - 120px) * 0.5); transform: translateX(-50%); font-size: 0.72rem; color: #cf222e; white-space: nowrap; }
+  .card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; height: 100%; }
+  .card-header { background: var(--bg-sub); padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); }
+  .card-body { padding: 12px 16px; }
+  @media (max-width: 800px) {
+    .grid.stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.cards, .grid.chart { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="banner">JTCC RAID Summer 2026 チーム共有用（トップ未掲載・noindex）。公開情報ベースのリサーチメモです。</div>
+
+  <section>
+    <h1>オンクレ層に刺さる内容と、スマホゲームのジャンル別ユーザー層</h1>
+    <p class="secondary">オンクレ利用者の調査と、スマホゲームのジャンル・タイトル別の利用者データを照らし合わせ、どの層と重なるかを整理しました。</p>
+  </section>
+
+  <div class="callout info">
+    <strong>結論</strong>
+    オンクレ層と最も重なるのは、20〜30代の「推しキャラ×ランダムに引く×集める」層です。具体的には、キャラクター・ガチャ型RPG（男性寄り）、ポケポケのようなカード開封（30〜40代男性）、女性向けの推し・アイドルゲーム（20〜30代女性）の3つです。カジュアルパズルと位置情報ゲームは、子育て世代・主婦層の入口として部分的に重なります。
+  </div>
+
+  <section>
+    <h2>オンクレ利用者の特徴</h2>
+    <div class="grid stats">
+      <div class="stat"><div class="value">73.5%</div><div class="label">20代＋30代（DMMオンクレ）</div></div>
+      <div class="stat"><div class="value">93.3%</div><div class="label">推しがいる（DMMオンクレ）</div></div>
+      <div class="stat"><div class="value">66%</div><div class="label">取りやすさ＋欲しい景品を最重視</div></div>
+      <div class="stat"><div class="value">74.5%</div><div class="label">月の利用額が3,000円未満</div></div>
+    </div>
+    <p class="note">出典: DMM.com（2025年12月発表、年代別割合）、DMMオンクレ推し活アンケート（2025年4月、n=1,928）、合同会社CGP「2026年版オンラインクレーンゲーム利用者調査」（2026年8月、n=94）</p>
+  </section>
+
+  <section>
+    <h2>オンクレ層に刺さる内容</h2>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>刺さる要素</th><th>根拠となるデータ</th><th>打ち手の例</th></tr></thead>
+        <tbody>
+          <tr><td>推しIPの限定景品</td><td>DMMオンクレ利用者の93.3%に推しがいて、うち71%が推し活目的。推しはアニメ51.5%、VTuber 13.0%、アイドル7.7%。UUUMコラボで売上226%増</td><td>アニメ・VTuberの限定アクスタやぬいぐるみ。月替わりコラボ</td></tr>
+          <tr><td>取りやすさが見えること</td><td>オンクレ選びの1位は取りやすさ36.2%、2位は欲しい景品29.8%。料金の安さは1.1%</td><td>ゲット保証（ガチャの天井に相当）の残り回数を常に表示。台ごとの獲得率を公開</td></tr>
+          <tr><td>取るまでの達成感と攻略</td><td>獲得理由の1位は達成感39.3%。推しがいる人の80%がコツを調べたり練習したりしている</td><td>攻略ショート動画、無料の練習台、上手い人のリプレイ観戦</td></tr>
+          <tr><td>運で当たるモード</td><td>「苦手でも運で当たる気がする」という理由で、たこ焼き台が好きな設定の2位（Makima調査）</td><td>たこ焼き・抽選型の台を初心者の入口に置く</td></tr>
+          <tr><td>低額で毎日触れること</td><td>74.5%が月3,000円未満。スマホゲームを選ぶ理由の1位は全層で「お金がかからない」（30代女性は51%）</td><td>毎日1回の無料プレイ、ログインボーナス、少額パック</td></tr>
+          <tr><td>決まった時刻のイベント</td><td>新景品の多くが深夜0時に出るため、アクセスは20〜25時に集中する</td><td>0時の新景品ドロップ予告。ガチャの新バナーのような期待感をつくる</td></tr>
+          <tr><td>罪悪感の少ない景品</td><td>主婦層は食品・日用品を好む。「課金しても罪悪感が少ない」（DMM主婦調査2022）</td><td>食品・日用品の台を一定の割合で常設</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>スマホゲームのジャンル別ユーザー層と、オンクレとの合致度</h2>
+    <p class="secondary">合致度は、年代（20〜30代）、推しキャラ要素、ランダムに引く課金、集める楽しさ、短いプレイ時間の5点で判定しました（筆者による判定）。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ジャンル</th><th>代表作</th><th>主なユーザー層</th><th>オンクレとの共通点</th><th>合致度</th></tr></thead>
+        <tbody>
+          <tr class="fit-high"><td>キャラクター・ガチャ型RPG</td><td>FGO、ウマ娘</td><td>男性中心。FGOは男6:女4で25〜34歳が45%。ウマ娘は男性78%で19〜34歳が70%</td><td>推しキャラをランダムに引く。天井＝ゲット保証。20〜30代の年齢帯がほぼ同じ</td><td class="center">高</td></tr>
+          <tr class="fit-high"><td>コレクション・カード開封</td><td>ポケポケ</td><td>男7:女3。日本は35〜44歳が他国の2倍、45〜54歳も多い。週138分と熱心</td><td>パックを開ける運と、集める楽しさ。日本は1DLあたりの課金額が世界1位</td><td class="center">高</td></tr>
+          <tr class="fit-high"><td>女性向けの推し・アイドル・リズム</td><td>あんスタ、プロセカ、ツイステ</td><td>あんスタは女性90%以上で25〜34歳が最多。プロセカは日本で女性52〜56%、18〜24歳が最多。ツイステは女性95%で10〜20代が81%</td><td>推しのグッズを集める文化。好きなグッズの上位はアクスタとキーホルダー</td><td class="center">高</td></tr>
+          <tr class="fit-mid"><td>カジュアルパズル</td><td>ツムツム、LINEポコポコ、ガーデンスケイプ</td><td>女性の全年代で1位（ツムツム）。30〜60代女性は6割超がパズルを遊ぶ</td><td>すきま時間、短いプレイ、低額。主婦層の入口として近い。ガチャ要素は弱め</td><td class="center">中</td></tr>
+          <tr class="fit-mid"><td>位置情報</td><td>Pokémon GO、Pikmin Bloom</td><td>30代以上で2番目のジャンル。Pikmin Bloomは女性63〜68%で35〜44歳が最多</td><td>家族で外出する層（ゲーセン常連の62%が家族連れ）と重なる。ポケモンIP</td><td class="center">中</td></tr>
+          <tr class="fit-mid"><td>放置RPG</td><td>放置少女、ドット勇者</td><td>平均年齢35歳前後。最多層は放置少女が25〜34歳、ドット勇者が35〜44歳</td><td>年齢は重なる。他のゲームと掛け持ちしやすい。推し要素は弱め</td><td class="center">中</td></tr>
+          <tr><td>スポーツ・10代向けリズム</td><td>サッカー・野球系、音楽ゲーム全般</td><td>10代男性はスポーツ、10代女性は音楽ゲームが1位のジャンル</td><td>年齢帯がオンクレの中心（20〜30代）より若い</td><td class="center">低</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">出典: Sensor Tower（FGO 2024年4〜6月、ウマ娘 2024年1〜3月、ポケポケ 2024年10月〜2025年10月、あんスタ・プロセカ 2023〜2026年、Pikmin Bloom 2025年7〜9月、放置RPG 2023年10〜12月）、iGage（ツイステ 2020年）、クロス・マーケティング「ゲームに関する調査」2023年・2025年</p>
+  </section>
+
+  <section class="grid chart">
+    <div>
+      <h3>タイトル別の女性ユーザー比率（%）</h3>
+      <div class="bars">
+        <div class="ref-line"></div>
+        <div class="ref-label">50%: DMMオンクレ（男女ほぼ半々）</div>
+        <div class="bar-row"><span>ツイステ</span><div class="bar-track"><div class="bar-fill" style="width:95%">95%</div></div></div>
+        <div class="bar-row"><span>あんスタMusic</span><div class="bar-track"><div class="bar-fill" style="width:90%">90%</div></div></div>
+        <div class="bar-row"><span>ガーデンスケイプ</span><div class="bar-track"><div class="bar-fill" style="width:67%">67%</div></div></div>
+        <div class="bar-row"><span>Pikmin Bloom</span><div class="bar-track"><div class="bar-fill" style="width:63%">63%</div></div></div>
+        <div class="bar-row"><span>プロセカ</span><div class="bar-track"><div class="bar-fill" style="width:52%">52%</div></div></div>
+        <div class="bar-row"><span>FGO</span><div class="bar-track"><div class="bar-fill" style="width:40%">40%</div></div></div>
+        <div class="bar-row"><span>ポケポケ</span><div class="bar-track"><div class="bar-fill" style="width:30%">30%</div></div></div>
+        <div class="bar-row"><span>ウマ娘</span><div class="bar-track"><div class="bar-fill" style="width:24%">24%</div></div></div>
+      </div>
+      <p class="note">縦軸: タイトル、横軸: 女性ユーザー比率（%）。出典: Sensor Tower、iGage。ガーデンスケイプは全世界の値、プロセカ・Pikmin Bloomは日本のApp Storeの値、あんスタは「90%以上」を90として表示</p>
+    </div>
+    <div>
+      <h3>グラフから分かること</h3>
+      <p>オンクレは男女ほぼ半々なので、1つのジャンルだけでは層をカバーできません。</p>
+      <p>男性側はガチャ型RPGとポケポケ、女性側は推し・アイドルゲームとパズルが受け皿になります。</p>
+      <p>男女どちらにも共通するのは「推しキャラのグッズを、運と腕で手に入れる」体験です。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>狙うべき3つの層</h2>
+    <div class="grid cards">
+      <div class="card"><div class="card-header">25〜39歳のガチャ・カードゲーマー（男性寄り）</div><div class="card-body">FGO・ウマ娘・ポケポケの層。ランダムに引く楽しさと天井に慣れていて、課金額も大きい。アニメIPのフィギュアと、天井の見える化が効く。</div></div>
+      <div class="card"><div class="card-header">20〜34歳の推し活女性</div><div class="card-body">あんスタ・プロセカ・ツイステの層。アクスタ・ぬいぐるみ・キーホルダーを集める。限定グッズとコラボ、獲得動画のシェアが効く。</div></div>
+      <div class="card"><div class="card-header">30〜40代の子育て世代・主婦</div><div class="card-body">ツムツム・Pikmin Bloom・Pokémon GOの層。すきま時間、低額、子どもと一緒に遊べることを重視する。食品・日用品と、毎日の無料プレイが効く。</div></div>
+    </div>
+  </section>
+
+  <div class="callout warn">
+    <strong>データの限界</strong>
+    「オンクレ利用者がどのスマホゲームを遊んでいるか」を直接調べた公開調査はありません。この合致度は、オンクレ利用者の属性と、ジャンル・タイトルごとの利用者属性を照らし合わせた推定です。メダルゲーム・コインプッシャー系アプリは遊び方が最も近いものの、信頼できる属性データが見つからなかったため表から外しています。
+  </div>
+
+</main>
+</body>
+</html>
