@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>海外・訪日客向けクレーンゲームの需要推計：計量分析と文献値</title>
+<style>
+  :root {
+    --fg: #1f2328; --fg2: #57606a; --fg3: #8c959f; --border: #d0d7de;
+    --bg: #ffffff; --bg-sub: #f6f8fa; --accent: #0969da;
+    --info-bg: #ddf4ff; --info-border: #54aeff; --warn-bg: #fff8c5; --warn-border: #d4a72c;
+    --ok-bg: #dafbe1; --low-bg: #ffebe9; --red: #cf222e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif; color: var(--fg); background: var(--bg); line-height: 1.7; }
+  a { color: var(--accent); }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 36px; }
+  h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 8px; }
+  h2 { font-size: 1.35rem; margin: 0 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.05rem; margin: 16px 0 8px; }
+  p { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 8px; padding-left: 1.4em; }
+  li { margin-bottom: 4px; }
+  .secondary { color: var(--fg2); }
+  .note { color: var(--fg3); font-size: 0.8rem; margin-top: 8px; }
+  .banner { font-size: 0.82rem; color: var(--fg2); background: var(--bg-sub); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; }
+  .callout { border-left: 4px solid; border-radius: 6px; padding: 14px 18px; }
+  .callout strong.title { display: block; margin-bottom: 6px; }
+  .callout.info { background: var(--info-bg); border-color: var(--info-border); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+  .callout ol, .callout ul { margin-bottom: 0; }
+  .grid { display: grid; gap: 16px; }
+  .grid.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat .value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+  .stat .range { font-size: 0.8rem; color: var(--fg2); margin-top: 2px; }
+  .stat .label { color: var(--fg2); font-size: 0.83rem; margin-top: 4px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--bg-sub); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  table.striped tbody tr:nth-child(even) { background: var(--bg-sub); }
+  td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+  code { background: var(--bg-sub); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.85em; }
+  figure { margin: 0; }
+  figure img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; }
+  figcaption { color: var(--fg3); font-size: 0.8rem; margin-top: 6px; }
+  .eq { font-family: "SF Mono", Menlo, monospace; font-size: 0.85rem; background: var(--bg-sub); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; overflow-x: auto; white-space: pre; }
+  .tag { display: inline-block; font-size: 0.72rem; font-weight: 600; border-radius: 999px; padding: 1px 8px; border: 1px solid var(--border); background: var(--bg-sub); color: var(--fg2); white-space: nowrap; }
+  .tag.ok { background: var(--ok-bg); border-color: #aceebb; color: #1a7f37; }
+  .tag.ng { background: var(--low-bg); border-color: #ffcecb; color: var(--red); }
+  .toc { font-size: 0.9rem; columns: 2; column-gap: 32px; }
+  .sources li { font-size: 0.84rem; }
+  @media (max-width: 800px) {
+    .grid.stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.two { grid-template-columns: 1fr; }
+    .toc { columns: 1; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="banner">JTCC RAID Summer 2026 チーム共有用（トップ未掲載・noindex）。方向性は未決定で、ここの推計はどの案を選ぶかの材料です。前提となる資料のまとめは <a href="../japan-live-shopping-irl/">8資料のリサーチまとめ</a>。最終更新: 2026-09-25</div>
+
+  <section>
+    <h1>海外・訪日客向けクレーンゲームの需要推計：計量分析と文献値</h1>
+    <p class="secondary">「海外の人や訪日客向けのクレーンゲームに、どれくらいの需要があるか」を、経済学・マーケティング・行動研究で使われる統計手法で推計しました。使った手法は、パネル回帰による弾力性の推定、Bass 普及モデル、対数正規分布による課金額の推定、重力モデル、モンテカルロ・シミュレーション、感度分析です。パラメータは公的統計と査読論文の値から取り、仮定を置いたところは明記しています。</p>
+  </section>
+
+  <div class="callout info">
+    <strong class="title">結論</strong>
+    <ol>
+      <li><strong>海外から遠隔で遊ぶ市場（A 案）の潜在規模は、年間 約110億円（80%区間 58〜187億円）。</strong>国内オンクレ市場（約300億円）の3分の1程度にあたる。距離の摩擦で、国内並みの浸透率の約4割まで落ちると置いた値。</li>
+      <li><strong>ホストが代わりにプレイする配信（B 案）は、1チャンネルあたり年間流通額 約1,000万円（80%区間 270万〜3,800万円）。</strong>プレイ代を引いた粗利は約550万円で、人件費と発送作業の前の数字。事業にするには多数のホストが要る。</li>
+      <li><strong>訪日客が旅行中にクレーンゲームに使う額（C 案）は、年間 約200億円（80%区間 64〜619億円）。</strong>国内クレーンゲーム市場（3,918億円）の約5%にあたる。「訪日客の何%が遊ぶか」の統計がないため、幅が最も広い。</li>
+      <li><strong>為替の影響は大きい。</strong>10%の円高で、越境購入は約13%減（点推定。信頼区間は広い）、訪日客数は7〜23%減（IMF の推定）。</li>
+      <li><strong>課金は一部の人に集中する。</strong>推定分布では上位10%の課金者が売上の約64%を占める。過去の実測（上位1%で26%）とも合う。需要推計は高額課金者の仮定に強く左右され、依存症リスクへの配慮も必要になる。</li>
+    </ol>
+  </div>
+
+  <section>
+    <h2>主な推計値</h2>
+    <div class="grid stats">
+      <div class="stat"><div class="value">約109億円/年</div><div class="range">80%区間 58〜187億円</div><div class="label">A: 海外から遠隔プレイ（市場全体の潜在規模）</div></div>
+      <div class="stat"><div class="value">約1,030万円/年</div><div class="range">80%区間 272万〜3,828万円</div><div class="label">B: ホスト代理プレイ（1チャンネルの流通額）</div></div>
+      <div class="stat"><div class="value">約202億円/年</div><div class="range">80%区間 64〜619億円</div><div class="label">C: 訪日客の旅行中のクレーン支出</div></div>
+      <div class="stat"><div class="value">約2,800万人</div><div class="range">95%CI 2,590万〜3,230万人</div><div class="label">海外の有料アニメファンの上限（Crunchyroll に Bass モデルを当てはめ）</div></div>
+      <div class="stat"><div class="value">0.56〜1.30</div><div class="range">ブートストラップ95%CI は0をまたぐ</div><div class="label">越境購入の為替弾力性（円安1%で購入額が何%増えるか）</div></div>
+      <div class="stat"><div class="value">約3,900円/月</div><div class="range">中央値は約1,000円</div><div class="label">オンクレ課金者1人あたりの平均課金額（対数正規で推定）</div></div>
+      <div class="stat"><div class="value">0.75</div><div class="range">上位10%で売上の64%</div><div class="label">課金額のジニ係数（推定）</div></div>
+      <div class="stat"><div class="value">17.5% → 30.5%</div><div class="range">中国は 49.5% → 32.7%</div><div class="label">米国の潜在需要シェア（通常の貿易 → オンライン、重力モデル）</div></div>
+    </div>
+    <p class="note">80%区間はモンテカルロ20万回の10%点〜90%点。CI は信頼区間。</p>
+  </section>
+
+  <section>
+    <h2>目次</h2>
+    <ol class="toc">
+      <li><a href="#overview">分析の全体像</a></li>
+      <li><a href="#lit">文献値の一覧</a></li>
+      <li><a href="#fx">為替と所得の弾力性（パネル回帰）</a></li>
+      <li><a href="#bass">海外ファン層の普及（Bass モデル）</a></li>
+      <li><a href="#spend">課金額の分布（対数正規・ジニ係数）</a></li>
+      <li><a href="#gravity">国別の潜在需要（重力モデル）</a></li>
+      <li><a href="#mc">3つの方向の需要推計（モンテカルロ）</a></li>
+      <li><a href="#sens">感度分析と為替シナリオ</a></li>
+      <li><a href="#interp">解釈（比較・未決定）</a></li>
+      <li><a href="#limits">限界と、次に取るべき一次データ</a></li>
+      <li><a href="#refs">出典</a></li>
+    </ol>
+  </section>
+
+  <section id="overview">
+    <h2>1. 分析の全体像</h2>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>問い</th><th>手法</th><th>データ</th><th>結果の使い道</th></tr></thead>
+        <tbody>
+          <tr><td>円安・円高で海外の購入はどれだけ動くか</td><td>固定効果パネル回帰（両対数、HC1 頑健標準誤差、ペア・ブートストラップ）</td><td>経産省 越境EC（中国・米国の消費者、2016〜2024年）、World Bank 為替・1人当たり実質GDP</td><td>為替シナリオ</td></tr>
+          <tr><td>海外で日本IPにお金を払うファンは何人まで増えるか</td><td>Bass 普及モデル（非線形最小二乗、残差ブートストラップ）</td><td>Crunchyroll 有料会員数（2012〜2026年、13時点）</td><td>A 案の対象人数の上限</td></tr>
+          <tr><td>課金者1人あたりいくら使うか、どれだけ偏るか</td><td>対数正規分布の分位点による推定、ローレンツ曲線・ジニ係数</td><td>CGP 2026 オンクレ利用者調査、Close et al. 2021、Zendle et al. 2020</td><td>ARPPU（課金者1人あたり売上）と集中度</td></tr>
+          <tr><td>どの国に需要があるか</td><td>重力モデル（GDP × 距離^-β）。β はメタ分析とオンライン貿易研究の値</td><td>World Bank GDP 2024、首都間の大圏距離</td><td>国別の優先順位、A 案の距離摩擦</td></tr>
+          <tr><td>各方向の需要はどれくらいか</td><td>モンテカルロ・シミュレーション（20万回）</td><td>上の推定値＋公的統計＋文献値</td><td>A・B・C の規模と不確実性</td></tr>
+          <tr><td>どの仮定が結果を左右するか</td><td>トルネード図（1要因ずつ10%点〜90%点で動かす）</td><td>モンテカルロの入力</td><td>次に何を測るべきか</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="lit">
+    <h2>2. 文献値の一覧</h2>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>分野</th><th>文献</th><th>手法・データ</th><th>推定値</th><th>本分析での使い方</th></tr></thead>
+        <tbody>
+          <tr><td>重力モデル</td><td><a href="https://doi.org/10.1162/rest.90.1.37">Disdier &amp; Head (2008) REStat</a></td><td>103本・1,467推定値のメタ分析</td><td>距離弾力性の平均 約0.9</td><td>通常の貿易の β</td></tr>
+          <tr><td>オンライン貿易</td><td><a href="https://doi.org/10.1111/ecoj.12286">Lendle, Olarreaga, Schropp &amp; Vézina (2016) Economic Journal</a></td><td>eBay と通常貿易、61か国の重力モデル</td><td>距離の効果が eBay では平均65%小さい（PPML で約55%）。売り手評価でさらに縮小</td><td>オンラインの β＝0.9×(0.35〜0.45)</td></tr>
+          <tr><td>越境EC</td><td><a href="https://doi.org/10.1016/j.infoecopol.2014.05.002">Gómez-Herrera, Martens &amp; Turlea (2014) Information Economics and Policy</a></td><td>EU 27か国の消費者パネル、重力モデル</td><td>言語共通の係数が 0.657（通常）→ 2.564（オンライン）。越境決済の利用1%増で越境EC最大7%増</td><td>英語対応・決済が需要の前提という解釈</td></tr>
+          <tr><td>観光需要</td><td><a href="https://doi.org/10.5089/9781513553207.001">IMF WP/20/169 (2020)</a></td><td>34市場、1996Q1〜2018Q4、パネル ARDL</td><td>実質1%の円安で訪日客 0.7〜2.5%増、所得弾力性 2.4〜5.3</td><td>C 案の為替シナリオ</td></tr>
+          <tr><td>観光需要</td><td><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7185866/">韓国→日本の観光需要モデル</a></td><td>四半期データ</td><td>円安1%で訪日 0.7%増、相対物価1%低下で2.3%増、所得弾力性1.2</td><td>IMF 値の下限の裏付け</td></tr>
+          <tr><td>観光需要</td><td><a href="https://doi.org/10.1177/0047287514528283">Peng, Song, Crouch &amp; Witt (2015) J. Travel Research</a></td><td>195研究のメタ分析</td><td>所得弾力性 平均2.526、価格弾力性 平均−1.281</td><td>観光は所得に敏感な「ぜいたく品」という前提</td></tr>
+          <tr><td>普及モデル</td><td><a href="https://doi.org/10.1177/002224379002700107">Sultan, Farley &amp; Lehmann (1990) JMR</a></td><td>213件の Bass モデル適用のメタ分析</td><td>p（革新係数）平均0.03、q（模倣係数）平均0.38</td><td>Crunchyroll の推定値と比べる基準</td></tr>
+          <tr><td>課金の集中</td><td><a href="https://www.sciencedirect.com/science/article/abs/pii/S0306460321000368">Close et al. (2021) Addictive Behaviors</a></td><td>ルートボックス購入者 7,771人</td><td>上位5%（月100ドル超）が売上の半分超。支出は所得と無相関、問題ギャンブル度と相関（ρ=.33）</td><td>対数正規の2点目の条件</td></tr>
+          <tr><td>課金の集中</td><td><a href="https://doi.org/10.31234/osf.io/5k2sy">Zendle et al. (2020)</a></td><td>CSGO の実購入 147万件・38.6万人</td><td>上位10%が過半、上位1%が26.33%</td><td>推定分布の検証</td></tr>
+          <tr><td>課金の集中</td><td><a href="https://doi.org/10.1145/3582927">Games: Research and Practice (2023)</a></td><td>モバイルゲーム 1,350万人の取引</td><td>「超パレート型」では上位10%が78%、上位1%が38%</td><td>集中度の上限の参考</td></tr>
+          <tr><td>ライブコマース</td><td><a href="https://open.library.ubc.ca/soa/cIRcle/collections/ubctheses/24/items/1.0440982">UBC 学位論文 "Sales impact of live streaming"</a></td><td>アパレル167ブランド、固定効果＋コピュラ法</td><td>ライブ動画1本追加で日次売上が中央値+22.9%。81%のブランドでプラス、4%でマイナス</td><td>ライブの上乗せ効果の目安</td></tr>
+          <tr><td>ライブコマース</td><td><a href="http://scholarspace.manoa.hawaii.edu/bitstream/10125/59887/1/0447.pdf">HICSS "Everyone Can Be a Star"</a></td><td>淘宝、差の差分析＋傾向スコア</td><td>ライブ導入後に売上+21.8%。体験財では+27.9%上乗せ</td><td>同上</td></tr>
+          <tr><td>ライブコマース</td><td><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5018972">SSRN "Fleeting or Lasting Success?"</a></td><td>アジアのライブコマース、準自然実験</td><td>売上効果はプラスだが配信当日だけ。続けないと残らない</td><td>B 案は配信を続けることが前提</td></tr>
+          <tr><td>ライブコマース</td><td><a href="https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=7758&amp;context=sis_research">SMU: What drives sales of e-commerce live streaming?</a></td><td>淘宝の大規模データ</td><td>リアルタイムのコメント1%増で売上+0.29%</td><td>チャットで景品を選ばせる設計の根拠</td></tr>
+          <tr><td>ライブコマース</td><td><a href="https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/its-showtime-how-live-commerce-is-transforming-the-shopping-experience">McKinsey (2021)</a></td><td>業界データ（因果推定ではない）</td><td>上位アカウントの購入率28%、通常ECの最大10倍</td><td>B 案の購入率の上限</td></tr>
+          <tr><td>観戦</td><td><a href="https://doi.org/10.1016/j.chb.2016.10.019">Sjöblom &amp; Hamari (2017) Computers in Human Behavior</a></td><td>Twitch 利用者 N=1,097</td><td>視聴時間は緊張解放・社会的つながり・感情で増える。有料購読を予測するのは社会的つながりだけ</td><td>「見るだけの人」をお金につなげるには交流が要るという解釈</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>市場・統計の基礎値</h3>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>項目</th><th class="num">値</th><th>出典</th></tr></thead>
+        <tbody>
+          <tr><td>国内クレーンゲーム売上（2024年度）</td><td class="num">3,918億円（+17.7%）</td><td>JAIA（2026年5月公表）</td></tr>
+          <tr><td>国内プライズゲーム売上（2024年度）</td><td class="num">4,177億円（施設売上の68%）</td><td><a href="https://jaia.jp/%e3%83%a1%e3%83%87%e3%82%a3%e3%82%a2%e3%81%ae%e3%81%bf%e3%81%aa%e3%81%95%e3%81%be%e3%81%b8/">JAIA</a></td></tr>
+          <tr><td>国内オンクレ市場</td><td class="num">約200億円（2020年度）→ 推定約300億円（2021年度）</td><td><a href="https://www.gamebusiness.jp/article/2025/07/02/24538.html">GameBusiness.jp</a>、<a href="https://batonz.jp/sell_cases/17190">BATONZ</a></td></tr>
+          <tr><td>推し活人口</td><td class="num">約1,384万人</td><td>DMM 登壇資料（GameBusiness.jp）</td></tr>
+          <tr><td>日本アニメの海外市場（2024年）</td><td class="num">2兆1,702億円（+26.0%）</td><td><a href="https://aja.gr.jp/info/2579">日本動画協会</a></td></tr>
+          <tr><td>Crunchyroll 有料会員</td><td class="num">2,100万人（2026年5月）</td><td><a href="https://www.animenewsnetwork.com/press-release/2026-05-08/crunchyroll-reaches-21-million-subscribers/.237189">Crunchyroll 発表</a></td></tr>
+          <tr><td>訪日客（2025年）</td><td class="num">4,268万人（+15.8%）</td><td><a href="https://www.jnto.go.jp/news/press/20260121_monthly.html">JNTO</a></td></tr>
+          <tr><td>訪日消費（2025年）／うち娯楽等サービス費</td><td class="num">9兆4,549億円／4,236億円（4.5%）</td><td><a href="https://www.mlit.go.jp/kankocho/content/001992584.pdf">観光庁 確報</a></td></tr>
+          <tr><td>娯楽等サービス費の1人あたり支出</td><td class="num">10,295円</td><td>同上</td></tr>
+          <tr><td>中国・米国の消費者の日本からの越境EC（2024年）</td><td class="num">2兆6,372億円／1兆5,978億円</td><td><a href="https://www.meti.go.jp/press/2025/08/20250826005/20250826005.html">経済産業省</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="fx">
+    <h2>3. 為替と所得の弾力性（パネル回帰）</h2>
+    <p>「日本の商品を海外から買う量」が円安や所得でどれだけ動くかを、経産省の越境EC統計で推定しました。中国と米国の消費者の2系列（2016〜2024年、計17観測）を使い、国ごとの水準の違いは固定効果で吸収しています。</p>
+    <div class="eq">ln(越境EC購入額_it) = α_i + β₁·ln(円/現地通貨_it) + β₂·ln(1人当たり実質GDP_it) + β₃·コロナ期_t + ε_it</div>
+    <div class="grid two" style="margin-top:12px">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>係数</th><th class="num">M1</th><th class="num">M2（コロナ期ダミー付き）</th></tr></thead>
+          <tbody>
+            <tr><td>為替弾力性 β₁</td><td class="num">0.557（SE 0.367, p=0.13）</td><td class="num"><strong>1.297</strong>（SE 0.385, p&lt;0.001）</td></tr>
+            <tr><td>β₁ のブートストラップ95%CI</td><td class="num">[−0.83, 1.35]</td><td class="num">[−0.01, 2.27]</td></tr>
+            <tr><td>所得弾力性 β₂</td><td class="num">2.089（SE 0.349）</td><td class="num">1.473（SE 0.387）</td></tr>
+            <tr><td>コロナ期（2020〜21年）</td><td class="num">—</td><td class="num">+0.228（約+26%）</td></tr>
+            <tr><td>R²／観測数</td><td class="num">0.912／17</td><td class="num">0.950／17</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <p><strong>読み方:</strong> M2 では、円が現地通貨に対して1%安くなると、日本からの越境購入額が約1.3%増える。所得が1%増えると約1.5%増える。</p>
+        <p><strong>ただし</strong>、観測が17点しかなく、ブートストラップの信頼区間は0をまたぎます。「為替が効く」と断定はできません。符号と大きさは IMF の観光需要の推定（0.7〜2.5）と同じ範囲に収まっています。</p>
+        <p class="note">標準誤差は HC1（不均一分散に頑健）。ブートストラップは観測単位の再標本化4,000回。</p>
+      </div>
+    </div>
+    <figure style="margin-top:12px"><img src="img/01_crossborder_fx.png" alt="越境EC購入額と円ドルレートの推移"><figcaption>縦軸（左）: 日本事業者からの越境EC購入額（兆円）、縦軸（右）: 円/ドル、横軸: 年。出典: 経済産業省、World Bank</figcaption></figure>
+  </section>
+
+  <section id="bass">
+    <h2>4. 海外ファン層の普及（Bass モデル）</h2>
+    <p>海外で日本アニメにお金を払う人の数の代わりとして、Crunchyroll の有料会員数（13時点）に Bass 普及モデルを非線形最小二乗法で当てはめました。</p>
+    <div class="eq">N(t) = m · [1 − e^{−(p+q)t}] / [1 + (q/p)·e^{−(p+q)t}]     m: 上限人数, p: 革新係数, q: 模倣係数</div>
+    <div class="grid two" style="margin-top:12px">
+      <figure><img src="img/02_bass_crunchyroll.png" alt="Crunchyroll 有料会員の Bass モデル当てはめ"><figcaption>縦軸: 有料会員（百万人）、横軸: 年。帯は残差ブートストラップ2,000回の90%区間</figcaption></figure>
+      <div>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th>上限 m</th><td class="num"><strong>2,800万人</strong>（95%CI 2,590万〜3,230万）</td></tr>
+              <tr><th>革新係数 p</th><td class="num">0.0007（メタ平均 0.03）</td></tr>
+              <tr><th>模倣係数 q</th><td class="num">0.537（95%CI 0.47〜0.58、メタ平均 0.38）</td></tr>
+              <tr><th>増加のピーク</th><td class="num">2024年ごろ</td></tr>
+              <tr><th>予測</th><td class="num">2028年 約2,540万人、2030年 約2,700万人</td></tr>
+              <tr><th>R²</th><td class="num">0.998</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:10px"><strong>読み方:</strong> メタ分析の平均と比べ、p が非常に小さく q が大きい。広告より<strong>口コミ・周りの影響で広がるタイプ</strong>です。増え方のピークは過ぎつつあり、今の形の事業では2,800万人前後で頭打ちになる見込みです。</p>
+        <p class="note">注意: 2022年の Funimation 統合による段差を含みます。会員数は累積の加入者ではなく、その時点の会員数です。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="spend">
+    <h2>5. 課金額の分布（対数正規・ジニ係数）</h2>
+    <p>オンクレ課金者の月の課金額が対数正規分布に従うと仮定し、2つの分位点から分布を決めました。</p>
+    <ul>
+      <li>条件1: 月3,000円未満が74.5%（CGP 2026 オンクレ利用者調査）</li>
+      <li>条件2: 上位5%の境目が月100ドル（約15,000円）（Close et al. 2021 のルートボックス研究）</li>
+    </ul>
+    <div class="grid two">
+      <figure><img src="img/03_lorenz.png" alt="課金額のローレンツ曲線"><figcaption>縦軸: 課金額の累積割合、横軸: 課金者の累積割合（少額→高額）。赤点は Zendle et al. 2020 の実測値</figcaption></figure>
+      <div>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th>分布</th><td class="num">対数正規 μ=6.93, σ=1.63</td></tr>
+              <tr><th>月の課金額 中央値</th><td class="num">約1,020円</td></tr>
+              <tr><th>月の課金額 平均（ARPPU）</th><td class="num"><strong>約3,880円</strong>（年 約4.65万円）</td></tr>
+              <tr><th>ジニ係数</th><td class="num">0.752</td></tr>
+              <tr><th>上位1%／5%／10%の売上シェア</th><td class="num">24.4%／49.5%／63.7%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:10px"><strong>検証:</strong> 推定分布の上位1%のシェア（24.4%）は、推定に使っていない Zendle et al. の実測値（26.3%）に近い値でした。</p>
+        <p><strong>読み方:</strong> 平均は中央値の約4倍。需要の金額は<strong>少数の高額課金者で決まる</strong>ため、利用者数の推計より課金額の仮定の方が結果を大きく動かします。Close et al. は、高額課金が所得ではなく問題ギャンブル度と相関すると報告しており、上限設定などの配慮が要ります。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="gravity">
+    <h2>6. 国別の潜在需要（重力モデル）</h2>
+    <p>国際貿易で最もよく使われる重力モデルで、国ごとの潜在需要の配分を計算しました。需要は相手国の GDP に比例し、距離のβ乗に反比例するとします。通常の貿易の β＝0.9（Disdier &amp; Head 2008 のメタ平均）と、オンラインの β＝0.315（Lendle et al. 2016 の「距離効果65%減」）を比べます。</p>
+    <div class="eq">潜在需要_j ∝ GDP_j × 距離(東京, j)^(−β)</div>
+    <div class="grid two" style="margin-top:12px">
+      <figure><img src="img/04_gravity.png" alt="重力モデルによる国別潜在需要"><figcaption>縦軸: 国、横軸: 19か国の合計に占める割合（%）。GDP は World Bank 2024（台湾は IMF）</figcaption></figure>
+      <div>
+        <div class="table-wrap">
+          <table class="striped">
+            <thead><tr><th>国</th><th class="num">距離</th><th class="num">通常</th><th class="num">オンライン</th></tr></thead>
+            <tbody>
+              <tr><td>中国</td><td class="num">2,093km</td><td class="num">49.5%</td><td class="num">32.7%</td></tr>
+              <tr><td>米国</td><td class="num">10,905km</td><td class="num">17.5%</td><td class="num"><strong>30.5%</strong></td></tr>
+              <tr><td>ドイツ</td><td class="num">8,917km</td><td class="num">3.4%</td><td class="num">5.2%</td></tr>
+              <tr><td>インド</td><td class="num">5,838km</td><td class="num">4.0%</td><td class="num">4.8%</td></tr>
+              <tr><td>英国</td><td class="num">9,559km</td><td class="num">2.5%</td><td class="num">4.0%</td></tr>
+              <tr><td>韓国</td><td class="num">1,153km</td><td class="num">8.5%</td><td class="num">4.0%</td></tr>
+              <tr><td>フランス</td><td class="num">9,713km</td><td class="num">2.1%</td><td class="num">3.4%</td></tr>
+              <tr><td>カナダ</td><td class="num">10,322km</td><td class="num">1.4%</td><td class="num">2.4%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:10px"><strong>読み方:</strong> オンラインでは距離の効果が弱まり、<strong>米国・欧州の比重が上がる</strong>。Gómez-Herrera et al. によると、オンラインでは言語の壁の影響が逆に強まるため、英語対応が前提になります。</p>
+        <p class="note">アニメ人気や規制は入れていない単純なモデルです。国ごとの需要の相対的な重みを見るためのもの。</p>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="mc">
+    <h2>7. 3つの方向の需要推計（モンテカルロ）</h2>
+    <p>リサーチまとめで並べた方向のうち、数字で比べやすい A・B・C の3つを推計しました。不確かな入力は分布で与え、20万回シミュレーションしています。</p>
+
+    <h3>入力パラメータ</h3>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>案</th><th>パラメータ</th><th>分布</th><th>根拠</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="5">A 海外から遠隔プレイ</td><td>対象ファン数</td><td>一様 600万〜2,100万人</td><td>Buyee＋転送コムの海外会員（600万）〜 Crunchyroll 有料会員（2,100万）。Bass の上限2,800万の内側</td></tr>
+          <tr><td>国内並みの浸透率</td><td>国内オンクレ課金者 ÷ 推し活人口（中央値 4.9%）</td><td>国内オンクレ 250〜400億円 ÷ ARPPU ÷ 1,384万人</td></tr>
+          <tr><td>距離の摩擦</td><td>(距離比)^(−β)、β 一様 0.315〜0.405、距離 3,000〜9,500km ÷ 国内500km</td><td>Disdier &amp; Head × Lendle et al.。中央値 0.41</td></tr>
+          <tr><td>ARPPU（年）</td><td>国内推定 4.65万円 × 一様0.6〜1.2</td><td>送料の負担で国内より下がる可能性</td></tr>
+          <tr><td>式</td><td colspan="2">売上 = 対象ファン数 × 浸透率 × 摩擦 × ARPPU</td></tr>
+          <tr><td rowspan="6">B ホスト代理プレイ（1チャンネル）</td><td>月の配信回数</td><td>整数一様 8〜16回</td><td>週2〜4回</td></tr>
+          <tr><td>1配信の視聴者数</td><td>対数正規 中央値300（σ=0.9）</td><td>個人配信の規模。上位の動画は200万回（CDawgVA）</td></tr>
+          <tr><td>購入率</td><td>三角 1%・4%・10%</td><td>通常EC 2〜3% 〜 ライブ上位28%（McKinsey）。ライブの上乗せ +22%（UBC、HICSS）</td></tr>
+          <tr><td>1注文の売上</td><td>三角 3,000・5,000・8,000円</td><td>景品（国内上限 約1,000円相当）＋代行・演出料。送料別</td></tr>
+          <tr><td>1個取るのにかかるプレイ代</td><td>三角 1,000・2,000・4,000円</td><td>Reddit・渋谷取材の獲得コスト</td></tr>
+          <tr><td>式</td><td colspan="2">流通額 = 配信回数 × 12 × 視聴者 × 購入率 × 客単価。粗利 = 注文数 × (客単価 − プレイ代)</td></tr>
+          <tr><td rowspan="4">C 訪日客の旅行中</td><td>訪日客数</td><td>4,268万人（2025年）</td><td>JNTO</td></tr>
+          <tr><td>クレーンで遊ぶ割合</td><td>一様 5〜20%</td><td><strong>公的統計なし（仮定）</strong>。渋谷・道頓堀の取材から</td></tr>
+          <tr><td>1人の支出</td><td>対数正規 中央値4,000円（σ=0.8）</td><td>渋谷取材 2,000〜20,000円</td></tr>
+          <tr><td>上限</td><td colspan="2">娯楽等サービス費の総額 4,236億円を超えないように制約</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure style="margin-top:16px"><img src="img/05_montecarlo.png" alt="モンテカルロ推計の分布"><figcaption>縦軸: 頻度、横軸: 各案の年間金額。実線は中央値、点線は10%点・90%点（表示は99%点まで）</figcaption></figure>
+
+    <h3>結果</h3>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>案</th><th>指標</th><th class="num">10%点</th><th class="num">中央値</th><th class="num">90%点</th><th>比較の目安</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>年間売上（市場全体）</td><td class="num">57.6億円</td><td class="num"><strong>108.6億円</strong></td><td class="num">186.7億円</td><td>国内オンクレ約300億円の約1/3</td></tr>
+          <tr><td>A</td><td>課金ユーザー数</td><td class="num">14.6万人</td><td class="num">26.7万人</td><td class="num">42.6万人</td><td>対象ファンの約2%</td></tr>
+          <tr><td>B</td><td>年間注文数（1チャンネル）</td><td class="num">532件</td><td class="num">1,976件</td><td class="num">7,134件</td><td>1日あたり約5件（中央値）</td></tr>
+          <tr><td>B</td><td>年間流通額（1チャンネル）</td><td class="num">272万円</td><td class="num"><strong>1,034万円</strong></td><td class="num">3,828万円</td><td>—</td></tr>
+          <tr><td>B</td><td>年間粗利（プレイ代控除後）</td><td class="num">123万円</td><td class="num">545万円</td><td class="num">2,214万円</td><td>人件費・梱包作業の前</td></tr>
+          <tr><td>C</td><td>年間支出</td><td class="num">63.6億円</td><td class="num"><strong>201.6億円</strong></td><td class="num">618.7億円</td><td>国内クレーン市場の約5%（1.6〜15.8%）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">A は「市場全体の潜在規模」。1社が取れるのはその一部で、たとえばシェア10%なら中央値で約11億円。</p>
+  </section>
+
+  <section id="sens">
+    <h2>8. 感度分析と為替シナリオ</h2>
+    <div class="grid two">
+      <figure><img src="img/06_tornado.png" alt="A 案の感度分析トルネード図"><figcaption>縦軸: 入力パラメータ、横軸: A 案の年間売上（億円）。各要因を10%点〜90%点で動かし、他は中央値に固定</figcaption></figure>
+      <div>
+        <p><strong>A 案で結果を最も動かすのは「対象ファン数」</strong>（63億〜164億円）。次いで ARPPU、浸透率、距離の摩擦の順。</p>
+        <p>→ 最初に確かめるべきは、「海外の日本IPファンのうち、オンクレに興味を持つのは誰で、何人いるか」。</p>
+        <h3>為替シナリオ（10%の円高）</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th>A: 越境購入</th><td class="num">約−12.8%</td><td>本分析 M2 の弾力性 1.30（信頼区間は広い）</td></tr>
+              <tr><th>C: 訪日客数</th><td class="num">−7.1〜−23.2%</td><td>IMF の弾力性 0.7〜2.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:8px">足元の円安（2024年 151円/ドル）は A・C の両方に追い風。逆に円高に戻ると両方に同時に逆風になるため、<strong>A と C は為替のリスクで分散できない</strong>。B は仕入れが円・販売が外貨なので、円高で利幅が縮む。</p>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="interp">
+    <h2>9. 解釈（比較・未決定）</h2>
+    <p class="secondary">どれかを推すものではありません。推計から読める各案の性格を並べます。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>案</th><th>規模の目安</th><th>不確実性</th><th>推計から読めること</th><th>最初に測るべきこと</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A 海外から遠隔プレイ</strong></td><td>市場全体で年100億円前後</td><td>中（80%区間で約3倍の幅）</td><td>国内オンクレの3分の1程度の潜在市場がありうる。米国・欧州の比重が大きく、英語対応と国際決済が前提</td><td>海外ファンの利用意向と、送料込みで払える額（コンジョイント分析や価格感度テスト）</td></tr>
+          <tr><td><strong>B ホスト代理プレイ配信</strong></td><td>1チャンネル年1,000万円前後</td><td>大（80%区間で約14倍の幅）</td><td>1人の配信者の副業〜小規模事業の規模。広げるにはホストを何人も抱えるか、店舗と組む必要がある。ライブの効果は配信当日だけ（SSRN）なので、続けることが条件</td><td>数回の試験配信での視聴者数と購入率</td></tr>
+          <tr><td><strong>C 訪日客の旅行中</strong></td><td>年200億円前後</td><td>最大（80%区間で約10倍の幅）</td><td>金額は大きいが、実店舗がすでに取っている需要。オンラインが取れるのは旅の前後の練習・続きの部分</td><td>訪日客のゲーセン利用率（公的統計がない。店舗データか調査が必要）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:10px">共通して言えるのは次の3点です。</p>
+    <ul>
+      <li><strong>課金は一部の人に集中する</strong>（上位10%で約64%）。高額課金者の扱い（上限・年齢確認）が売上と社会的な受け止めの両方を左右する。</li>
+      <li><strong>海外ファン層の伸びは鈍り始めている</strong>（Bass のピークが2024年ごろ）。「これから急増する市場」ではなく、既にいるファンの取り合いになる。</li>
+      <li><strong>為替への依存が大きい</strong>。円安の追い風を前提にしない計画が必要。</li>
+    </ul>
+  </section>
+
+  <div class="callout warn" id="limits">
+    <strong class="title">10. 限界と、次に取るべき一次データ</strong>
+    <ul>
+      <li>パネル回帰は17観測と少なく、為替弾力性の信頼区間は0をまたぐ。越境EC統計は推計値で、商品カテゴリ別ではない</li>
+      <li>Crunchyroll の会員数は「海外で日本IPにお金を払う人」の代わりにすぎない。統合による段差もある</li>
+      <li>課金額の分布の2点目は、オンクレではなくルートボックスの研究から借りている</li>
+      <li>「訪日客の何%がクレーンで遊ぶか」「海外ファンの何%がオンクレを使うか」の直接データはなく、仮定で置いた</li>
+      <li>国際送料・関税・国ごとの景品規制・決済手数料は A・B の式に明示的には入れていない（摩擦係数に含めた扱い）</li>
+    </ul>
+    <p style="margin:8px 0 4px"><strong>精度を上げるための一次データ（案）</strong></p>
+    <ul>
+      <li>海外ファン向けアンケートでのコンジョイント分析：景品の種類・送料・1プレイの価格・言語への支払意思額を推定する</li>
+      <li>Van Westendorp の価格感度測定：1プレイ・送料の許容範囲を把握する</li>
+      <li>B 案の小規模なフィールド実験：試験配信を数回行い、視聴者数・購入率・粗利を実測し、モンテカルロの分布を事後分布で更新する（ベイズ更新）</li>
+      <li>店舗データ：訪日客比率の高い店の売上とプレイ単価から、C 案の遊ぶ割合と支出を推定する</li>
+    </ul>
+  </div>
+
+  <section id="refs">
+    <h2>11. 出典</h2>
+    <h3>論文・研究</h3>
+    <ul class="sources">
+      <li>Bass, F. M. (1969). A new product growth for model consumer durables. <i>Management Science</i>, 15(5), 215–227. <a href="https://doi.org/10.1287/mnsc.15.5.215">doi:10.1287/mnsc.15.5.215</a></li>
+      <li>Close, J., Spicer, S. G., Nicklin, L. L., Uther, M., Lloyd, J., &amp; Lloyd, H. (2021). Secondary analysis of loot box data: Are high-spending "whales" wealthy gamers or problem gamblers? <i>Addictive Behaviors</i>. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0306460321000368">ScienceDirect</a></li>
+      <li>Disdier, A.-C., &amp; Head, K. (2008). The puzzling persistence of the distance effect on bilateral trade. <i>Review of Economics and Statistics</i>, 90(1), 37–48. <a href="https://doi.org/10.1162/rest.90.1.37">doi:10.1162/rest.90.1.37</a></li>
+      <li>Gómez-Herrera, E., Martens, B., &amp; Turlea, G. (2014). The drivers and impediments for cross-border e-commerce in the EU. <i>Information Economics and Policy</i>, 28, 83–96. <a href="https://doi.org/10.1016/j.infoecopol.2014.05.002">doi:10.1016/j.infoecopol.2014.05.002</a></li>
+      <li>IMF (2020). Japan's Inbound Tourism Boom: Lessons for its Post-COVID-19 Revival. WP/20/169. <a href="https://doi.org/10.5089/9781513553207.001">doi:10.5089/9781513553207.001</a></li>
+      <li>Lendle, A., Olarreaga, M., Schropp, S., &amp; Vézina, P.-L. (2016). There goes gravity: eBay and the death of distance. <i>Economic Journal</i>, 126(591), 406–441. <a href="https://doi.org/10.1111/ecoj.12286">doi:10.1111/ecoj.12286</a></li>
+      <li>Peng, B., Song, H., Crouch, G. I., &amp; Witt, S. F. (2015). A meta-analysis of international tourism demand elasticities. <i>Journal of Travel Research</i>, 54(5), 611–633. <a href="https://doi.org/10.1177/0047287514528283">doi:10.1177/0047287514528283</a></li>
+      <li>Role of tourism price in attracting international tourists: The case of Japanese inbound tourism from South Korea. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7185866/">PMC7185866</a></li>
+      <li>Sjöblom, M., &amp; Hamari, J. (2017). Why do people watch others play video games? <i>Computers in Human Behavior</i>, 75, 985–996. <a href="https://doi.org/10.1016/j.chb.2016.10.019">doi:10.1016/j.chb.2016.10.019</a></li>
+      <li>Sultan, F., Farley, J. U., &amp; Lehmann, D. R. (1990). A meta-analysis of applications of diffusion models. <i>Journal of Marketing Research</i>, 27(1), 70–77. <a href="https://doi.org/10.1177/002224379002700107">doi:10.1177/002224379002700107</a></li>
+      <li>Zendle, D., et al. (2020). How do loot boxes make money? An analysis of a very large dataset of real Chinese CSGO loot box openings. <a href="https://doi.org/10.31234/osf.io/5k2sy">doi:10.31234/osf.io/5k2sy</a></li>
+      <li>The Many Faces of Monetisation (2023). <i>Games: Research and Practice</i>. <a href="https://doi.org/10.1145/3582927">doi:10.1145/3582927</a></li>
+      <li>Sales impact of live streaming（UBC 学位論文）. <a href="https://open.library.ubc.ca/soa/cIRcle/collections/ubctheses/24/items/1.0440982">UBC Open Collections</a></li>
+      <li>Everyone Can Be a Star: Quantifying Grassroots Online Sellers' Live Streaming Effects on Product Sales（HICSS）. <a href="http://scholarspace.manoa.hawaii.edu/bitstream/10125/59887/1/0447.pdf">PDF</a></li>
+      <li>Fleeting or Lasting Success? Unlocking the Power Durability of Live Commerce. <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5018972">SSRN 5018972</a></li>
+      <li>What drives sales of e-commerce live streaming? Evidence from Taobao（SMU）. <a href="https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=7758&amp;context=sis_research">PDF</a></li>
+      <li>Live Commerce: Understanding How Live Streaming Influences Sales and Reviews（ICIS 2020）. <a href="https://aisel.aisnet.org/icis2020/digital_commerce/digital_commerce/6/">AISeL</a></li>
+      <li>McKinsey (2021). It's showtime! How live commerce is transforming the shopping experience. <a href="https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/its-showtime-how-live-commerce-is-transforming-the-shopping-experience">McKinsey</a></li>
+    </ul>
+    <h3>統計・データ</h3>
+    <ul class="sources">
+      <li>経済産業省「電子商取引に関する市場調査」各年版（<a href="https://www.meti.go.jp/press/2025/08/20250826005/20250826005.html">令和6年度</a>、<a href="https://www.meti.go.jp/press/2023/08/20230831002/20230831002.html">令和4年度</a> ほか）</li>
+      <li>World Bank Open Data（PA.NUS.FCRF 為替、NY.GDP.PCAP.KD 1人当たり実質GDP、NY.GDP.MKTP.CD GDP）</li>
+      <li>JAIA 日本アミューズメント産業協会（<a href="https://jaia.jp/%e3%83%a1%e3%83%87%e3%82%a3%e3%82%a2%e3%81%ae%e3%81%bf%e3%81%aa%e3%81%95%e3%81%be%e3%81%b8/">メディアのみなさまへ</a>）、<a href="https://www.wacoca.com/games/1454216/">2024年度クレーンゲーム売上3,918億円の報道</a></li>
+      <li>観光庁「訪日外国人消費動向調査 2025年暦年 確報」（<a href="https://www.mlit.go.jp/kankocho/content/001992584.pdf">PDF</a>）、JNTO「訪日外客数」（<a href="https://www.jnto.go.jp/news/press/20260121_monthly.html">2025年12月推計値</a>）</li>
+      <li>日本動画協会「アニメ産業レポート2025」速報（<a href="https://aja.gr.jp/info/2579">発表</a>）</li>
+      <li>Crunchyroll 有料会員数（<a href="https://www.statista.com/statistics/594952/crunchyroll-users/">Statista</a>、<a href="https://www.animenewsnetwork.com/press-release/2026-05-08/crunchyroll-reaches-21-million-subscribers/.237189">2026年5月発表</a>）</li>
+      <li>BEENOS（<a href="https://beenos.com/news-center/press-release/20250203_bns_pr/">海外ユーザー600万人突破</a>）</li>
+      <li>合同会社CGP「2026年版オンラインクレーンゲーム利用者調査」（2026年8月、n=94）</li>
+      <li>国内オンクレ市場（<a href="https://www.gamebusiness.jp/article/2025/07/02/24538.html">GameBusiness.jp</a>、<a href="https://batonz.jp/sell_cases/17190">BATONZ</a>、<a href="https://dime.jp/genre/1567165/">@DIME</a>）</li>
+    </ul>
+    <p class="note">再現用のコード（Python、乱数の種を固定）は、チームのリポジトリの <code>day2/demand-analysis/analysis.py</code> にあり、実行すると <code>results.json</code> と図を出力します。</p>
+  </section>
+
+</main>
+</body>
+</html>
