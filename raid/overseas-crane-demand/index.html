@@ -479,24 +479,46 @@
       <table class="striped">
         <thead><tr><th>段</th><th>定義</th><th>年間の流通額</th><th>粗利</th></tr></thead>
         <tbody>
-          <tr><td><strong>TAM</strong></td><td>海外の消費者が日本の事業者から買う越境EC（中国＋米国。他地域は統計なし）</td><td class="num"><strong>4.2兆円</strong></td><td>—</td></tr>
-          <tr><td><strong>SAM</strong></td><td>英語圏など中国以外から、ライブで売れる品目の代理購入＋ゲーセン代理プレイ</td><td class="num"><strong>660億円</strong><br><span class="secondary">408〜1,003億</span></td><td>—</td></tr>
-          <tr><td>　うちライブ買い付け</td><td>米国の越境購入 1兆5,978億 × 他地域 1.2〜1.8倍 × 現地でないと見つけにくい品目 15〜35% × ライブで売れる割合 3〜12%</td><td class="num">421億円<br><span class="secondary">213〜735億</span></td><td>—</td></tr>
-          <tr><td>　うちゲーセン代理プレイ</td><td>9節の B（北米・欧州）と同じ: コレクタブル系ライブ × 日本IP × ゲーム形式 × 日本発</td><td class="num">214億円<br><span class="secondary">111〜392億</span></td><td>—</td></tr>
-          <tr><td><strong>SOM</strong>（ホスト1人）</td><td>ChatGPT の「1人の配信者のビジネスとして始める」</td><td class="num"><strong>1,424万円</strong><br><span class="secondary">373万〜5,243万</span></td><td class="num">461万円<br><span class="secondary">117万〜1,741万</span></td></tr>
-          <tr><td><strong>SOM</strong>（ホスト10〜30人）</td><td>ChatGPT の「複数の配信者と店舗をつなぐ事業に広げる」（3〜5年）</td><td class="num"><strong>4.5億円</strong><br><span class="secondary">2.3〜7.4億</span></td><td class="num">1.5億円<br><span class="secondary">0.8〜2.4億</span></td></tr>
-          <tr><td><strong>SOM</strong>（SAM の 2〜10%）</td><td>上から見て、新規1社が取れる上限の目安</td><td class="num"><strong>36億円</strong><br><span class="secondary">19〜63億</span></td><td class="num">11億円<br><span class="secondary">6〜19億</span></td></tr>
+          <tr><td><strong>TAM</strong></td><td>世界の消費者が日本の事業者から買う越境EC（200か国。推計方法は下の小節）</td><td class="num"><strong>6.8兆円</strong><br><span class="secondary">5.6〜9.1兆</span></td><td>—</td></tr>
+          <tr><td>　うち英語ホストが届く範囲</td><td>国別の届く割合を掛けた値（英語圏 100%、中国本土 0%、台湾・香港・韓国 10〜40%、その他 40〜80%）</td><td class="num">3.2兆円<br><span class="secondary">2.4〜4.7兆</span></td><td>—</td></tr>
+          <tr><td><strong>SAM</strong></td><td>英語ホストが届く範囲から、ライブで売れる品目の代理購入＋ゲーセン代理プレイ</td><td class="num"><strong>880億円</strong><br><span class="secondary">523〜1,448億</span></td><td>—</td></tr>
+          <tr><td>　うちライブ買い付け</td><td>届く範囲 3.2兆 × 現地でないと見つけにくい品目 15〜35% × ライブで売れる割合 3〜12%</td><td class="num">573億円<br><span class="secondary">278〜1,091億</span></td><td>—</td></tr>
+          <tr><td>　うちゲーセン代理プレイ</td><td>9節の B（北米・欧州）を、日本からの越境購入の地域分布に合わせて世界へ広げた</td><td class="num">275億円<br><span class="secondary">141〜504億</span></td><td>—</td></tr>
+          <tr><td><strong>SOM</strong>（ホスト1人）</td><td>ChatGPT の「1人の配信者のビジネスとして始める」</td><td class="num"><strong>1,422万円</strong><br><span class="secondary">375万〜5,292万</span></td><td class="num">460万円<br><span class="secondary">118万〜1,750万</span></td></tr>
+          <tr><td><strong>SOM</strong>（ホスト10〜30人）</td><td>ChatGPT の「複数の配信者と店舗をつなぐ事業に広げる」（3〜5年）</td><td class="num"><strong>4.5億円</strong><br><span class="secondary">2.3〜7.4億</span></td><td class="num">1.5億円<br><span class="secondary">0.8〜2.5億</span></td></tr>
+          <tr><td><strong>SOM</strong>（SAM の 2〜10%）</td><td>上から見て、新規1社が取れる上限の目安</td><td class="num"><strong>48億円</strong><br><span class="secondary">25〜89億</span></td><td class="num">14億円<br><span class="secondary">7〜27億</span></td></tr>
         </tbody>
       </table>
     </div>
     <p class="note">ホスト1人のモデル: 月8〜16回配信、1配信の視聴者は中央値300人（対数正規）、購入率1〜10%（最頻4%）。配信の3〜6割をゲーセン回（1注文3,000〜8,000円、プレイ代1,000〜4,000円）、残りを買い付け回（1注文4,000〜15,000円、手数料＋粗利15〜30%）とした。粗利は人件費・梱包・発送作業の前。</p>
 
+    <h3>世界全体の越境EC（TAM）の推計方法</h3>
+    <p>日本の事業者からの越境EC購入額を国別に実測している公的統計は、中国・米国（経産省）と韓国（韓国統計庁）の3か国だけです。そこで、6節の重力モデル（GDP × 距離<sup>−β</sup>、オンラインの距離弾力性 β = 0.315〜0.405）を世界銀行の200か国（＋台湾）に広げ、米国の実測で目盛りを合わせました。</p>
+    <div class="grid two">
+      <figure><img src="img/10_world_crossborder.png" alt="世界の消費者が日本から買う越境EC：地域別"><figcaption>横軸: 日本の事業者からの越境EC購入額（億円/年、2024年）。棒は中央値、ひげは80%区間。北米と東アジアは実測を含むため幅が狭い</figcaption></figure>
+      <div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>国</th><th>実測（2024年）</th><th>重力モデルの予測</th><th>実測 ÷ 予測</th></tr></thead>
+            <tbody>
+              <tr><td>米国</td><td class="num">1兆5,978億円</td><td class="num">（目盛り合わせ）</td><td class="num">1.00</td></tr>
+              <tr><td>中国</td><td class="num">2兆6,372億円</td><td class="num">約1兆8,400億円</td><td class="num">1.43</td></tr>
+              <tr><td>韓国</td><td class="num">約603億円<br><span class="secondary">5,436億ウォン</span></td><td class="num">約2,300億円</td><td class="num">0.26</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:8px">モデルの当たり外れは国によって大きい（中国は予測より多く、韓国は4分の1）。そこで、3か国の「実測 ÷ 予測」の対数平均と標準誤差から補正倍率を引き（中央値0.72、80%区間0.37〜1.40）、実測のない国の予測に掛けました。</p>
+        <p><strong>結果: 世界全体で約6.8兆円（5.6〜9.1兆円）。</strong>中国＋米国の実測 4.2兆円に、欧州 約1.2兆円（0.6〜2.4兆）、中南米・中東・南アジア 各約2,000〜2,400億円、台湾・香港・マカオ 約850億円などが加わる。世界の越境EC 1.01兆ドル（約152兆円、経産省引用）の約4.4%にあたる。</p>
+      </div>
+    </div>
+    <p class="note">限界: 台湾・香港は日本製品の人気が高く、補正倍率（韓国の低さに引っ張られている）では過小の可能性がある。欧州は VAT・関税の手続きがあり、過大の可能性がある。実測が3か国しかないため、補正倍率の不確実性は大きい。</p>
+
     <h3>推計から読めること</h3>
     <ul>
-      <li><strong>TAM 4.2兆円の6割強は中国の消費者（2兆6,372億円）で、英語ホストの配信では届かない。</strong>中国向けにするなら、中国語ホストと現地プラットフォーム（抖音・小紅書など）という別の案になる。</li>
-      <li><strong>SAM は約660億円で、買い付けが3分の2、ゲーセン代理プレイが3分の1。</strong>ゲーセンだけに絞るより、買い付けと組み合わせたほうが届く市場は約3倍になる。</li>
-      <li><strong>代理購入市場から絞る別の計算では、ライブ買い付けの SAM は約150億円（76〜248億）。</strong>Buyee の流通額 774億円 ÷ Buyee のシェア 25〜45% × 中国以外 40〜70% × ライブ割合 5〜20%。上の421億円との間に真の値があると見るのが自然。</li>
-      <li><strong>SOM を決めるのは市場の大きさではなく、ホストの人数と発送の人手。</strong>シェアから見た上限の36億円に届くには、ホスト1人あたり約1,400万円なので250人規模が要る。ホスト10〜30人でも1日の注文は約170件（87〜275件）になり、買い付け・梱包・発送の人員が先に上限になる。</li>
+      <li><strong>世界の TAM 6.8兆円のうち、中国が2.64兆円（約4割）、米国が1.60兆円。</strong>中国は英語ホストの配信では届かない。中国向けにするなら、中国語ホストと現地プラットフォーム（抖音・小紅書など）という別の案になる。英語で届く範囲は約3.2兆円。</li>
+      <li><strong>SAM は約880億円で、買い付けが3分の2、ゲーセン代理プレイが3分の1。</strong>ゲーセンだけに絞るより、買い付けと組み合わせたほうが届く市場は約3倍になる。中国＋米国だけで数えた場合（約660億円）より約3割大きい。</li>
+      <li><strong>代理購入市場から絞る別の計算では、ライブ買い付けの SAM は約150億円（76〜248億）。</strong>Buyee の流通額 774億円 ÷ Buyee のシェア 25〜45% × 中国以外 40〜70% × ライブ割合 5〜20%。上の573億円との間に真の値があると見るのが自然。</li>
+      <li><strong>SOM を決めるのは市場の大きさではなく、ホストの人数と発送の人手。</strong>シェアから見た上限の48億円に届くには、ホスト1人あたり約1,400万円なので約340人が要る。ホスト10〜30人でも1日の注文は約170件（87〜275件）になり、買い付け・梱包・発送の人員が先に上限になる。</li>
       <li><strong>ホスト1人なら、粗利は年約460万円。</strong>ChatGPT の「小さく始める価値は高いが、街歩き配信だけを事業の中心に据えるのはまだ早い」という判断と合う規模。</li>
     </ul>
 
