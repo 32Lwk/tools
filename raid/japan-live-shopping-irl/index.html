@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>日本から海外向けのライブ配信：ライブ買い付けと街歩きIRLの市場と参入価値</title>
+<style>
+  :root {
+    --fg: #1f2328;
+    --fg2: #57606a;
+    --fg3: #8c959f;
+    --border: #d0d7de;
+    --bg: #ffffff;
+    --bg-sub: #f6f8fa;
+    --accent: #0969da;
+    --info-bg: #ddf4ff;
+    --info-border: #54aeff;
+    --warn-bg: #fff8c5;
+    --warn-border: #d4a72c;
+    --ok-bg: #dafbe1;
+    --mid-bg: #fff8c5;
+    --low-bg: #ffebe9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+    line-height: 1.7;
+  }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 32px; }
+  h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 8px; }
+  h2 { font-size: 1.3rem; margin: 0 0 12px; }
+  h3 { font-size: 1.05rem; margin: 0 0 8px; }
+  p { margin: 0 0 8px; }
+  ul { margin: 0 0 8px; padding-left: 1.4em; }
+  .secondary { color: var(--fg2); }
+  .note { color: var(--fg3); font-size: 0.8rem; margin-top: 8px; }
+  .banner { font-size: 0.82rem; color: var(--fg2); background: var(--bg-sub); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; }
+  .callout { border-left: 4px solid; border-radius: 6px; padding: 14px 18px; }
+  .callout strong { display: block; margin-bottom: 4px; }
+  .callout.info { background: var(--info-bg); border-color: var(--info-border); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+  .grid { display: grid; gap: 16px; }
+  .grid.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid.cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .stat .value { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+  .stat .label { color: var(--fg2); font-size: 0.85rem; }
+  .stat .caveat { color: var(--fg3); font-size: 0.75rem; margin-top: 6px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--bg-sub); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  table.striped tbody tr:nth-child(even) { background: var(--bg-sub); }
+  tr.fit-high { background: var(--ok-bg); }
+  tr.fit-mid { background: var(--mid-bg); }
+  tr.fit-low { background: var(--low-bg); }
+  td.center { text-align: center; font-weight: 700; white-space: nowrap; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+  code { background: var(--bg-sub); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.85em; }
+  .card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; height: 100%; }
+  .card-header { background: var(--bg-sub); padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); }
+  .card-body { padding: 12px 16px; }
+  .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.9rem; }
+  .flow .step { border: 1px solid var(--border); background: var(--bg-sub); border-radius: 6px; padding: 8px 12px; }
+  .flow .arrow { color: var(--fg3); }
+  @media (max-width: 800px) {
+    .grid.stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.cards, .grid.two { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="banner">JTCC RAID Summer 2026 チーム共有用（トップ未掲載・noindex）。公開情報ベースのリサーチメモです。方向性は未決定で、ここに書いた判断は比較用の一案です。</div>
+
+  <section>
+    <h1>日本から海外向けのライブ配信：ライブ買い付けと街歩きIRLの市場と参入価値</h1>
+    <p class="secondary">海外視聴者に向けて日本から配信している人たちを調べ、どんな形で稼いでいるか、市場はどれくらいか、参入する価値があるかを整理しました。最後に、オンクレと組み合わせる案を検証の観点つきで載せています。</p>
+  </section>
+
+  <div class="callout info">
+    <strong>結論</strong>
+    確認できる大きな市場は「海外の人が日本の商品を買う」ことです。まだ分からないのは「ライブで現地を見せると、新たに何件の購入が生まれるか」です。小さく始めて測る価値は高いですが、街歩き配信だけを事業の中心にするのはまだ早いと判断しました。
+  </div>
+
+  <section>
+    <h2>配信者は大きく2種類</h2>
+    <div class="grid two">
+      <div class="card"><div class="card-header">ライブ買い付けをする配信者</div><div class="card-body">商品の発見から購入までを仲介する。視聴者は店頭を一緒に見て、欲しい品を指定し、日本から送ってもらう。<strong>収入源は手数料や販売粗利。</strong></div></div>
+      <div class="card"><div class="card-header">日本を歩くIRL配信者</div><div class="card-body">日本の街をリアルタイムで見せ、視聴者と話す。<strong>収入源は視聴体験そのものへの投げ銭や会費。</strong></div></div>
+    </div>
+    <p class="note">両者を合わせた「日本から海外向けの配信」の市場規模は、公表統計では確認できません。以下では実例と周辺市場の数字を分けて評価します。</p>
+  </section>
+
+  <section>
+    <h2>どんな人・サービスがいるか</h2>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>部類</th><th>視聴者が得るもの</th><th>確認できた実例</th></tr></thead>
+        <tbody>
+          <tr><td>ライブ買い付け・代理購入</td><td>店頭を一緒に見て、欲しい品を指定し、日本から送ってもらう</td><td><strong>New Wonder</strong>：日本のガチャ店やキャラクターショップなどを配信。視聴者の希望品を取りまとめ、請求・発送する手順を公開している</td></tr>
+          <tr><td>ライブ競売型の買い付け</td><td>現地で見つかった品に、その場で入札する</td><td><strong>Nijiworks</strong>：配信者が日本のフリマ・店・イベントを巡り、落札後に現場で商品を確保して発送する仕組みを説明。ただし公開ページだけでは継続的な取引実績は確認できない</td></tr>
+          <tr><td>街歩き・IRL配信</td><td>日本の街をリアルタイムで見て、配信者と話す</td><td><strong>Cory May</strong>：東京周辺の街歩きライブを公開し、自身のサイトで配信活動への寄付も受け付けている。寄付額や総収入は非公開</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">探すときの検索語 — ライブ買い付け側: <code>live shopping</code> <code>livestream proxy shopping</code> <code>personal shopper in Japan</code>／街歩き側: <code>Japan IRL streamer</code> <code>Tokyo live walk</code> <code>walking livestream</code>。「特定の配信者が相当稼いでいる」かどうかは、名前や配信URLがない段階では検証できません。</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>市場はどれくらい大きいか</h2>
+    <p>購入の需要は大きい一方、そのうちライブ買い付けが何％かは分かりません。以下はすべて<strong>周辺市場の数字</strong>で、ライブ配信経由の市場規模としては使えません。</p>
+    <div class="grid stats">
+      <div class="stat"><div class="value">2兆6,372億円</div><div class="label">中国の消費者が日本の事業者から購入した越境EC（経産省 2024年推計）</div><div class="caveat">通常の越境ECを含む広い数字</div></div>
+      <div class="stat"><div class="value">774億円</div><div class="label">代理購入大手 Buyee の流通総額（2024年9月期）</div><div class="caveat">ライブ配信経由以外も含む</div></div>
+      <div class="stat"><div class="value">588万人超</div><div class="label">Buyee の会員数（関連サービス込み）</div><div class="caveat">仲介を使って日本の商品を買う需要は実在する</div></div>
+      <div class="stat"><div class="value">70%超／約60%</div><div class="label">TikTok Shop Japan の流通総額のうちコンテンツ起点／そのうちライブ配信経由（2025年6月末〜2026年6月末）</div><div class="caveat">主に日本国内向けのデータ</div></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px">
+      <strong>街歩き配信の市場規模は不明</strong>
+      「日本の街歩きを海外の視聴者が見て支払う」市場の金額は、信頼できる公開推計が見つかりませんでした。個別の配信者が寄付を受け付けていることは確認できますが、寄付・スパチャ・会費の実収入が公表されていない以上、数人の成功例から市場規模を積み上げるのは危険です。
+    </div>
+  </section>
+
+  <section>
+    <h2>参入価値の判断</h2>
+    <p class="secondary">判断：小さく始める価値は高い。ただし街歩き配信だけを事業の中心に据えるのはまだ早い。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>モデル</th><th>参入評価</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr class="fit-high"><td>街歩き・店巡りを入口に、買い物や体験につなぐ</td><td class="center">最も試したい</td><td>無料で「日本を一緒に歩く」視聴者を集め、欲しいものが見つかった時だけ購入につなげられる。投げ銭にも依存しない</td></tr>
+          <tr class="fit-high"><td>日本の商品をライブで紹介し、代理購入・発送</td><td class="center">高い</td><td>商品購入という明確な支払意思がある。配信を集客と商品発見に使い、手数料や販売粗利を得られる。ただし買い付け・梱包・発送が増えるほど人手が要る</td></tr>
+          <tr class="fit-low"><td>街歩きライブで投げ銭を得る</td><td class="center">単独では慎重</td><td>小さく始められるが、収益は配信者個人への支持に左右される。視聴数から売上を予測しにくい</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px">誰でもネットで買える定番品は、Buyee など既存サービスとの競争になります。狙い目は<strong>「現地に行かないと見つけにくいもの」「実物を見て選びたいもの」</strong>です。たとえば中古ホビー、地域限定グッズ、フリマ、作家ものなど（仮説）。Buyee の公表データでも、トレカやアニメ関連品への海外需要が確認できます。</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>オンクレと組み合わせるなら（仮説）</h2>
+    <p>今回の調査から出てきた面白い仮説は、<strong>海外の視聴者は必ずしも自分で機械を操作したいわけではないかもしれない</strong>、というものです。</p>
+    <div class="flow" style="margin:12px 0">
+      <span class="step">英語で配信するホストが日本のゲームセンターを巡る</span><span class="arrow">→</span>
+      <span class="step">視聴者はチャットで景品を選ぶ</span><span class="arrow">→</span>
+      <span class="step">ホストの挑戦をみんなで見守る</span><span class="arrow">→</span>
+      <span class="step">獲得品は購入・発送できる。買わない人も配信を楽しめる</span>
+    </div>
+    <p>これは通常のオンクレとも、ライブ買い付けとも違う企画です。次の2点を<strong>別々に</strong>検証する必要があります。</p>
+    <div class="grid two">
+      <div class="card"><div class="card-header">検証1：視聴だけでも人が集まるか</div><div class="card-body">配信数回での視聴者数を測る。</div></div>
+      <div class="card"><div class="card-header">検証2：他人が獲った景品に代金を払うか</div><div class="card-body">購入希望件数 → 実購入率 → 発送後に残る粗利を測る。</div></div>
+    </div>
+    <p class="note">前提：店側から撮影と代理プレイの了承を得たうえで行う。</p>
+  </section>
+
+  <section>
+    <h2>次に決めること</h2>
+    <p>「ライブで現地を見せると何件の購入が生まれるか」を実測できれば、次のどちらに進むかを判断できます。</p>
+    <ul>
+      <li>1人の配信者のビジネスとして始める</li>
+      <li>複数の配信者と店舗をつなぐ事業に広げる</li>
+    </ul>
+    <p class="secondary">掘り下げの候補：日本のライブ買い付け市場の事業計画／オンクレ連携企画の実験案と成功条件／ライブ配信型代理購入の収益モデルと運営コストのシミュレーション</p>
+  </section>
+
+  <div class="callout warn">
+    <strong>データの限界</strong>
+    ライブ配信経由の購入額、街歩き配信者の収入は、どちらも公開データで確認できません。上の数字は越境EC・代理購入・国内ライブコマースという周辺市場のもので、市場規模の推計には使えません。実例の3者についても、取引実績や収入は公開ページから確認できた範囲にとどまります。
+  </div>
+
+</main>
+</body>
+</html>
