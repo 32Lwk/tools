@@ -132,6 +132,7 @@
       <li><a href="#mc">3つの方向の需要推計（モンテカルロ）</a></li>
       <li><a href="#sens">感度分析と為替シナリオ</a></li>
       <li><a href="#tam">TAM・SAM・SOM（中国ライブコマースからの絞り込みを含む）</a></li>
+      <li><a href="#chatgpt">ChatGPT 案（海外向けライブ買い付け）で進める場合の TAM・SAM・SOM</a></li>
       <li><a href="#interp">解釈（比較・未決定）</a></li>
       <li><a href="#limits">限界と、次に取るべき一次データ</a></li>
       <li><a href="#refs">出典</a></li>
@@ -456,13 +457,67 @@
         </tbody>
       </table>
     </div>
-    <p style="margin-top:8px">真の値は両者の間にあると考えるのが自然です。<strong>どちらに近いかは「海外ファンが既存の買い方からオンクレにどれだけ乗り換えるか」で決まり</strong>、これは11節のコンジョイント分析や試験配信で直接測れます。</p>
+    <p style="margin-top:8px">真の値は両者の間にあると考えるのが自然です。<strong>どちらに近いかは「海外ファンが既存の買い方からオンクレにどれだけ乗り換えるか」で決まり</strong>、これは12節のコンジョイント分析や試験配信で直接測れます。</p>
+  </section>
+
+  <section id="chatgpt">
+    <h2>10. ChatGPT 案（海外向けライブ買い付け）で進める場合の TAM・SAM・SOM</h2>
+    <p class="secondary">比較用の一案として、<a href="../japan-live-shopping-irl/">8資料のリサーチまとめ</a>にある ChatGPT の案をそのまま前提にした場合の推計です。採用を意味しません。</p>
+    <div class="callout info">
+      <strong class="title">前提にした案の中身</strong>
+      <ul>
+        <li>英語で配信するホストが、日本の街歩き・店巡りのライブで海外の視聴者を無料で集める</li>
+        <li>欲しい品が見つかった時だけ、代理購入して海外へ発送する（収入は手数料と販売粗利）</li>
+        <li>オンクレ連携として、ゲーセンを巡り、視聴者がチャットで選んだ景品にホストが挑戦し、獲得品を販売する</li>
+        <li>投げ銭・会費は公開データがないため金額に含めない（ChatGPT も「単独では慎重」としている）</li>
+      </ul>
+    </div>
+
+    <h3>結果</h3>
+    <figure><img src="img/09_chatgpt_plan.png" alt="ChatGPT 案の TAM・SAM・SOM"><figcaption>横軸: 年間の流通額（億円、対数軸）。棒は中央値、ひげは80%区間。モンテカルロ20万回</figcaption></figure>
+    <div class="table-wrap" style="margin-top:12px">
+      <table class="striped">
+        <thead><tr><th>段</th><th>定義</th><th>年間の流通額</th><th>粗利</th></tr></thead>
+        <tbody>
+          <tr><td><strong>TAM</strong></td><td>海外の消費者が日本の事業者から買う越境EC（中国＋米国。他地域は統計なし）</td><td class="num"><strong>4.2兆円</strong></td><td>—</td></tr>
+          <tr><td><strong>SAM</strong></td><td>英語圏など中国以外から、ライブで売れる品目の代理購入＋ゲーセン代理プレイ</td><td class="num"><strong>660億円</strong><br><span class="secondary">408〜1,003億</span></td><td>—</td></tr>
+          <tr><td>　うちライブ買い付け</td><td>米国の越境購入 1兆5,978億 × 他地域 1.2〜1.8倍 × 現地でないと見つけにくい品目 15〜35% × ライブで売れる割合 3〜12%</td><td class="num">421億円<br><span class="secondary">213〜735億</span></td><td>—</td></tr>
+          <tr><td>　うちゲーセン代理プレイ</td><td>9節の B（北米・欧州）と同じ: コレクタブル系ライブ × 日本IP × ゲーム形式 × 日本発</td><td class="num">214億円<br><span class="secondary">111〜392億</span></td><td>—</td></tr>
+          <tr><td><strong>SOM</strong>（ホスト1人）</td><td>ChatGPT の「1人の配信者のビジネスとして始める」</td><td class="num"><strong>1,424万円</strong><br><span class="secondary">373万〜5,243万</span></td><td class="num">461万円<br><span class="secondary">117万〜1,741万</span></td></tr>
+          <tr><td><strong>SOM</strong>（ホスト10〜30人）</td><td>ChatGPT の「複数の配信者と店舗をつなぐ事業に広げる」（3〜5年）</td><td class="num"><strong>4.5億円</strong><br><span class="secondary">2.3〜7.4億</span></td><td class="num">1.5億円<br><span class="secondary">0.8〜2.4億</span></td></tr>
+          <tr><td><strong>SOM</strong>（SAM の 2〜10%）</td><td>上から見て、新規1社が取れる上限の目安</td><td class="num"><strong>36億円</strong><br><span class="secondary">19〜63億</span></td><td class="num">11億円<br><span class="secondary">6〜19億</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">ホスト1人のモデル: 月8〜16回配信、1配信の視聴者は中央値300人（対数正規）、購入率1〜10%（最頻4%）。配信の3〜6割をゲーセン回（1注文3,000〜8,000円、プレイ代1,000〜4,000円）、残りを買い付け回（1注文4,000〜15,000円、手数料＋粗利15〜30%）とした。粗利は人件費・梱包・発送作業の前。</p>
+
+    <h3>推計から読めること</h3>
+    <ul>
+      <li><strong>TAM 4.2兆円の6割強は中国の消費者（2兆6,372億円）で、英語ホストの配信では届かない。</strong>中国向けにするなら、中国語ホストと現地プラットフォーム（抖音・小紅書など）という別の案になる。</li>
+      <li><strong>SAM は約660億円で、買い付けが3分の2、ゲーセン代理プレイが3分の1。</strong>ゲーセンだけに絞るより、買い付けと組み合わせたほうが届く市場は約3倍になる。</li>
+      <li><strong>代理購入市場から絞る別の計算では、ライブ買い付けの SAM は約150億円（76〜248億）。</strong>Buyee の流通額 774億円 ÷ Buyee のシェア 25〜45% × 中国以外 40〜70% × ライブ割合 5〜20%。上の421億円との間に真の値があると見るのが自然。</li>
+      <li><strong>SOM を決めるのは市場の大きさではなく、ホストの人数と発送の人手。</strong>シェアから見た上限の36億円に届くには、ホスト1人あたり約1,400万円なので250人規模が要る。ホスト10〜30人でも1日の注文は約170件（87〜275件）になり、買い付け・梱包・発送の人員が先に上限になる。</li>
+      <li><strong>ホスト1人なら、粗利は年約460万円。</strong>ChatGPT の「小さく始める価値は高いが、街歩き配信だけを事業の中心に据えるのはまだ早い」という判断と合う規模。</li>
+    </ul>
+
+    <h3>この案で最初に測ること</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>測る値</th><th>推計で置いた値</th><th>SOM への効き方</th></tr></thead>
+        <tbody>
+          <tr><td>1配信の視聴者数</td><td>中央値300人（対数正規、幅が大きい）</td><td>そのまま比例。ChatGPT の「検証1: 視聴だけで集まるか」</td></tr>
+          <tr><td>視聴者の購入率</td><td>1〜10%（最頻4%）</td><td>そのまま比例。「検証2: 他人が獲った景品に払うか」</td></tr>
+          <tr><td>1注文の粗利（発送後）</td><td>ゲーセン回 約3,000円、買い付け回 約1,800円</td><td>粗利に比例。送料・関税で消える分を実測する</td></tr>
+          <tr><td>ホスト1人が月に回せる配信数と発送件数</td><td>月8〜16回、1日約5件</td><td>事業に広げたときの上限を決める</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <hr>
 
   <section id="interp">
-    <h2>10. 解釈（比較・未決定）</h2>
+    <h2>11. 解釈（比較・未決定）</h2>
     <p class="secondary">どれかを推すものではありません。推計から読める各案の性格を並べます。</p>
     <div class="table-wrap">
       <table>
@@ -483,7 +538,7 @@
   </section>
 
   <div class="callout warn" id="limits">
-    <strong class="title">11. 限界と、次に取るべき一次データ</strong>
+    <strong class="title">12. 限界と、次に取るべき一次データ</strong>
     <ul>
       <li>パネル回帰は17観測と少なく、為替弾力性の信頼区間は0をまたぐ。越境EC統計は推計値で、商品カテゴリ別ではない</li>
       <li>Crunchyroll の会員数は「海外で日本IPにお金を払う人」の代わりにすぎない。統合による段差もある</li>
@@ -501,7 +556,7 @@
   </div>
 
   <section id="refs">
-    <h2>12. 出典</h2>
+    <h2>13. 出典</h2>
     <h3>論文・研究</h3>
     <ul class="sources">
       <li>Bass, F. M. (1969). A new product growth for model consumer durables. <i>Management Science</i>, 15(5), 215–227. <a href="https://doi.org/10.1287/mnsc.15.5.215">doi:10.1287/mnsc.15.5.215</a></li>
@@ -546,7 +601,7 @@
       <li>キャラクタービジネス市場 2024年度 2兆7,773億円（矢野経済研究所、<a href="https://www.dreamnews.jp/press/0000325125">プレスリリース</a>）、プライズゲーム 4,178億円（JAIA、<a href="https://amusement-japan.co.jp/article/detail/10005385/">Amusement Japan</a>）</li>
       <li>中国の在線抓娃娃 2017年（<a href="https://www.woshipm.com/it/857262.html">人人都是产品经理</a>、<a href="https://www.jiemian.com/article/1821373.html">界面新聞</a>）、トレバ 60か国・約1,500万ユーザー（<a href="https://macloud.jp/companies/4179">M&amp;Aクラウド</a>）</li>
     </ul>
-    <p class="note">再現用のコード（Python、乱数の種を固定）は、チームのリポジトリの <code>day2/demand-analysis/analysis.py</code> にあり、実行すると <code>results.json</code> と図を出力します。9節は同じフォルダの <code>tam_sam_som.py</code>（出力は <code>tam_sam_som.json</code>）。</p>
+    <p class="note">再現用のコード（Python、乱数の種を固定）は、チームのリポジトリの <code>day2/demand-analysis/analysis.py</code> にあり、実行すると <code>results.json</code> と図を出力します。9節は同じフォルダの <code>tam_sam_som.py</code>（出力は <code>tam_sam_som.json</code>）、10節は <code>chatgpt_plan_tam.py</code>（出力は <code>chatgpt_plan_tam.json</code>）。</p>
   </section>
 
 </main>
