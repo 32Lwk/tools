@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>日本から海外向けのライブ配信：ライブ買い付けと街歩きIRLの市場と参入価値</title>
+<title>海外・訪日客 × クレーンゲーム × ライブ配信：8資料のリサーチまとめ</title>
 <style>
   :root {
     --fg: #1f2328;
@@ -14,6 +14,7 @@
     --bg: #ffffff;
     --bg-sub: #f6f8fa;
     --accent: #0969da;
+    --accent2: #8250df;
     --info-bg: #ddf4ff;
     --info-border: #54aeff;
     --warn-bg: #fff8c5;
@@ -21,6 +22,7 @@
     --ok-bg: #dafbe1;
     --mid-bg: #fff8c5;
     --low-bg: #ffebe9;
+    --red: #cf222e;
   }
   * { box-sizing: border-box; }
   body {
@@ -30,30 +32,33 @@
     background: var(--bg);
     line-height: 1.7;
   }
-  main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 32px; }
+  a { color: var(--accent); }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 36px; }
   h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 8px; }
-  h2 { font-size: 1.3rem; margin: 0 0 12px; }
-  h3 { font-size: 1.05rem; margin: 0 0 8px; }
+  h2 { font-size: 1.35rem; margin: 0 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.05rem; margin: 16px 0 8px; }
   p { margin: 0 0 8px; }
-  ul { margin: 0 0 8px; padding-left: 1.4em; }
+  ul, ol { margin: 0 0 8px; padding-left: 1.4em; }
+  li { margin-bottom: 4px; }
   .secondary { color: var(--fg2); }
   .note { color: var(--fg3); font-size: 0.8rem; margin-top: 8px; }
   .banner { font-size: 0.82rem; color: var(--fg2); background: var(--bg-sub); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; }
   .callout { border-left: 4px solid; border-radius: 6px; padding: 14px 18px; }
-  .callout strong { display: block; margin-bottom: 4px; }
+  .callout strong.title { display: block; margin-bottom: 6px; }
   .callout.info { background: var(--info-bg); border-color: var(--info-border); }
   .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+  .callout ol, .callout ul { margin-bottom: 0; }
   .grid { display: grid; gap: 16px; }
   .grid.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .grid.cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-  .stat .value { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
-  .stat .label { color: var(--fg2); font-size: 0.85rem; }
-  .stat .caveat { color: var(--fg3); font-size: 0.75rem; margin-top: 6px; }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat .value { font-size: 1.6rem; font-weight: 700; line-height: 1.2; }
+  .stat .label { color: var(--fg2); font-size: 0.83rem; margin-top: 4px; }
+  .stat .src { color: var(--fg3); font-size: 0.72rem; margin-top: 6px; }
   .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--border); }
   th { background: var(--bg-sub); font-weight: 600; white-space: nowrap; }
   tr:last-child td { border-bottom: none; }
   table.striped tbody tr:nth-child(even) { background: var(--bg-sub); }
@@ -61,125 +66,522 @@
   tr.fit-mid { background: var(--mid-bg); }
   tr.fit-low { background: var(--low-bg); }
   td.center { text-align: center; font-weight: 700; white-space: nowrap; }
+  td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   hr { border: none; border-top: 1px solid var(--border); margin: 0; }
   code { background: var(--bg-sub); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.85em; }
   .card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; height: 100%; }
-  .card-header { background: var(--bg-sub); padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); }
-  .card-body { padding: 12px 16px; }
-  .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.9rem; }
+  .card-header { background: var(--bg-sub); padding: 10px 16px; font-weight: 600; border-bottom: 1px solid var(--border); }
+  .card-body { padding: 12px 16px; font-size: 0.92rem; }
+  .card-body p:last-child, .card-body ul:last-child { margin-bottom: 0; }
+  .tag { display: inline-block; font-size: 0.72rem; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-right: 4px; border: 1px solid var(--border); background: var(--bg-sub); color: var(--fg2); white-space: nowrap; }
+  .tag.pr { background: var(--low-bg); border-color: #ffcecb; color: var(--red); }
+  .tag.ok { background: var(--ok-bg); border-color: #aceebb; color: #1a7f37; }
+  .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.88rem; }
   .flow .step { border: 1px solid var(--border); background: var(--bg-sub); border-radius: 6px; padding: 8px 12px; }
   .flow .arrow { color: var(--fg3); }
+  .bars { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 10px; font-size: 0.83rem; }
+  .bar-track { height: 22px; background: var(--bg-sub); border-radius: 4px; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; color: #fff; font-size: 0.74rem; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; white-space: nowrap; min-width: 56px; }
+  .bar-fill.alt { background: var(--accent2); }
+  .bar-fill.bad { background: var(--red); }
+  .toc { font-size: 0.9rem; columns: 2; column-gap: 32px; }
+  .toc li { break-inside: avoid; }
+  .sources li { font-size: 0.85rem; }
+  blockquote { margin: 8px 0; padding: 6px 14px; border-left: 3px solid var(--border); color: var(--fg2); font-size: 0.9rem; }
   @media (max-width: 800px) {
     .grid.stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid.cards, .grid.two { grid-template-columns: 1fr; }
+    .toc { columns: 1; }
+    .bar-row { grid-template-columns: 120px 1fr; }
   }
 </style>
 </head>
 <body>
 <main>
 
-  <div class="banner">JTCC RAID Summer 2026 チーム共有用（トップ未掲載・noindex）。公開情報ベースのリサーチメモです。方向性は未決定で、ここに書いた判断は比較用の一案です。</div>
+  <div class="banner">JTCC RAID Summer 2026 チーム共有用（トップ未掲載・noindex）。公開情報ベースのリサーチメモです。方向性は未決定で、ここに書いた示唆や判断はすべて比較用の一案です。最終更新: 2026-09-25</div>
 
   <section>
-    <h1>日本から海外向けのライブ配信：ライブ買い付けと街歩きIRLの市場と参入価値</h1>
-    <p class="secondary">海外視聴者に向けて日本から配信している人たちを調べ、どんな形で稼いでいるか、市場はどれくらいか、参入する価値があるかを整理しました。最後に、オンクレと組み合わせる案を検証の観点つきで載せています。</p>
+    <h1>海外・訪日客 × クレーンゲーム × ライブ配信：8資料のリサーチまとめ</h1>
+    <p class="secondary">「海外の人は日本のクレーンゲームや日本の商品にどれだけお金を使うのか」「配信はその入口になるのか」を、チームで集めた8本の資料から整理しました。実店舗（GENDA 北米・道頓堀・渋谷）、旅行者の声（Reddit）、動画とプロモーション（YouTube・オンクレアプリの米国展開）、ライブ買い付けと街歩き配信（ChatGPT 調査を出典で裏取り）の順に並べ、最後にオンクレにつなげる方向を複数並べて比べています。</p>
   </section>
 
   <div class="callout info">
-    <strong>結論</strong>
-    確認できる大きな市場は「海外の人が日本の商品を買う」ことです。まだ分からないのは「ライブで現地を見せると、新たに何件の購入が生まれるか」です。小さく始めて測る価値は高いですが、街歩き配信だけを事業の中心にするのはまだ早いと判断しました。
+    <strong class="title">要点（5つ）</strong>
+    <ol>
+      <li><strong>日本IPのプライズは海外で強く求められているが、手に入れる場所が足りない。</strong>GENDA は「北米のアニメファンは近くにグッズを手に入れる場がない」と述べ、北米で約13,000か所のミニロケを展開している。</li>
+      <li><strong>訪日客はゲーセンで大きく使う。</strong>渋谷の取材では1回の来店で2,000〜20,000円。道頓堀のクレーン専門店は客の9割が外国人。</li>
+      <li><strong>同時に「難しい・ズルされている」不安が強い。</strong>旅行者は「小さくていいから自分で取ってお土産にしたい」「1つに50ドルは使いたくない」と考え、スタッフの手助けや取りやすい台を探している。</li>
+      <li><strong>見られること・対決・盛り上がりが、売上にも宣伝にも効いている。</strong>鐘とギャラリーで競合出店から1か月で回復（道頓堀）、クレーン挑戦動画は1本約200万回再生、オンクレアプリの米国向け対決動画は送客効率4倍。</li>
+      <li><strong>「海外の人が日本の商品を買う」市場は大きいが、ライブ配信経由の割合は誰も公表していない。</strong>中国向け越境EC 2兆6,372億円、Buyee 流通総額774億円。ライブで見せると何件の購入が増えるかは、自分たちで測るしかない。</li>
+    </ol>
   </div>
 
   <section>
-    <h2>配信者は大きく2種類</h2>
+    <h2>主な数字</h2>
+    <div class="grid stats">
+      <div class="stat"><div class="value">約13,000か所</div><div class="label">GENDA の北米ミニロケ（無人の小規模クレーンコーナー）。ゲーセンは約200店</div><div class="src">GENDA IR 2026-08</div></div>
+      <div class="stat"><div class="value">約1年半</div><div class="label">北米ミニロケ新店の投資回収期間（日本の GiGO 型は4〜5年）</div><div class="src">GENDA IR 2026-08</div></div>
+      <div class="stat"><div class="value">+17%</div><div class="label">新しい決済端末を先行導入した北米店の平均売上増</div><div class="src">GENDA IR 2026-08</div></div>
+      <div class="stat"><div class="value">369万人</div><div class="label">2025年5月の訪日客（前年比+21.5%、5月として過去最多）</div><div class="src">集英社オンライン 2025-06</div></div>
+      <div class="stat"><div class="value">2,000〜20,000円</div><div class="label">渋谷のゲーセンで訪日客が1回に使った額（取材4組）</div><div class="src">集英社オンライン 2025-06</div></div>
+      <div class="stat"><div class="value">9割</div><div class="label">クレーン横丁 道頓堀店の客に占める外国人観光客</div><div class="src">イオンファンタジー 2025-05時点</div></div>
+      <div class="stat"><div class="value">約200万回</div><div class="label">CDawgVA のクレーンゲーム挑戦動画の再生数（2本とも）</div><div class="src">YouTube 2026-09-25時点</div></div>
+      <div class="stat"><div class="value">4倍超</div><div class="label">オンクレアプリの米国向け YouTuber 対決動画の送客効率（通常施策比）</div><div class="src">Tokyo Creative 事例</div></div>
+      <div class="stat"><div class="value">2兆6,372億円</div><div class="label">中国の消費者が日本の事業者から買った越境EC（2024年、前年比+8.5%）</div><div class="src">経済産業省 2025-08</div></div>
+      <div class="stat"><div class="value">774億円</div><div class="label">代理購入 Buyee の流通総額（2024年9月期、過去最高、前年比+12.5%）</div><div class="src">BEENOS 2024-12</div></div>
+      <div class="stat"><div class="value">588万人超</div><div class="label">Buyee＋転送コムの海外会員数（2024年9月末）。2025年2月に600万人突破</div><div class="src">BEENOS</div></div>
+      <div class="stat"><div class="value">約60%</div><div class="label">TikTok Shop Japan のコンテンツ経由GMVのうちライブ配信経由（コンテンツ経由はGMV全体の70%超）</div><div class="src">TikTok Shop Japan 2026-07</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>目次</h2>
+    <ol class="toc">
+      <li><a href="#sources">資料の一覧と信頼度</a></li>
+      <li><a href="#genda">北米の実店舗：GENDA</a></li>
+      <li><a href="#inbound">訪日客の行動：渋谷・道頓堀・Reddit</a></li>
+      <li><a href="#video">動画とプロモーション：YouTube・オンクレアプリ</a></li>
+      <li><a href="#live">ライブ買い付けと街歩き配信（ChatGPT 調査の裏取り）</a></li>
+      <li><a href="#cross">資料を横断して見えること</a></li>
+      <li><a href="#options">オンクレにつなげる方向（比較・未決定）</a></li>
+      <li><a href="#test">検証するなら何を測るか</a></li>
+      <li><a href="#limits">データの限界</a></li>
+      <li><a href="#refs">出典</a></li>
+    </ol>
+  </section>
+
+  <section id="sources">
+    <h2>1. 資料の一覧と信頼度</h2>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>#</th><th>資料</th><th>発信者の種類</th><th>日付</th><th>何が分かるか</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><a href="https://finance.logmi.jp/articles/385603#s3">GENDA 北米事業 IRセミナー</a></td><td><span class="tag pr">当事者</span>投資家向け説明</td><td>2026-08-12</td><td>海外での日本IPプライズ需要、ミニロケの収益構造、運営KPI</td></tr>
+          <tr><td>2</td><td><a href="https://shueisha.online/articles/-/254319">渋谷ゲーセンの訪日客（集英社オンライン）</a></td><td>報道・街頭取材</td><td>2025-06-21</td><td>訪日客が使う額、ゲーセンへの印象</td></tr>
+          <tr><td>3</td><td><a href="https://chatgpt.com/s/t_6ab5c7130318819190fce1f6c8b4cec9">ChatGPT 調査（ライブ買い付け・街歩き配信）</a></td><td>AI の調査結果</td><td>2026-09</td><td>海外向け配信者の型、周辺市場の数字、参入価値。<span class="tag ok">本ページで出典を裏取り済み</span></td></tr>
+          <tr><td>4</td><td><a href="https://www.reddit.com/r/JapanTravelTips/comments/1c3yl6f/wheres_the_best_place_to_win_at_crane_games/">Reddit r/JapanTravelTips</a></td><td>旅行者の投稿（コメント20件）</td><td>2024-04-14</td><td>初心者旅行者の期待と不安、店の評判</td></tr>
+          <tr><td>5</td><td><a href="https://www.talent-book.jp/fantasy/stories/58211">イオンファンタジー クレーン横丁 道頓堀店</a></td><td><span class="tag pr">当事者</span>採用広報</td><td>2025-10-16（内容は2025-05時点）</td><td>客の9割が外国人の店の運営、競合出店からの回復策</td></tr>
+          <tr><td>6</td><td><a href="https://www.youtube.com/watch?v=p8z2OCkXxkI">CDawgVA「I Spent $500 On Japanese Crane Games」</a></td><td>YouTube 動画</td><td>2020-12-09</td><td>海外視聴者向けクレーン挑戦企画の人気（再生数・概要欄のみ確認）</td></tr>
+          <tr><td>7</td><td><a href="https://www.youtube.com/watch?v=rkXx6yqsgOY">CDawgVA「Japan $1000 Crane Game Challenge Ft. Daidus」</a></td><td>YouTube 動画</td><td>2023-01-19</td><td>対決形式の人気（同上）</td></tr>
+          <tr><td>8</td><td><a href="https://www.tokyocreative.jp/ja/casestudy-4-クレーンゲームジャパン様">Tokyo Creative × クレーンゲームジャパン</a></td><td><span class="tag pr">当事者</span>代理店の事例紹介</td><td>不明</td><td>オンクレアプリを米国で広めた施策と成果</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><span class="tag pr">当事者</span>は自社や自社サービスについての発信で、良い面が強調されている可能性がある資料です。</p>
+  </section>
+
+  <hr>
+
+  <section id="genda">
+    <h2>2. 北米の実店舗：GENDA（資料1）</h2>
+    <p class="secondary">GiGO を運営する GENDA が、北米子会社 Kiddleton などの事業を個人投資家に説明したセミナー（2026年8月12日開催）。</p>
+
+    <h3>規模と経緯</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>時期</th><th>出来事</th></tr></thead>
+        <tbody>
+          <tr><td>2019年7月</td><td>Kiddleton 設立</td></tr>
+          <tr><td>2021年〜</td><td>日系スーパーの一角にミニクレーン数台を置く「ミニロケ」を開始</td></tr>
+          <tr><td>2024年</td><td>ミニロケ600か所超</td></tr>
+          <tr><td>2024年11月</td><td>旧 National Entertainment Network を買収（ミニロケ約1万か所）</td></tr>
+          <tr><td>2025年7月</td><td>旧 Player One Amusement Group を買収（有人ゲーセン100店超）</td></tr>
+          <tr><td>2025年12月</td><td>アミューズメント施設9店舗を譲受。ほかミニロケのロールアップM&A 2件</td></tr>
+          <tr><td>現在</td><td>北米でゲーセン約200店、ミニロケ約13,000か所。ゲーセンは4割が映画館併設、5割超が大型ファミリー向け娯楽施設内</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>ビジネスの形</h3>
+    <div class="grid two">
+      <div class="card"><div class="card-header">ミニロケ（無人）</div><div class="card-body">
+        <ul>
+          <li>スーパーの出入口やレストランの一角、モールのテナント区画に数台</li>
+          <li>賃料は家主とのレベニューシェア。設備投資が安い</li>
+          <li>ラウンダー（巡回スタッフ）が1日4〜5か所を回り、集金と景品補充</li>
+          <li><strong>新店の投資回収は約1年半</strong>（日本の GiGO 型ゲーセンは4〜5年）</li>
+        </ul>
+      </div></div>
+      <div class="card"><div class="card-header">買収後の手直し（PMI）</div><div class="card-body">
+        <ul>
+          <li><strong>SWAP</strong>: 大型クレーンを撤去し、ミニクレーン＋「KAWAII」景品・日本IP景品に入れ替え</li>
+          <li><strong>大型IP景品の投入</strong>: 大型機はそのままで景品だけ日本IPに。設備投資なし</li>
+          <li><strong>Add on</strong>: ゲーセンの空きスペースにミニクレーンを追加。集客効果で他の機種も売上が上がる</li>
+          <li>進捗: 買収した約12,100か所のうち約3,000で完了（SWAP 約1,100／景品入替 約1,500／Add on 約400）。今後さらに約5,100。Walmart の狭小区画約2,000は数年で段階撤去</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <h3>日本IPの需要</h3>
+    <ul>
+      <li>人気は『ドラゴンボール』（北米で独占展開）、『鬼滅の刃』『呪術廻戦』、サンリオ、東宝『ゴジラ』</li>
+      <li>日本で人気の作品は、米国で放映されるとほぼ時差なく人気になる。一方で<strong>「ファンになっても近くにグッズを手に入れる場がない」</strong></li>
+      <li>地元資本のミニロケは非正規品の景品が多く、版元も問題視している。正規品を扱うこと自体が強みになる</li>
+      <li>拠点数で版元との交渉力が上がり、「Kiddleton Exclusive」景品を制作。2026年7月末に顧客向け「Kiddleton App」を開始</li>
+      <li>最初は「KAWAII」系（非IP）で始め、後から日本IPに広げた</li>
+    </ul>
+
+    <h3>運営の要：ラウンダーの巡回回数</h3>
+    <div class="grid two">
+      <div>
+        <div class="bars">
+          <div class="bar-row"><span>統合前（前年10月）</span><div class="bar-track"><div class="bar-fill" style="width:96%">15,700回</div></div></div>
+          <div class="bar-row"><span>システム統合直後（11月）</span><div class="bar-track"><div class="bar-fill bad" style="width:55%">8,900回</div></div></div>
+          <div class="bar-row"><span>回復後（2026年7月）</span><div class="bar-track"><div class="bar-fill" style="width:100%">16,300回</div></div></div>
+        </div>
+        <p class="note">縦軸: 時期、横軸: 月間の拠点訪問回数。出典: GENDA IR</p>
+      </div>
+      <div>
+        <p>システム統合の混乱で巡回が約4割減り、売り場が荒れたまま放置されて売上が落ちた。業務アプリ「Kiddleton Force」とインセンティブ（回数×品質）で回復させた。</p>
+        <p>Kiddleton Force は、AI が売れ行き・現金の溜まり具合・移動時間・契約条件から訪問先とルートを提示し、チェックイン → 工程リスト → 補充前後の写真 → バーコードで景品ごとの置き方と機械設定を表示する。</p>
+      </div>
+    </div>
+
+    <h3>売上・コストの施策と日米の違い</h3>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>項目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>プレイ単価</td><td>カード決済の単価切り上げ、新しい決済端末。先行店で売上平均+17%</td></tr>
+          <tr><td>コスト</td><td>統合一時費用は11月に収束見込み。倉庫・重複機能の統廃合。損益分岐点割れの店は賃料交渉 → だめなら撤退</td></tr>
+          <tr><td>景品の上限額</td><td>日本はおおむね1,000円程度（聞き手の発言）。米国は州ごとに違い、2,000円程度〜1万円超</td></tr>
+          <tr><td>粘り強さ</td><td>「最後まで諦めずにプレイする客は日本より米国のほうが多い」（社長）。国内でも秋葉原・池袋・道頓堀のインバウンド客は客単価が高い</td></tr>
+          <tr><td>課題</td><td>冬場は地域によって巡回が落ちる。拠点が増えるとラウンダー不足の可能性</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="inbound">
+    <h2>3. 訪日客の行動：渋谷・道頓堀・Reddit（資料2・4・5）</h2>
+
+    <h3>渋谷センター街のゲーセン（資料2、1ページ目のみ確認）</h3>
+    <p>ゲーセンが観光スポット化し、英語・中国語・フランス語などが飛び交う。人気はクレーンゲーム（アニメグッズ、食品サンプル）。</p>
+    <div class="grid two">
+      <div>
+        <div class="bars">
+          <div class="bar-row"><span>英国 20代（取れず）</span><div class="bar-track"><div class="bar-fill alt" style="width:10%">2,000円</div></div></div>
+          <div class="bar-row"><span>イスラエル 20代（獲得）</span><div class="bar-track"><div class="bar-fill alt" style="width:15%">3,000円</div></div></div>
+          <div class="bar-row"><span>米国 30代（取れず）</span><div class="bar-track"><div class="bar-fill alt" style="width:25%">5,000円</div></div></div>
+          <div class="bar-row"><span>グアム 40代家族（獲得）</span><div class="bar-track"><div class="bar-fill alt" style="width:100%">20,000円</div></div></div>
+        </div>
+        <p class="note">縦軸: 取材対象、横軸: 1回の来店で使った額。出典: 集英社オンライン 2025-06-21</p>
+      </div>
+      <div>
+        <blockquote>「イギリスにもクレーンゲームはあるけど、海辺の遊園地くらい。街のど真ん中にこういう施設があるのは珍しい」（英国・20代）</blockquote>
+        <blockquote>「5,000円も使って、ひとつも取れなかったけど。めちゃくちゃ難しいね」（米国・30代）</blockquote>
+        <blockquote>「日本に来るたびに必ず立ち寄ります。家族全員で楽しめる」（グアム・40代、来日3回目）</blockquote>
+      </div>
+    </div>
+    <p class="note">記事の後半は騒音・路上飲酒などのマナー問題（未確認）。</p>
+
+    <h3>クレーン横丁 道頓堀店（資料5）</h3>
+    <div class="grid two">
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><th>開業</th><td>2024年7月。イオンファンタジー初の繁華街路面・クレーン専門店</td></tr>
+            <tr><th>規模</th><td>約130坪に100台以上、プレイブース300以上</td></tr>
+            <tr><th>客層</th><td>9割が外国人観光客。平日・休日の差がない</td></tr>
+            <tr><th>人員</th><td>17名（社員4名＋アルバイト・パート）</td></tr>
+            <tr><th>人気景品</th><td>世界的に知られた日本の国民的アニメ・ゲームのキャラクター</td></tr>
+            <tr><th>現在</th><td>同社クレーン部門で売上1位、全業態でも上位</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card"><div class="card-header">約3倍の競合店が同じ通りに出店 → 1か月で回復</div><div class="card-body">
+        <ul>
+          <li><strong>景品が取れたら鐘を鳴らして盛り上げる</strong>＋店頭で呼び込み → 客同士が交流し、<strong>自然とギャラリーができた</strong></li>
+          <li>料金: 1,000円で5回 → 6回に</li>
+          <li>ブース別の売上を1日・1週間単位で分析。店頭か奥かで売れ方が違い、同じキャラでもサイズや特徴で差が出る</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <h3>Reddit「クレーンゲームで勝ちやすい場所は？」（資料4）</h3>
+    <p><strong>投稿者（初心者、池袋滞在）の要望:</strong> 旅の主目的の一つがゲーセン。小さいぬいぐるみやキーホルダーでよいので、お土産として自分で取りたい。スタッフが手伝ってくれる店か、アームが強い店を知りたい。「ゲーセン予算」は作るが、1つに50ドルは使いたくない。</p>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>分類</th><th>コメントの内容</th></tr></thead>
+        <tbody>
+          <tr><td>スタッフの手助け</td><td>「困ったらスタッフに頼め。取らせたがっているし、位置を直したりコツを教えたりしてくれる」／一方で「GiGO 3 では隅に寄った景品を戻してもらえなかった」</td></tr>
+          <tr><td>取りやすい台</td><td>初心者マーク（🔰）の台は取りやすい（タイトー、アドアーズで見た）</td></tr>
+          <tr><td>店の評価</td><td>「Round1・タイトーステーション &gt; GiGO（コスパ）」「秋葉原 GamePanic は小物向き」「秋葉原ドンキ上階がクレーン専門に。1,000円未満で小ぬい2つ」</td></tr>
+          <tr><td>金額感</td><td>「大物やフィギュア以外はそこまで難しくない。GiGO で約2,000円、妻が大きいカービィを獲得」</td></tr>
+          <tr><td>ハマり</td><td>「子どもが初回で2つ取ったら、その後1週間で約500ドル使った」</td></tr>
+          <tr><td>不信</td><td>「大阪で端の小ぬいがホチキスで留められていた。詐欺だ」</td></tr>
+          <tr><td>代替手段</td><td>「秋葉原 Traders（中古店）でクレーン景品のフィギュアが1,000〜2,000円で買える」</td></tr>
+          <tr><td>準備</td><td>「動画でテクニックを予習しておくとよい」</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="video">
+    <h2>4. 動画とプロモーション：YouTube・オンクレアプリ（資料6・7・8）</h2>
+
+    <h3>CDawgVA のクレーンゲーム挑戦動画（資料6・7）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>動画</th><th>公開</th><th>長さ</th><th>再生数</th><th>企画</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://www.youtube.com/watch?v=p8z2OCkXxkI">I Spent $500 On Japanese Crane Games</a></td><td>2020-12-09</td><td class="num">約23分</td><td class="num">約206万回</td><td>日本で最もクレーンゲームが多い店で500ドル挑戦</td></tr>
+          <tr><td><a href="https://www.youtube.com/watch?v=rkXx6yqsgOY">Japan $1000 Crane Game Challenge Ft. Daidus</a></td><td>2023-01-19</td><td class="num">約39分</td><td class="num">約221万回</td><td>1,000ドルで2人が対決。「どっちが勝った？」と視聴者に問う</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">動画の中身は未視聴。タイトル・再生数・概要欄のみ確認（2026-09-25時点）。</p>
+    <p>在日外国人の人気 YouTuber にとって「日本のクレーンゲームに大金を使う」は定番の企画で、<strong>他人が挑戦するのを見るだけで1本200万回規模</strong>の視聴が集まっている。</p>
+
+    <h3>クレーンゲームジャパン（オンクレアプリ）の米国向けプロモーション（資料8）</h3>
+    <div class="table-wrap">
+      <table>
+        <tbody>
+          <tr><th>課題</th><td>オンラインクレーンゲームアプリの<strong>米国での認知とダウンロード</strong>を増やしたい。国内では YouTuber 施策の実績あり</td></tr>
+          <tr><th>施策</th><td>人気の在日外国人 YouTuber（akidearest、the Anime Man など）が<strong>景品をかけてバトル</strong>。プレゼントキャンペーンも同時に実施</td></tr>
+          <tr><th>工夫</th><td>「やってみた」だけでは飽きるので対決にし、好きな YouTuber を応援できる形に。誰が何を取るか最後まで分からない</td></tr>
+          <tr><th>結果</th><td>再生12万回超、好意的なコメント4,800件超（「アプリを試してみたい」「ハマりそう」）、通常のインバウンド向けデジタル施策の<strong>4倍超の送客効率</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>オンクレを海外在住者に売る試みは既にある。</strong>効いたのは「対決＋応援＋プレゼント」の形。</p>
+  </section>
+
+  <hr>
+
+  <section id="live">
+    <h2>5. ライブ買い付けと街歩き配信（資料3：ChatGPT 調査の裏取り）</h2>
+    <p class="secondary">ChatGPT の調査結果を、各社の公式ページや公表資料で確認しました。数字はすべて出典どおりでした。実例のうち Nijiworks は説明に補足が必要です（下表）。</p>
+
+    <h3>配信者は大きく2種類</h3>
     <div class="grid two">
       <div class="card"><div class="card-header">ライブ買い付けをする配信者</div><div class="card-body">商品の発見から購入までを仲介する。視聴者は店頭を一緒に見て、欲しい品を指定し、日本から送ってもらう。<strong>収入源は手数料や販売粗利。</strong></div></div>
       <div class="card"><div class="card-header">日本を歩くIRL配信者</div><div class="card-body">日本の街をリアルタイムで見せ、視聴者と話す。<strong>収入源は視聴体験そのものへの投げ銭や会費。</strong></div></div>
     </div>
-    <p class="note">両者を合わせた「日本から海外向けの配信」の市場規模は、公表統計では確認できません。以下では実例と周辺市場の数字を分けて評価します。</p>
-  </section>
 
-  <section>
-    <h2>どんな人・サービスがいるか</h2>
+    <h3>実例（出典で確認した内容）</h3>
     <div class="table-wrap">
       <table class="striped">
-        <thead><tr><th>部類</th><th>視聴者が得るもの</th><th>確認できた実例</th></tr></thead>
+        <thead><tr><th>部類</th><th>実例</th><th>確認できた仕組み</th><th>確認結果</th></tr></thead>
         <tbody>
-          <tr><td>ライブ買い付け・代理購入</td><td>店頭を一緒に見て、欲しい品を指定し、日本から送ってもらう</td><td><strong>New Wonder</strong>：日本のガチャ店やキャラクターショップなどを配信。視聴者の希望品を取りまとめ、請求・発送する手順を公開している</td></tr>
-          <tr><td>ライブ競売型の買い付け</td><td>現地で見つかった品に、その場で入札する</td><td><strong>Nijiworks</strong>：配信者が日本のフリマ・店・イベントを巡り、落札後に現場で商品を確保して発送する仕組みを説明。ただし公開ページだけでは継続的な取引実績は確認できない</td></tr>
-          <tr><td>街歩き・IRL配信</td><td>日本の街をリアルタイムで見て、配信者と話す</td><td><strong>Cory May</strong>：東京周辺の街歩きライブを公開し、自身のサイトで配信活動への寄付も受け付けている。寄付額や総収入は非公開</td></tr>
+          <tr>
+            <td>ライブ買い付け・代理購入</td>
+            <td><a href="https://newwonder.co/pages/live-stream">New Wonder</a></td>
+            <td>
+              <ul>
+                <li>日本在住の姉妹と母による家族経営。TikTok（@newwonderco、@nwjapana）で、ガチャ店・サンリオ・ポケモンセンター・コスメ・お菓子の店を配信</li>
+                <li>10ドルの予約デポジットを買い、4桁の注文番号をチャットで伝えて参加。1週間以内に請求書</li>
+                <li>自社店舗からの1対1のライブ予約（45分／20分、1ドル＝10ポイント）もある</li>
+                <li>DHL Express（米国2〜5営業日）と日本郵便（2〜4週間）で世界に発送。追跡付き</li>
+              </ul>
+            </td>
+            <td><span class="tag ok">一致</span></td>
+          </tr>
+          <tr>
+            <td>ライブ競売型の買い付け</td>
+            <td><a href="https://nijiworksjp.com/en">Nijiworks</a></td>
+            <td>
+              <ul>
+                <li>「店から直接ライブ → 入札 → 最高額で落札 → 世界に発送」の3ステップ</li>
+                <li>実際は<strong>日本のポケモンカードのライブ競売が中心</strong>。入札前に配信者へ角・表面・センタリングを見せてもらえるのが売り（「通常の代理購入では届くまで状態が分からない」への答え）</li>
+                <li><strong>初回ライブは2026年5月31日</strong>とごく新しい。公式 Reddit で日程・事前ロット・落札価格の振り返りを公開</li>
+              </ul>
+            </td>
+            <td><span class="tag">補足</span>「フリマ・店・イベントを巡る」より対象は狭い。取引実績は未確認</td>
+          </tr>
+          <tr>
+            <td>街歩き・IRL配信</td>
+            <td><a href="https://corymay.carrd.co/">Cory May</a></td>
+            <td>
+              <ul>
+                <li>日本育ちの韓国系アメリカ人。2012年から YouTube。<strong>毎週月曜10時（日本時間）</strong>に東京周辺の街歩きライブ（上野、松戸、六本木など）</li>
+                <li>支援は <a href="https://ko-fi.com/corymay81">Ko-fi</a>（「路上の投げ銭帽子のようなもの」）と <a href="https://cory-may-shop.fourthwall.com/">Fourthwall</a>（5／10／20ドル・任意額の寄付、グッズ販売）</li>
+              </ul>
+            </td>
+            <td><span class="tag ok">一致</span>寄付額・総収入は非公開</td>
+          </tr>
         </tbody>
       </table>
     </div>
-    <p class="note">探すときの検索語 — ライブ買い付け側: <code>live shopping</code> <code>livestream proxy shopping</code> <code>personal shopper in Japan</code>／街歩き側: <code>Japan IRL streamer</code> <code>Tokyo live walk</code> <code>walking livestream</code>。「特定の配信者が相当稼いでいる」かどうかは、名前や配信URLがない段階では検証できません。</p>
-  </section>
+    <p class="note">探すときの検索語 — ライブ買い付け側: <code>live shopping</code> <code>livestream proxy shopping</code> <code>personal shopper in Japan</code>／街歩き側: <code>Japan IRL streamer</code> <code>Tokyo live walk</code> <code>walking livestream</code>。代理購入の市場は「数秒ごとに新しい業者が出てくるほど飽和している」という声もある（<a href="https://www.reddit.com/r/internationalshopper/comments/1s034kn/japan_proxy_needed/">r/internationalshopper</a>）。</p>
 
-  <hr>
-
-  <section>
-    <h2>市場はどれくらい大きいか</h2>
-    <p>購入の需要は大きい一方、そのうちライブ買い付けが何％かは分かりません。以下はすべて<strong>周辺市場の数字</strong>で、ライブ配信経由の市場規模としては使えません。</p>
-    <div class="grid stats">
-      <div class="stat"><div class="value">2兆6,372億円</div><div class="label">中国の消費者が日本の事業者から購入した越境EC（経産省 2024年推計）</div><div class="caveat">通常の越境ECを含む広い数字</div></div>
-      <div class="stat"><div class="value">774億円</div><div class="label">代理購入大手 Buyee の流通総額（2024年9月期）</div><div class="caveat">ライブ配信経由以外も含む</div></div>
-      <div class="stat"><div class="value">588万人超</div><div class="label">Buyee の会員数（関連サービス込み）</div><div class="caveat">仲介を使って日本の商品を買う需要は実在する</div></div>
-      <div class="stat"><div class="value">70%超／約60%</div><div class="label">TikTok Shop Japan の流通総額のうちコンテンツ起点／そのうちライブ配信経由（2025年6月末〜2026年6月末）</div><div class="caveat">主に日本国内向けのデータ</div></div>
+    <h3>周辺市場の数字（どれもライブ配信経由の市場規模ではない）</h3>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>数字</th><th>内容</th><th>使うときの注意</th><th>出典</th></tr></thead>
+        <tbody>
+          <tr><td class="num">2兆6,372億円</td><td>中国の消費者が日本の事業者から買った越境EC（2024年、前年比+8.5%）。米国向けは1兆5,978億円</td><td>通常の越境ECを含む広い数字</td><td><a href="https://www.meti.go.jp/press/2025/08/20250826005/20250826005.html">経済産業省</a></td></tr>
+          <tr><td class="num">774億円</td><td>Buyee の流通総額（2024年9月期、過去最高、前年比+12.5%）。円安（一時1ドル160円超）が追い風</td><td>ライブ配信経由以外も含む</td><td><a href="https://beenos.com/news-center/detail/20241204_bns_pr/">BEENOS</a></td></tr>
+          <tr><td class="num">588万人超</td><td>Buyee＋転送コムの海外会員数（2024年9月末）。2025年2月に600万人突破</td><td>「仲介を使ってでも日本の商品を買う」需要は実在する</td><td><a href="https://beenos.com/news-center/press-release/20250203_bns_pr/">BEENOS</a></td></tr>
+          <tr><td class="num">70%超／約60%</td><td>TikTok Shop Japan の GMV のうちコンテンツ起点／そのうちライブ配信経由（2025年6月末〜2026年6月末）。「ライブ比率がショート動画より高いのは先進国で日本だけ」「想定外」</td><td>日本国内向けのデータ。海外向け代理購入の比率ではない</td><td><a href="https://prtimes.jp/main/html/rd/p/000000033.000165244.html">TikTok Shop Japan</a>、<a href="https://www.wwdjapan.com/articles/2460458">WWDJAPAN</a></td></tr>
+        </tbody>
+      </table>
     </div>
-    <div class="callout warn" style="margin-top:16px">
-      <strong>街歩き配信の市場規模は不明</strong>
-      「日本の街歩きを海外の視聴者が見て支払う」市場の金額は、信頼できる公開推計が見つかりませんでした。個別の配信者が寄付を受け付けていることは確認できますが、寄付・スパチャ・会費の実収入が公表されていない以上、数人の成功例から市場規模を積み上げるのは危険です。
+    <div class="callout warn" style="margin-top:12px">
+      <strong class="title">街歩き配信の市場規模は不明</strong>
+      「日本の街歩きを海外の視聴者が見て支払う」市場の金額は、信頼できる公開推計が見つかりませんでした。寄付・スパチャ・会費の実収入が公表されていない以上、数人の成功例から市場規模を積み上げるのは危険です。
     </div>
-  </section>
 
-  <section>
-    <h2>参入価値の判断</h2>
-    <p class="secondary">判断：小さく始める価値は高い。ただし街歩き配信だけを事業の中心に据えるのはまだ早い。</p>
+    <h3>ChatGPT の参入評価（比較用の一案）</h3>
+    <p class="secondary">ChatGPT の見立て: 小さく始める価値は高いが、街歩き配信だけを事業の中心に据えるのはまだ早い。</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>モデル</th><th>参入評価</th><th>理由</th></tr></thead>
+        <thead><tr><th>モデル</th><th>評価</th><th>理由</th></tr></thead>
         <tbody>
-          <tr class="fit-high"><td>街歩き・店巡りを入口に、買い物や体験につなぐ</td><td class="center">最も試したい</td><td>無料で「日本を一緒に歩く」視聴者を集め、欲しいものが見つかった時だけ購入につなげられる。投げ銭にも依存しない</td></tr>
-          <tr class="fit-high"><td>日本の商品をライブで紹介し、代理購入・発送</td><td class="center">高い</td><td>商品購入という明確な支払意思がある。配信を集客と商品発見に使い、手数料や販売粗利を得られる。ただし買い付け・梱包・発送が増えるほど人手が要る</td></tr>
+          <tr class="fit-high"><td>街歩き・店巡りを入口に、買い物や体験につなぐ</td><td class="center">最も試したい</td><td>無料で「日本を一緒に歩く」視聴者を集め、欲しいものが見つかった時だけ購入につなげられる。投げ銭に依存しない</td></tr>
+          <tr class="fit-high"><td>日本の商品をライブで紹介し、代理購入・発送</td><td class="center">高い</td><td>商品購入という明確な支払意思がある。配信を集客と商品発見に使い、手数料や粗利を得る。ただし買い付け・梱包・発送が増えるほど人手が要る</td></tr>
           <tr class="fit-low"><td>街歩きライブで投げ銭を得る</td><td class="center">単独では慎重</td><td>小さく始められるが、収益は配信者個人への支持に左右される。視聴数から売上を予測しにくい</td></tr>
         </tbody>
       </table>
     </div>
-    <p style="margin-top:12px">誰でもネットで買える定番品は、Buyee など既存サービスとの競争になります。狙い目は<strong>「現地に行かないと見つけにくいもの」「実物を見て選びたいもの」</strong>です。たとえば中古ホビー、地域限定グッズ、フリマ、作家ものなど（仮説）。Buyee の公表データでも、トレカやアニメ関連品への海外需要が確認できます。</p>
+    <p style="margin-top:10px">誰でもネットで買える定番品は Buyee など既存サービスとの競争になる。狙い目は<strong>「現地に行かないと見つけにくいもの」「実物を見て選びたいもの」</strong>（中古ホビー、地域限定グッズ、フリマ、作家ものなど。仮説）。Nijiworks が「カードの状態を配信で見せる」ことを売りにしているのは、この仮説と合う。</p>
   </section>
 
   <hr>
 
-  <section>
-    <h2>オンクレと組み合わせるなら（仮説）</h2>
-    <p>今回の調査から出てきた面白い仮説は、<strong>海外の視聴者は必ずしも自分で機械を操作したいわけではないかもしれない</strong>、というものです。</p>
-    <div class="flow" style="margin:12px 0">
-      <span class="step">英語で配信するホストが日本のゲームセンターを巡る</span><span class="arrow">→</span>
-      <span class="step">視聴者はチャットで景品を選ぶ</span><span class="arrow">→</span>
+  <section id="cross">
+    <h2>6. 資料を横断して見えること</h2>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>観点</th><th>分かったこと</th><th>根拠</th></tr></thead>
+        <tbody>
+          <tr><td>需要</td><td>日本IPのプライズ・グッズは海外で人気。ただし海外では手に入れる場所が少なく、非正規品も多い</td><td>GENDA、道頓堀、渋谷、Buyee</td></tr>
+          <tr><td>使う額</td><td>訪日客は1回2,000〜20,000円。米国人は最後まで粘る。ハマると1週間で約500ドル</td><td>渋谷、GENDA、Reddit</td></tr>
+          <tr><td>体験の価値</td><td>「日本で自分で取った」がお土産になる。中古店で1,000〜2,000円で買える物でも自分で取りたい</td><td>Reddit、渋谷</td></tr>
+          <tr><td>不安</td><td>難しすぎる、ズルされている（ホチキス留め）、スタッフが助けてくれるか分からない、商品の状態が届くまで分からない</td><td>Reddit、渋谷、Nijiworks</td></tr>
+          <tr><td>見る楽しさ</td><td>鐘・ギャラリー・対決・応援が、売上にも宣伝にも効く。他人の挑戦を見るだけで200万回再生</td><td>道頓堀、YouTube、Tokyo Creative</td></tr>
+          <tr><td>ライブの効き目</td><td>ライブは「納得してから買いたい」人に効く。日本の TikTok Shop ではライブが最大の売上経路</td><td>TikTok Shop Japan、Nijiworks</td></tr>
+          <tr><td>運営</td><td>景品補充・台の手入れの頻度が売上を左右する。決済を変えると単価が上がる。買い付け型は梱包・発送の人手が増える</td><td>GENDA、ChatGPT 調査</td></tr>
+          <tr><td>規制</td><td>景品の上限額は国・州で違う（日本は約1,000円、米国は州により2,000円〜1万円超）</td><td>GENDA</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="options">
+    <h2>7. オンクレにつなげる方向（比較・未決定）</h2>
+    <p class="secondary">どれかを推すものではありません。今回の資料が各方向をどれだけ支えるか、何が弱いかを並べています。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>方向</th><th>中身</th><th>資料が支える点</th><th>弱い点・未確認</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>A. 海外在住者が自分で遠隔プレイ</strong></td>
+            <td>日本の実機を海外から操作し、取れた景品を国際発送</td>
+            <td>米国向けオンクレアプリの前例（送客4倍）。「近くにグッズがない」需要。Buyee 会員600万人</td>
+            <td>国際送料・関税、景品規制、時差、通信の遅延。GENDA の実店舗網と競合</td>
+          </tr>
+          <tr>
+            <td><strong>B. ホストが代わりにプレイする配信</strong>（ChatGPT 案）</td>
+            <td>英語ホストがゲーセンを巡り、視聴者がチャットで景品を選ぶ。獲得品は購入・発送、買わない人も視聴で楽しむ</td>
+            <td>挑戦動画200万回、道頓堀のギャラリー効果、ライブ買い付けの実例（New Wonder）</td>
+            <td>「他人が獲った景品に払うか」は未検証。店の撮影・代理プレイの許可が必要</td>
+          </tr>
+          <tr>
+            <td><strong>C. 訪日客の旅の前後をつなぐ</strong></td>
+            <td>来日前に練習・予習、帰国後に続きを遊ぶ</td>
+            <td>訪日客の支出の大きさ、「動画で予習する」声、グアム家族のようなリピーター</td>
+            <td>旅行中は実店舗で遊べるので、オンラインを使う理由を作る必要がある</td>
+          </tr>
+          <tr>
+            <td><strong>D. 対決・観戦をコンテンツにする</strong></td>
+            <td>配信者同士や視聴者同士の対決、応援、景品プレゼントを軸にする</td>
+            <td>CDawgVA の対決動画、Tokyo Creative のバトル施策、道頓堀の鐘とギャラリー</td>
+            <td>配信者の人気に左右される。見るだけの人をどう収益化するか</td>
+          </tr>
+          <tr>
+            <td><strong>E. 「信頼」を売りにする</strong></td>
+            <td>取りやすさの表示、正規品の保証、景品の状態をライブで見せる</td>
+            <td>Reddit の不信（ホチキス・隅の景品）、GENDA の非正規品問題、Nijiworks の状態確認</td>
+            <td>単独の企画というより、A〜D どれにも乗せる要素</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>B 案の流れ（ChatGPT の提案）</h3>
+    <div class="flow">
+      <span class="step">英語ホストが日本のゲーセンを巡る</span><span class="arrow">→</span>
+      <span class="step">視聴者がチャットで景品を選ぶ</span><span class="arrow">→</span>
       <span class="step">ホストの挑戦をみんなで見守る</span><span class="arrow">→</span>
-      <span class="step">獲得品は購入・発送できる。買わない人も配信を楽しめる</span>
+      <span class="step">獲得品は購入・発送。買わない人も配信を楽しめる</span>
     </div>
-    <p>これは通常のオンクレとも、ライブ買い付けとも違う企画です。次の2点を<strong>別々に</strong>検証する必要があります。</p>
+    <p style="margin-top:8px">背景にある仮説は<strong>「海外の視聴者は必ずしも自分で機械を操作したいわけではないかもしれない」</strong>。通常のオンクレともライブ買い付けとも違う企画なので、単独で検証が必要。</p>
+  </section>
+
+  <section id="test">
+    <h2>8. 検証するなら何を測るか</h2>
     <div class="grid two">
-      <div class="card"><div class="card-header">検証1：視聴だけでも人が集まるか</div><div class="card-body">配信数回での視聴者数を測る。</div></div>
-      <div class="card"><div class="card-header">検証2：他人が獲った景品に代金を払うか</div><div class="card-body">購入希望件数 → 実購入率 → 発送後に残る粗利を測る。</div></div>
+      <div class="card"><div class="card-header">検証1：視聴だけで人が集まるか</div><div class="card-body">
+        <ul>
+          <li>配信数回での同時視聴者数、平均視聴時間</li>
+          <li>チャットで景品を指定した人数</li>
+          <li>比較対象: CDawgVA の動画（約200万回）、Tokyo Creative の事例（12万回）</li>
+        </ul>
+      </div></div>
+      <div class="card"><div class="card-header">検証2：他人が獲った景品にお金を払うか</div><div class="card-body">
+        <ul>
+          <li>購入希望件数 → 実購入率 → 発送後に残る粗利</li>
+          <li>比較対象: 中古店なら1,000〜2,000円（Reddit）、Buyee など代理購入の手数料</li>
+        </ul>
+      </div></div>
+      <div class="card"><div class="card-header">検証3：自分で遊びたい人はどれくらいいるか（A 案）</div><div class="card-body">
+        <ul>
+          <li>海外からの遠隔プレイの希望率、1人あたりの支出</li>
+          <li>国際送料込みで払える上限</li>
+        </ul>
+      </div></div>
+      <div class="card"><div class="card-header">前提として確認すること</div><div class="card-body">
+        <ul>
+          <li>店側の撮影・代理プレイの許可</li>
+          <li>国・州ごとの景品規制、国際発送・関税、決済</li>
+          <li>梱包・発送の人手（件数が増えると重くなる）</li>
+        </ul>
+      </div></div>
     </div>
-    <p class="note">前提：店側から撮影と代理プレイの了承を得たうえで行う。</p>
+    <p style="margin-top:12px">「ライブで現地を見せると何件の購入が生まれるか」を実測できれば、1人の配信者のビジネスとして始めるか、複数の配信者と店舗をつなぐ事業に広げるかを判断できる（ChatGPT 調査の結論）。</p>
   </section>
 
-  <section>
-    <h2>次に決めること</h2>
-    <p>「ライブで現地を見せると何件の購入が生まれるか」を実測できれば、次のどちらに進むかを判断できます。</p>
+  <div class="callout warn" id="limits">
+    <strong class="title">9. データの限界</strong>
     <ul>
-      <li>1人の配信者のビジネスとして始める</li>
-      <li>複数の配信者と店舗をつなぐ事業に広げる</li>
+      <li>GENDA（投資家向け説明）、イオンファンタジー（採用広報）、Tokyo Creative（代理店の事例）はいずれも当事者の発信で、良い面が強調されている可能性がある</li>
+      <li>渋谷の取材（4組）と Reddit（コメント20件）は個人の声で、数が少ない</li>
+      <li>YouTube は中身を見ておらず、再生数と概要欄のみ</li>
+      <li>ライブ配信経由の購入額、街歩き配信者の収入は公開データで確認できない。越境EC・代理購入・国内ライブコマースの数字は周辺市場のもので、市場規模の推計には使えない</li>
+      <li>オンクレを海外向けに展開したときの送料・関税・景品規制・決済は、今回の資料では分からない</li>
     </ul>
-    <p class="secondary">掘り下げの候補：日本のライブ買い付け市場の事業計画／オンクレ連携企画の実験案と成功条件／ライブ配信型代理購入の収益モデルと運営コストのシミュレーション</p>
-  </section>
-
-  <div class="callout warn">
-    <strong>データの限界</strong>
-    ライブ配信経由の購入額、街歩き配信者の収入は、どちらも公開データで確認できません。上の数字は越境EC・代理購入・国内ライブコマースという周辺市場のもので、市場規模の推計には使えません。実例の3者についても、取引実績や収入は公開ページから確認できた範囲にとどまります。
   </div>
+
+  <section id="refs">
+    <h2>10. 出典</h2>
+    <h3>チームで集めた資料</h3>
+    <ol class="sources">
+      <li><a href="https://finance.logmi.jp/articles/385603#s3">GENDA、北米でゲームセンター約200店・ミニロケ約1.3万拠点を展開（ログミーファイナンス、2026-08-25公開）</a></li>
+      <li><a href="https://shueisha.online/articles/-/254319">「2万円も使ったよ！」渋谷のゲーセンに外国人がゴッタ返す（集英社オンライン、2025-06-21）</a></li>
+      <li><a href="https://chatgpt.com/s/t_6ab5c7130318819190fce1f6c8b4cec9">ChatGPT 共有：日本から海外向けのライブ配信の調査</a></li>
+      <li><a href="https://www.reddit.com/r/JapanTravelTips/comments/1c3yl6f/wheres_the_best_place_to_win_at_crane_games/">Where's the best place to win at crane games?（Reddit r/JapanTravelTips、2024-04-14）</a></li>
+      <li><a href="https://www.talent-book.jp/fantasy/stories/58211">外国人観光客9割の新業態店舗で基盤を築く（イオンファンタジー／タレントブック、2025-10-16）</a></li>
+      <li><a href="https://www.youtube.com/watch?v=p8z2OCkXxkI">I Spent $500 On Japanese Crane Games（CDawgVA、2020-12-09）</a></li>
+      <li><a href="https://www.youtube.com/watch?v=rkXx6yqsgOY">Japan $1000 Crane Game Challenge Ft. Daidus（CDawgVA、2023-01-19）</a></li>
+      <li><a href="https://www.tokyocreative.jp/ja/casestudy-4-クレーンゲームジャパン様">クレーンゲームジャパン様のインバウンド集客事例（Tokyo Creative）</a></li>
+    </ol>
+    <h3>ChatGPT 調査の裏取りに使った資料</h3>
+    <ul class="sources">
+      <li><a href="https://newwonder.co/pages/live-stream">New Wonder: Live Stream</a>／<a href="https://newwonder.co/pages/faqs">FAQS</a></li>
+      <li><a href="https://nijiworksjp.com/en">Nijiworks - Live Auctions from Japan</a>／<a href="https://www.reddit.com/r/Nijiworks/comments/1treoqa/welcome_to_rnijiworks_what_we_are_what_we_run_and/">r/Nijiworks 紹介投稿（2026-05-29）</a></li>
+      <li><a href="https://corymay.carrd.co/">Cory May（プロフィール）</a>／<a href="https://ko-fi.com/corymay81">Ko-fi</a>／<a href="https://cory-may-shop.fourthwall.com/">Fourthwall</a></li>
+      <li><a href="https://www.meti.go.jp/press/2025/08/20250826005/20250826005.html">経済産業省「令和6年度 電子商取引に関する市場調査」（2025-08-26）</a>／<a href="https://netshop.impress.co.jp/node/14688">ネットショップ担当者フォーラムの解説</a></li>
+      <li><a href="https://beenos.com/news-center/detail/20241204_bns_pr/">BEENOS「越境EC×ヒットランキング2024」（2024-12-04）</a>／<a href="https://beenos.com/news-center/press-release/20250203_bns_pr/">海外ユーザー数600万人突破（2025-02-03）</a></li>
+      <li><a href="https://prtimes.jp/main/html/rd/p/000000033.000165244.html">TikTok Shop、日本での提供開始から1年（PR TIMES、2026-07-28）</a>／<a href="https://www.wwdjapan.com/articles/2460458">WWDJAPAN</a>／<a href="https://netkeizai.com/articles/detail/19343">日本ネット経済新聞</a></li>
+      <li><a href="https://www.reddit.com/r/internationalshopper/comments/1s034kn/japan_proxy_needed/">Japan Proxy Needed（Reddit r/internationalshopper、2026-03-21）</a></li>
+    </ul>
+  </section>
 
 </main>
 </body>
