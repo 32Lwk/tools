@@ -83,6 +83,16 @@
     </ol>
   </div>
 
+  <div class="callout warn">
+    <strong class="title">追記: TAM・SAM・SOM（<a href="#tam">9節</a>）</strong>
+    <ul>
+      <li><strong>市場を広く取ると兆円単位になる。</strong>海外の人が日本IPのグッズ・トレカに払う総額（A 案の TAM）は年 約3.7兆円、コレクタブル系のライブコマース（B 案の TAM）は年 約1.6兆円。</li>
+      <li><strong>日本から届けられて、ゲーム性のある買い方に当たる部分（SAM）は、A 約830億円、B 約350億円、C 約200億円。</strong>新規の1社が3〜5年で取れる部分（SOM）は、A 約80億円、B・C 約13〜14億円。</li>
+      <li><strong>7節の「約110億円」は、国内のオンクレと同じ割合で海外ファンが使うと置いて下から積んだ値</strong>で、上から絞った SAM（約830億円）の約8分の1。どちらに近いかは、海外ファンが既存の買い方（パック開封・くじ）からどれだけ乗り換えるかで決まる。</li>
+      <li><strong>中国のライブコマース約105兆円（5兆元）は全品目の合計。</strong>アニメ系グッズはその約0.65%（約6,800億円）で、日本IP・ゲーム形式・越境で届く範囲まで絞ると約120億円。中国の現地パートナーと組めば約450億円まで広がる。</li>
+    </ul>
+  </div>
+
   <section>
     <h2>主な推計値</h2>
     <div class="grid stats">
@@ -109,6 +119,7 @@
       <li><a href="#gravity">国別の潜在需要（重力モデル）</a></li>
       <li><a href="#mc">3つの方向の需要推計（モンテカルロ）</a></li>
       <li><a href="#sens">感度分析と為替シナリオ</a></li>
+      <li><a href="#tam">TAM・SAM・SOM（中国ライブコマースからの絞り込みを含む）</a></li>
       <li><a href="#interp">解釈（比較・未決定）</a></li>
       <li><a href="#limits">限界と、次に取るべき一次データ</a></li>
       <li><a href="#refs">出典</a></li>
@@ -333,7 +344,7 @@
         </tbody>
       </table>
     </div>
-    <p class="note">A は「市場全体の潜在規模」。1社が取れるのはその一部で、たとえばシェア10%なら中央値で約11億円。</p>
+    <p class="note">A は「市場全体の潜在規模」を下から積んだ値。1社が取れるのはその一部で、たとえばシェア10%なら中央値で約11億円。上から絞った推計との比較は <a href="#tam">9節</a>。</p>
   </section>
 
   <section id="sens">
@@ -357,18 +368,97 @@
     </div>
   </section>
 
+  <section id="tam">
+    <h2>9. TAM・SAM・SOM</h2>
+    <p>7節は「海外ファンが国内と同じ割合でオンクレを使う」と置いて<strong>下から積んだ</strong>推計でした。ここでは逆に、<strong>すでに払われているお金を上から絞り込み</strong>、市場の広さを3段で出します。各段の係数は一様分布・三角分布で幅を持たせ、モンテカルロで20万回まわしました（為替は 150円/ドル、21円/元）。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>段</th><th>この分析での定義</th></tr></thead>
+        <tbody>
+          <tr><td><strong>TAM</strong>（最大の市場）</td><td>チャネルや遊び方を問わず、その方向が対象にする消費者が払っている総額</td></tr>
+          <tr><td><strong>SAM</strong>（届けられる市場）</td><td>そのうち「ゲーム性のある買い方（クレーン・くじ・パック開封など）」で、かつ「日本から届けられる／日本で遊べる」部分</td></tr>
+          <tr><td><strong>SOM</strong>（取れる市場）</td><td>新規参入の1社が3〜5年で取れる部分</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>結果</h3>
+    <figure><img src="img/07_tam_sam_som.png" alt="3方向の TAM・SAM・SOM"><figcaption>横軸: 年間の市場規模（億円、対数軸）。棒は中央値、ひげは80%区間（10%点〜90%点）</figcaption></figure>
+    <div class="table-wrap" style="margin-top:12px">
+      <table class="striped">
+        <thead><tr><th>方向</th><th>TAM</th><th>SAM</th><th>SOM（1社）</th><th>下から積んだ値との突き合わせ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A 海外から遠隔プレイ</strong></td><td class="num">3.7兆円<br><span class="secondary">2.7〜5.3兆</span></td><td class="num"><strong>832億円</strong><br><span class="secondary">439〜1,516億</span></td><td class="num"><strong>81億円</strong><br><span class="secondary">36〜171億</span></td><td>7節の市場全体 109億円は、SAM と SOM の間</td></tr>
+          <tr><td><strong>B ホスト代理プレイ配信</strong></td><td class="num">1.6兆円<br><span class="secondary">1.4〜2.0兆</span></td><td class="num"><strong>349億円</strong><br><span class="secondary">202〜574億</span></td><td class="num"><strong>13億円</strong><br><span class="secondary">6〜26億</span></td><td>1チャンネル年1,030万円 × 5〜30チャンネルでは 1.6億円（0.4〜6.9億）。13億円に届くには100チャンネル規模が要る</td></tr>
+          <tr><td><strong>C 訪日客の旅行中</strong></td><td class="num">4,236億円</td><td class="num"><strong>201億円</strong><br><span class="secondary">64〜623億</span></td><td class="num"><strong>14億円</strong><br><span class="secondary">4〜47億</span></td><td>SAM は7節の C と同じ推計</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">A と B は同じ海外ファンを別の形で狙うため、SAM を足し合わせると重複する。2030年の TAM は、文献の成長率で伸ばすと A 約5.5兆円、B 約4.3兆円（米国ライブコマースの CAGR 15〜37% が効く）。</p>
+
+    <h3>各段の係数と根拠</h3>
+    <div class="table-wrap">
+      <table class="striped">
+        <thead><tr><th>方向</th><th>段</th><th>置いた値</th><th>根拠</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="5">A</td><td>TAM</td><td>世界のアニメグッズ 98〜324億ドル ＋ 日本以外の TCG（約110億ドル）× 日本IP比率 50〜70%</td><td>グッズは調査会社で3倍の幅（Persistence 98億、Research and Markets 112億、Marketintelo 324億ドル）。TCG は世界 128〜133億ドル（Dataintelo、Mordor）から日本 2,863億円を引いた</td></tr>
+          <tr><td>ゲーム性の割合</td><td>10〜23%</td><td>国内の目安: プライズ 4,178億 ÷ キャラクタービジネス 2兆7,773億 = 15%、トレカを足すと 23%（JAIA、矢野経済研究所）</td></tr>
+          <tr><td>日本から届く割合</td><td>10〜30%</td><td>越境EC は国内EC より小さい。中国は現地販売の壁で特に低い（仮定）</td></tr>
+          <tr><td>規制・決済が通る国</td><td>60〜85%</td><td>景品規制・賭博の定義は国で違う（仮定）</td></tr>
+          <tr><td>1社のシェア</td><td>3〜20%（最頻 8%）</td><td>国内オンクレは約30社（GameBusiness.jp）</td></tr>
+          <tr><td rowspan="5">B</td><td>TAM（北米・欧州）</td><td>ライブコマース 146〜220億ドル × コレクタブル・トレカ・玩具 25〜45%</td><td>米国 146億ドル（eMarketer 2025）、北米＋欧州 約220億ドル（Whatnot 2026年報告）。Whatnot は流通額80億ドルで、スポーツカードと TCG が上位2カテゴリ</td></tr>
+          <tr><td>TAM（中国）</td><td>谷子 2,021億元 × ネット比率 40〜60% × うちライブ 25〜40%</td><td>谷子経済 2025年 2,021億元（艾媒咨詢）。ライブはネット小売の約3分の1（商務部研究院）</td></tr>
+          <tr><td>日本IP比率</td><td>北米欧州 25〜45%、中国 30〜60%</td><td>米国はスポーツカードが最大。中国は国産IPが伸びている（仮定）</td></tr>
+          <tr><td>ゲーム形式・届く割合</td><td>ゲーム形式 20〜50%、日本発で満たせる 10〜30%、中国に越境で届く 5〜20%（現地パートナーありなら 30〜60%）</td><td>ブレイク・開封・くじの比重（Whatnot の報告）。届く割合は仮定</td></tr>
+          <tr><td>1社のシェア</td><td>1〜8%（最頻 3%）</td><td>プラットフォームではなく出品者・運営者として参入する前提</td></tr>
+          <tr><td rowspan="2">C</td><td>TAM</td><td>訪日消費のうち娯楽等サービス費 4,236億円</td><td>観光庁 2025年確報</td></tr>
+          <tr><td>1社のシェア</td><td>2〜15%（最頻 5%）</td><td>訪日客向けの新店舗、または旅の前後にオンラインで遊ばせる形（仮定）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>中国のライブコマース約100兆円との関係</h3>
+    <div class="grid two">
+      <figure><img src="img/08_china_funnel.png" alt="中国ライブコマースからの絞り込み"><figcaption>横軸: 年間の規模（億円、対数軸、中央値）。上から順に係数を掛けて絞り込んだ</figcaption></figure>
+      <div>
+        <p>中国のライブコマースは2025年に<strong>5兆元超（約105兆円）</strong>で、ネット小売の約3分の1を占めます（商務部研究院、網経社は 6.95兆元）。数字は正しいのですが、ここから日本発のクレーン系サービスが届く範囲までは、次の順で大きく縮みます。</p>
+        <ol>
+          <li><strong>全品目の合計である。</strong>服・化粧品・食品が中心で、アニメ系グッズ（谷子）のライブ販売は約6,800億円、全体の約0.65%。</li>
+          <li><strong>中国の谷子は国産IPが伸びている。</strong>日本IPに絞ると約3,000億円。</li>
+          <li><strong>くじ・開封などゲーム形式</strong>に絞ると約1,000億円。</li>
+          <li><strong>中国国内のライブ販売は、現地の店舗・決済・物流が前提。</strong>日本から越境で届く部分に絞ると約120億円（SAM）。新規1社なら約4.5億円（SOM）。</li>
+        </ol>
+        <p><strong>上振れの条件は、中国の現地パートナーと組むこと。</strong>届く割合を 30〜60% にすると、SAM は約450億円（257〜772億）、1社の SOM は約17億円になります。</p>
+        <p class="secondary">参考: 中国では2017年末に在線抓娃娃（オンラインクレーン）のアプリが30以上出ましたが、全体の週次アクティブは最大約123万人（モバイル利用者の約0.1%）、7日継続率は10%未満で、定着しませんでした（猎豹大数据の集計を引用した報道）。形式そのものの浸透には天井がありうる、という下から積んだ推計側の根拠になります。</p>
+      </div>
+    </div>
+
+    <h3>下から積んだ値（約110億円）と上から絞った値（約830億円）がずれる理由</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>下から積む（7節）</th><th>上から絞る（この節）</th></tr></thead>
+        <tbody>
+          <tr><th>置いている仮定</th><td>海外ファンは、国内の推し活層と同じ割合（約4.9%）でオンクレに課金する。そこに距離の摩擦（約0.4倍）がかかる</td><td>海外ファンが日本IPに使うお金のうち、ゲーム性のある買い方（10〜23%）で日本から届く部分（10〜30%）は、オンクレで置き換えられる</td></tr>
+          <tr><th>過小になりやすい点</th><td>米国のブレイクや開封配信のように、海外ではすでにゲーム性のある買い方が大きい</td><td>—</td></tr>
+          <tr><th>過大になりやすい点</th><td>—</td><td>パック開封やくじの人が、クレーンという形式に乗り換えるとは限らない。中国の在線抓娃娃は定着しなかった</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:8px">真の値は両者の間にあると考えるのが自然です。<strong>どちらに近いかは「海外ファンが既存の買い方からオンクレにどれだけ乗り換えるか」で決まり</strong>、これは11節のコンジョイント分析や試験配信で直接測れます。</p>
+  </section>
+
   <hr>
 
   <section id="interp">
-    <h2>9. 解釈（比較・未決定）</h2>
+    <h2>10. 解釈（比較・未決定）</h2>
     <p class="secondary">どれかを推すものではありません。推計から読める各案の性格を並べます。</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>案</th><th>規模の目安</th><th>不確実性</th><th>推計から読めること</th><th>最初に測るべきこと</th></tr></thead>
         <tbody>
-          <tr><td><strong>A 海外から遠隔プレイ</strong></td><td>市場全体で年100億円前後</td><td>中（80%区間で約3倍の幅）</td><td>国内オンクレの3分の1程度の潜在市場がありうる。米国・欧州の比重が大きく、英語対応と国際決済が前提</td><td>海外ファンの利用意向と、送料込みで払える額（コンジョイント分析や価格感度テスト）</td></tr>
-          <tr><td><strong>B ホスト代理プレイ配信</strong></td><td>1チャンネル年1,000万円前後</td><td>大（80%区間で約14倍の幅）</td><td>1人の配信者の副業〜小規模事業の規模。広げるにはホストを何人も抱えるか、店舗と組む必要がある。ライブの効果は配信当日だけ（SSRN）なので、続けることが条件</td><td>数回の試験配信での視聴者数と購入率</td></tr>
-          <tr><td><strong>C 訪日客の旅行中</strong></td><td>年200億円前後</td><td>最大（80%区間で約10倍の幅）</td><td>金額は大きいが、実店舗がすでに取っている需要。オンラインが取れるのは旅の前後の練習・続きの部分</td><td>訪日客のゲーセン利用率（公的統計がない。店舗データか調査が必要）</td></tr>
+          <tr><td><strong>A 海外から遠隔プレイ</strong></td><td>SAM 約830億円、1社 約80億円（下から積むと市場全体で約110億円）</td><td>中（80%区間で約3倍の幅）</td><td>国内オンクレの3分の1程度の潜在市場がありうる。米国・欧州の比重が大きく、英語対応と国際決済が前提</td><td>海外ファンの利用意向と、送料込みで払える額（コンジョイント分析や価格感度テスト）</td></tr>
+          <tr><td><strong>B ホスト代理プレイ配信</strong></td><td>SAM 約350億円、1社 約13億円（1チャンネルでは年1,000万円前後）</td><td>大（80%区間で約14倍の幅）</td><td>1人の配信者の副業〜小規模事業の規模。広げるにはホストを何人も抱えるか、店舗と組む必要がある。ライブの効果は配信当日だけ（SSRN）なので、続けることが条件</td><td>数回の試験配信での視聴者数と購入率</td></tr>
+          <tr><td><strong>C 訪日客の旅行中</strong></td><td>SAM 約200億円、1社 約14億円</td><td>最大（80%区間で約10倍の幅）</td><td>金額は大きいが、実店舗がすでに取っている需要。オンラインが取れるのは旅の前後の練習・続きの部分</td><td>訪日客のゲーセン利用率（公的統計がない。店舗データか調査が必要）</td></tr>
         </tbody>
       </table>
     </div>
@@ -381,7 +471,7 @@
   </section>
 
   <div class="callout warn" id="limits">
-    <strong class="title">10. 限界と、次に取るべき一次データ</strong>
+    <strong class="title">11. 限界と、次に取るべき一次データ</strong>
     <ul>
       <li>パネル回帰は17観測と少なく、為替弾力性の信頼区間は0をまたぐ。越境EC統計は推計値で、商品カテゴリ別ではない</li>
       <li>Crunchyroll の会員数は「海外で日本IPにお金を払う人」の代わりにすぎない。統合による段差もある</li>
@@ -399,7 +489,7 @@
   </div>
 
   <section id="refs">
-    <h2>11. 出典</h2>
+    <h2>12. 出典</h2>
     <h3>論文・研究</h3>
     <ul class="sources">
       <li>Bass, F. M. (1969). A new product growth for model consumer durables. <i>Management Science</i>, 15(5), 215–227. <a href="https://doi.org/10.1287/mnsc.15.5.215">doi:10.1287/mnsc.15.5.215</a></li>
@@ -433,7 +523,18 @@
       <li>合同会社CGP「2026年版オンラインクレーンゲーム利用者調査」（2026年8月、n=94）</li>
       <li>国内オンクレ市場（<a href="https://www.gamebusiness.jp/article/2025/07/02/24538.html">GameBusiness.jp</a>、<a href="https://batonz.jp/sell_cases/17190">BATONZ</a>、<a href="https://dime.jp/genre/1567165/">@DIME</a>）</li>
     </ul>
-    <p class="note">再現用のコード（Python、乱数の種を固定）は、チームのリポジトリの <code>day2/demand-analysis/analysis.py</code> にあり、実行すると <code>results.json</code> と図を出力します。</p>
+    <h3>統計・データ（9節 TAM・SAM・SOM）</h3>
+    <ul class="sources">
+      <li>中国ライブコマース 2025年 5兆元超（商務部国際貿易経済合作研究院、<a href="https://bank.stockstar.com/IG2026032600017866.shtml">央視財経の報道</a>）、6兆9,461億元（<a href="https://www.100ec.cn/index/detail--6659027.html">網経社</a>）、2024年 約5.8兆元（艾瑞咨詢、<a href="https://sw.gz.gov.cn/swzx/gnmy/content/post_10261298.html">広州市商務局</a>）</li>
+      <li>中国 谷子経済 2025年 2,021億元、泛二次元ユーザー 5.26億人（艾媒咨詢、<a href="https://www.iimedia.cn/c1020/110131.html">解説</a>、<a href="https://www.iimedia.cn/c1094/108809.html">推移</a>）</li>
+      <li>米国ライブコマース 2025年 146.4億ドル（eMarketer、<a href="https://www.digitalapplied.com/blog/social-commerce-statistics-2026-data-points">集計記事</a>）、世界 1,729億ドル（<a href="https://www.grandviewresearch.com/industry-analysis/live-commerce-market-report">Grand View Research</a>）</li>
+      <li>Whatnot 2025年 流通額80億ドル超、2026 State of Live Selling Report（<a href="https://sports.yahoo.com/articles/whatnot-doubled-sales-more-8-183000855.html">cllct / Yahoo Sports</a>、<a href="https://sacra.com/c/whatnot/">Sacra</a>）</li>
+      <li>世界のアニメグッズ市場（<a href="https://www.persistencemarketresearch.com/market-research/anime-merchandising-market.asp">Persistence</a>、<a href="https://www.researchandmarkets.com/reports/6215923/anime-merchandising-market-report-product">Research and Markets</a>、<a href="https://marketintelo.com/report/anime-merchandise-market">Marketintelo</a>）</li>
+      <li>世界の TCG 市場（<a href="https://dataintelo.com/report/global-trading-card-game-market">Dataintelo</a>、<a href="https://www.mordorintelligence.com/industry-reports/trading-card-game-market">Mordor Intelligence</a>）、ポケモン 2025年 小売157億ドル（<a href="https://gamecolumn.jp/blog-entry-116729.html">報道</a>）</li>
+      <li>キャラクタービジネス市場 2024年度 2兆7,773億円（矢野経済研究所、<a href="https://www.dreamnews.jp/press/0000325125">プレスリリース</a>）、プライズゲーム 4,178億円（JAIA、<a href="https://amusement-japan.co.jp/article/detail/10005385/">Amusement Japan</a>）</li>
+      <li>中国の在線抓娃娃 2017年（<a href="https://www.woshipm.com/it/857262.html">人人都是产品经理</a>、<a href="https://www.jiemian.com/article/1821373.html">界面新聞</a>）、トレバ 60か国・約1,500万ユーザー（<a href="https://macloud.jp/companies/4179">M&amp;Aクラウド</a>）</li>
+    </ul>
+    <p class="note">再現用のコード（Python、乱数の種を固定）は、チームのリポジトリの <code>day2/demand-analysis/analysis.py</code> にあり、実行すると <code>results.json</code> と図を出力します。9節は同じフォルダの <code>tam_sam_som.py</code>（出力は <code>tam_sam_som.json</code>）。</p>
   </section>
 
 </main>
