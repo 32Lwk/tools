@@ -71,7 +71,7 @@ async function importAesKey(env: Env): Promise<CryptoKey> {
   ]);
 }
 
-async function encryptJson(env: Env, data: unknown): Promise<string> {
+export async function encryptJson(env: Env, data: unknown): Promise<string> {
   const key = await importAesKey(env);
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const plain = new TextEncoder().encode(JSON.stringify(data));
@@ -79,7 +79,7 @@ async function encryptJson(env: Env, data: unknown): Promise<string> {
   return `${b64url(iv)}.${b64url(cipher)}`;
 }
 
-async function decryptJson<T>(env: Env, packed: string): Promise<T> {
+export async function decryptJson<T>(env: Env, packed: string): Promise<T> {
   const [ivB64, cipherB64] = packed.split(".");
   if (!ivB64 || !cipherB64) throw new Error("encrypted payload invalid");
   const key = await importAesKey(env);

@@ -58,6 +58,43 @@ npx wrangler secret put UPLOAD_GATE
 
 UI でパスワード入力 → HttpOnly セッション Cookie（12 時間）。Drive タブはゲート認証では無効。
 
+同じ IP からログインに **5 回失敗すると 15 分ロック**されます（KV `authfail:<IP>`）。
+
+### A-2. イラスト選択（ゲートの追加要素・任意）
+
+ゲートのログインに「3 択のイラスト選択」を足せます（パスワード＋全問正解で入れる）。Google ログインは対象外（フル機能のまま）。
+
+- 1 問あたり **正解 1 枚＋ダミー 2 枚（固定）** を毎回シャッフル表示。1〜5 問まで。
+- ダミーは毎回同じ 2 枚にすること（入れ替えると、毎回出てくる画像＝正解だとバレる）。
+- 画像と正解の設定は **リポジトリに置かない**（リポジトリ全体が静的アセットとして公開されるため）。R2 と KV にだけ置く。
+- 問題文（`prompt`）は画面に出るので、「誕生日」など答えのヒントになる語は避けて、自分だけ分かる言い方にする（省略時は「正しいイラストを選んでください」）。
+- `TOKEN_ENC_KEY` が必須（チャレンジトークンの暗号化に使用）。
+
+1. 画像を R2 の `auth-challenge/` に置く（ファイル名は正解が推測できない名前に）:
+
+```bash
+cd workers/transfer
+npx wrangler r2 object put tools-transfer/auth-challenge/a7.png --file ./a7.png --content-type image/png --remote
+# 問数 × 3 枚ぶん繰り返す
+```
+
+2. 設定 JSON（例: `challenge.json`、コミットしない）を作って KV に入れる:
+
+```json
+{
+  "rounds": [
+    { "prompt": "1 つ目", "answer": "auth-challenge/a7.png", "decoys": ["auth-challenge/k2.png", "auth-challenge/q9.png"] },
+    { "prompt": "2 つ目", "answer": "auth-challenge/m4.png", "decoys": ["auth-challenge/c1.png", "auth-challenge/z5.png"] }
+  ]
+}
+```
+
+```bash
+npx wrangler kv key put "authcfg:picture" --path ./challenge.json --binding META --preview false --remote
+```
+
+3. `https://tools.yutok.dev/share/api/auth/methods` の `gateChallenge` が `true` になれば有効。無効化は `npx wrangler kv key delete "authcfg:picture" --binding META --preview false --remote`（パスワードのみに戻る）。
+
 ### B. Cloudflare Access（任意・所有者用）
 
 **2026-09-22:** `tools.yutok.dev/transfer*` 向け Self-hosted アプリは削除済み。公開は共有パスワード（UPLOAD_GATE）が主経路です。`/transfer/` と `/share/` は Access なしで到達します。
@@ -132,7 +169,7 @@ npx wrangler deploy
 ## 6. 動作確認
 
 1. `https://tools.yutok.dev/share/api/auth/methods` が JSON（`access` / `google` / `gate`）であること
-2. 未認証で `https://tools.yutok.dev/share/` が開き、共有パスワード入力できること
+2. 未認証で `https://tools.yutok.dev/share/` が開き、共有パスワード入力できること（イラスト選択を設定済みなら 3 択が表示されること）
 3. ゲートログイン後、小ファイル upload → `yuto.k051028@gmail.com` に通知
 4. 501 MiB 相当・セッション合計 1 GiB 超が拒否されること
 5. `/share/d/{slug}` でファイル用パスワード DL

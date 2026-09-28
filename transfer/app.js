@@ -21,6 +21,8 @@ let authState = {
   limits: null,
 };
 let authMethodsState = { access: false, google: false, gate: false };
+let gateChallengeEnabled = false;
+let gateChallengeId = null;
 let r2SlugManual = false;
 let driveSlugManual = false;
 
@@ -330,6 +332,8 @@ async function loadAuthMethods() {
 
     if (data.gate) {
       gateForm.hidden = false;
+      gateChallengeEnabled = !!data.gateChallenge;
+      if (gateChallengeEnabled) await loadGateChallenge();
     } else {
       gateForm.hidden = true;
     }
@@ -357,6 +361,56 @@ async function loadAuthMethods() {
     $("auth-config-hint").hidden = false;
     return null;
   }
+}
+
+async function loadGateChallenge() {
+  const box = $("gate-challenge");
+  gateChallengeId = null;
+  box.replaceChildren();
+  box.hidden = true;
+  try {
+    const res = await fetch("/share/api/auth/challenge", { credentials: "include", cache: "no-store" });
+    const data = await readJsonResponse(res);
+    if (!res.ok) throw new Error(data.error || "イラスト選択を読み込めませんでした");
+    if (!data.enabled) return;
+    gateChallengeId = data.id;
+    data.rounds.forEach((round, ri) => {
+      const fs = document.createElement("fieldset");
+      const legend = document.createElement("legend");
+      legend.textContent = `${ri + 1}. ${round.prompt}`;
+      const options = document.createElement("div");
+      options.className = "gate-challenge-options";
+      round.images.forEach((src, i) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = `gate-chal-${ri}`;
+        input.value = String(i);
+        input.required = true;
+        input.setAttribute("aria-label", `${ri + 1}問目 候補 ${i + 1}`);
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        img.loading = "eager";
+        label.append(input, img);
+        options.append(label);
+      });
+      fs.append(legend, options);
+      box.append(fs);
+    });
+    box.hidden = false;
+  } catch (e) {
+    showAuthMsg(e.message || String(e));
+  }
+}
+
+function gateChallengePicks() {
+  const picks = [];
+  for (const fs of $("gate-challenge").querySelectorAll("fieldset")) {
+    const checked = fs.querySelector("input:checked");
+    picks.push(checked ? Number(checked.value) : -1);
+  }
+  return picks;
 }
 
 async function refreshStatus() {
@@ -566,15 +620,25 @@ function wireAuth() {
     const btn = $("gate-login-btn");
     btn.disabled = true;
     try {
+      const payload = { password };
+      if (gateChallengeEnabled) {
+        payload.challengeId = gateChallengeId;
+        payload.picks = gateChallengePicks();
+      }
       const res = await fetch("/share/api/auth/login", {
         method: "POST",
         credentials: "include",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify(payload),
       });
       const data = await readJsonResponse(res);
-      if (!res.ok) throw new Error(data.error || "認証に失敗しました");
+      if (!res.ok) {
+        if (gateChallengeEnabled) await loadGateChallenge();
+        throw new Error(data.error || "認証に失敗しました");
+      }
       $("gate-password").value = "";
+      $("gate-challenge").replaceChildren();
+      $("gate-challenge").hidden = true;
       setAuthenticated(true, {
         mode: data.mode || "gate",
         limits: data.limits || null,

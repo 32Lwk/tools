@@ -25,8 +25,9 @@
     </nav>
 
     <div id="auth-gate" class="auth-gate" hidden>
-      <p class="muted">アップロードには認証が必要です。共有パスワード、または所有者ログインを使えます。</p>
+      <p class="muted">アップロードには認証が必要です。共有パスワード（機能制限あり）、または所有者ログインを使えます。</p>
       <form id="gate-login-form" class="stack gate-login" hidden>
+        <div id="gate-challenge" class="gate-challenge" hidden></div>
         <label>
           共有パスワード
           <input id="gate-password" type="password" required autocomplete="current-password" />

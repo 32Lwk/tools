@@ -19,7 +19,7 @@ export interface Env {
   GOOGLE_CLIENT_SECRET?: string;
   /** Defaults to https://tools.yutok.dev/share/api/auth/google/callback */
   GOOGLE_REDIRECT_URI?: string;
-  /** 32-byte key (base64 or hex) for encrypting Google refresh tokens in KV. */
+  /** 32-byte key (base64 or hex) for encrypting Google refresh tokens in KV and picture-challenge tokens. */
   TOKEN_ENC_KEY?: string;
   /** Override notify recipient (default: yuto.k051028@gmail.com). */
   NOTIFY_TO?: string;

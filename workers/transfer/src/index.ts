@@ -23,6 +23,16 @@ import {
   verifyUploadGatePassword,
   withCors,
 } from "./access";
+import {
+  MAX_LOGIN_FAILURES,
+  challengeConfigured,
+  challengeImage,
+  clearLoginFailures,
+  createChallenge,
+  loginLockedOut,
+  recordLoginFailure,
+  verifyChallenge,
+} from "./challenge";
 import { notifyUploadComplete } from "./notify";
 import {
   driveUploadEndpoints,
@@ -265,6 +275,7 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     const accessReturn = `${url.origin}/transfer/`;
     return json({
       ...methods,
+      gateChallenge: methods.gate && (await challengeConfigured(env)),
       accessLoginUrl: methods.access ? accessLoginUrl(env, accessReturn) : null,
       googleStartUrl: methods.google ? `${SHARE_PREFIX}/api/auth/google/start` : null,
       accessLogoutUrl: accessLogoutUrl(env),
@@ -331,11 +342,39 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     if (!env.UPLOAD_GATE) {
       return json({ error: "ゲートパスワードが未設定です", authRequired: true }, 503);
     }
-    const body = await readJson<{ password?: string }>(request);
-    if (!body?.password) return json({ error: "password required", authRequired: true }, 400);
-    if (!(await verifyUploadGatePassword(env, body.password))) {
-      return json({ error: "認証に失敗しました", authRequired: true }, 401);
+    if (await loginLockedOut(request, env)) {
+      return json(
+        {
+          error: `失敗が ${MAX_LOGIN_FAILURES} 回続いたため、しばらくログインできません（最大 15 分）`,
+          authRequired: true,
+        },
+        429,
+      );
     }
+    const body = await readJson<{ password?: string; challengeId?: string; picks?: unknown }>(
+      request,
+    );
+    if (!body?.password) return json({ error: "password required", authRequired: true }, 400);
+    const passwordOk = await verifyUploadGatePassword(env, body.password);
+    let challengeResult: "ok" | "wrong" | "expired" = "ok";
+    if (await challengeConfigured(env)) {
+      challengeResult = await verifyChallenge(env, body.challengeId, body.picks);
+    }
+    if (challengeResult === "expired") {
+      return json(
+        { error: "イラスト選択の有効期限が切れました。もう一度選んでください", authRequired: true, challengeExpired: true },
+        400,
+      );
+    }
+    if (!passwordOk || challengeResult !== "ok") {
+      const count = await recordLoginFailure(request, env);
+      const left = Math.max(0, MAX_LOGIN_FAILURES - count);
+      return json(
+        { error: `認証に失敗しました（残り ${left} 回）`, authRequired: true },
+        401,
+      );
+    }
+    await clearLoginFailures(request, env);
     const session = await createUploadSession(env, { mode: "gate", usedBytes: 0 });
     return json(
       {
@@ -349,6 +388,28 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
       200,
       { "set-cookie": session.setCookie },
     );
+  }
+
+  if (path === "/transfer/api/auth/challenge" && request.method === "GET") {
+    if (!env.UPLOAD_GATE) return json({ error: "ゲートパスワードが未設定です" }, 503);
+    try {
+      const challenge = await createChallenge(env, `${SHARE_PREFIX}/api/auth/challenge/img`);
+      if (!challenge) return json({ enabled: false });
+      return json({ enabled: true, ...challenge }, 200, { "cache-control": "no-store" });
+    } catch (e) {
+      return json({ error: e instanceof Error ? e.message : "challenge failed" }, 503);
+    }
+  }
+
+  const challengeImgMatch = path.match(/^\/transfer\/api\/auth\/challenge\/img\/([^/]+)\/(\d)\/(\d)$/);
+  if (challengeImgMatch && request.method === "GET") {
+    const img = await challengeImage(
+      env,
+      decodeSlugParam(challengeImgMatch[1]!),
+      Number(challengeImgMatch[2]),
+      Number(challengeImgMatch[3]),
+    );
+    return img ?? json({ error: "not found" }, 404);
   }
 
   if (path === "/transfer/api/auth/logout" && request.method === "POST") {
