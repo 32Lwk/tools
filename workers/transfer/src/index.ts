@@ -1,7 +1,17 @@
-import { estimateR2Cost, FREE_STORAGE_BYTES, MAX_BYTES, PART_SIZE, RETENTION_HOURS, formatBytes } from "./cost";
+import {
+  estimateR2Cost,
+  FREE_STORAGE_BYTES,
+  GATE_MAX_FILE_BYTES,
+  GATE_MAX_SESSION_BYTES,
+  MAX_BYTES,
+  PART_SIZE,
+  RETENTION_HOURS,
+  formatBytes,
+} from "./cost";
 import {
   accessLoginUrl,
   accessLogoutUrl,
+  addSessionUsedBytes,
   authMethods,
   corsHeaders,
   createUploadSession,
@@ -13,6 +23,7 @@ import {
   verifyUploadGatePassword,
   withCors,
 } from "./access";
+import { notifyUploadComplete } from "./notify";
 import {
   driveUploadEndpoints,
   findOrCreateFolder,
@@ -312,18 +323,32 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
   }
 
   if (path === "/transfer/api/auth/login" && request.method === "POST") {
-    // Emergency gate only (UI hidden). Prefer Access / Google.
+    // Shared gate password (primary path for external uploaders).
     if (env.DEV_OPEN_UPLOAD === "1") {
       const session = await createUploadSession(env, { mode: "dev", email: "dev@localhost" });
       return json({ ok: true, mode: "dev" }, 200, { "set-cookie": session.setCookie });
+    }
+    if (!env.UPLOAD_GATE) {
+      return json({ error: "ゲートパスワードが未設定です", authRequired: true }, 503);
     }
     const body = await readJson<{ password?: string }>(request);
     if (!body?.password) return json({ error: "password required", authRequired: true }, 400);
     if (!(await verifyUploadGatePassword(env, body.password))) {
       return json({ error: "認証に失敗しました", authRequired: true }, 401);
     }
-    const session = await createUploadSession(env, { mode: "gate" });
-    return json({ ok: true, mode: "gate" }, 200, { "set-cookie": session.setCookie });
+    const session = await createUploadSession(env, { mode: "gate", usedBytes: 0 });
+    return json(
+      {
+        ok: true,
+        mode: "gate",
+        limits: {
+          maxFileBytes: GATE_MAX_FILE_BYTES,
+          maxSessionBytes: GATE_MAX_SESSION_BYTES,
+        },
+      },
+      200,
+      { "set-cookie": session.setCookie },
+    );
   }
 
   if (path === "/transfer/api/auth/logout" && request.method === "POST") {
@@ -340,13 +365,23 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     if (!identity) {
       return json({ ok: false, authenticated: false, authRequired: true }, 401);
     }
+    const methods = authMethods(env);
     return json({
       ok: true,
       authenticated: true,
       email: identity.email || null,
       mode: identity.mode,
+      sessionUsedBytes: identity.sessionUsedBytes ?? null,
       accessLogoutUrl: identity.accessLogoutUrl || accessLogoutUrl(env),
-      methods: authMethods(env),
+      methods,
+      limits:
+        identity.mode === "gate"
+          ? {
+              maxFileBytes: GATE_MAX_FILE_BYTES,
+              maxSessionBytes: GATE_MAX_SESSION_BYTES,
+              sessionUsedBytes: identity.sessionUsedBytes ?? 0,
+            }
+          : null,
     });
   }
 
@@ -390,6 +425,16 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
   if (path === "/transfer/api/drive/status" && request.method === "GET") {
     const auth = await requireUploadIdentity(request, env);
     if ("response" in auth) return auth.response;
+    if (auth.identity.mode === "gate") {
+      return json({
+        ok: true,
+        connected: false,
+        email: null,
+        googleConfigured: googleConfigured(env),
+        gateBlocked: true,
+        message: "ゲートパスワード認証では Drive 保管は使えません。Google でログインしてください。",
+      });
+    }
     const email = auth.identity.email;
     if (!email || !googleConfigured(env)) {
       return json({
@@ -414,6 +459,9 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
   if (path === "/transfer/api/drive/folder" && request.method === "POST") {
     const auth = await requireUploadIdentity(request, env);
     if ("response" in auth) return auth.response;
+    if (auth.identity.mode === "gate") {
+      return json({ error: "ゲート認証では Drive は利用できません" }, 403);
+    }
     const email = auth.identity.email;
     const tok = await requireDriveAccessToken(env, email);
     if ("error" in tok) return json({ error: tok.error }, tok.status);
@@ -436,6 +484,9 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
   if (path === "/transfer/api/drive/init" && request.method === "POST") {
     const auth = await requireUploadIdentity(request, env);
     if ("response" in auth) return auth.response;
+    if (auth.identity.mode === "gate") {
+      return json({ error: "ゲート認証では Drive は利用できません" }, 403);
+    }
     const email = auth.identity.email;
     const tok = await requireDriveAccessToken(env, email);
     if ("error" in tok) return json({ error: tok.error }, tok.status);
@@ -544,11 +595,18 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
       meta.contentType = file.mimeType || meta.contentType;
       meta.originalName = file.name || meta.originalName;
       await putMeta(env, meta);
+      const downloadPath = `${DL_PAGE_PREFIX}/${meta.slug}`;
+      await notifyUploadComplete(env, meta, {
+        request,
+        origin: url.origin,
+        authMode: auth.identity.mode,
+        downloadPath,
+      });
       return json({
         ok: true,
         slug: meta.slug,
         expiresAt: meta.expiresAt,
-        downloadPath: `${DL_PAGE_PREFIX}/${meta.slug}`,
+        downloadPath,
       });
     } catch (e) {
       return json({ error: e instanceof Error ? e.message : "complete failed" }, 400);
@@ -571,8 +629,8 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
   }
 
   if (path === "/transfer/api/r2/init" && request.method === "POST") {
-    const gate = await requireUploadAccess(request, env);
-    if (gate) return gate;
+    const auth = await requireUploadIdentity(request, env);
+    if ("response" in auth) return auth.response;
     const body = await readJson<{
       slug: string;
       password: string;
@@ -597,6 +655,30 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
     }
     if (!body.filename || body.filename.length > 255) {
       return json({ error: "ファイル名が不正です" }, 400);
+    }
+
+    const isGate = auth.identity.mode === "gate";
+    if (isGate && body.size > GATE_MAX_FILE_BYTES) {
+      return json(
+        {
+          error: `ゲート認証では 1 ファイル最大 ${formatBytes(GATE_MAX_FILE_BYTES)} までです`,
+          maxFileBytes: GATE_MAX_FILE_BYTES,
+        },
+        400,
+      );
+    }
+    if (isGate) {
+      const sessionUsed = auth.identity.sessionUsedBytes ?? 0;
+      if (sessionUsed + body.size > GATE_MAX_SESSION_BYTES) {
+        return json(
+          {
+            error: `ゲート認証のセッション合計上限（${formatBytes(GATE_MAX_SESSION_BYTES)}）を超えます。使用中 ${formatBytes(sessionUsed)}`,
+            sessionUsedBytes: sessionUsed,
+            maxSessionBytes: GATE_MAX_SESSION_BYTES,
+          },
+          409,
+        );
+      }
     }
 
     const estimate = estimateR2Cost(body.size);
@@ -683,8 +765,8 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
   }
 
   if (path === "/transfer/api/r2/complete" && request.method === "POST") {
-    const gate = await requireUploadAccess(request, env);
-    if (gate) return gate;
+    const auth = await requireUploadIdentity(request, env);
+    if ("response" in auth) return auth.response;
     const body = await readJson<{
       slug: string;
       uploadId: string;
@@ -703,11 +785,20 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
       meta.status = "ready";
       delete meta.uploadId;
       await putMeta(env, meta);
+      const sessionUsedBytes = await addSessionUsedBytes(request, env, meta.size);
+      const downloadPath = `${DL_PAGE_PREFIX}/${meta.slug}`;
+      await notifyUploadComplete(env, meta, {
+        request,
+        origin: url.origin,
+        authMode: auth.identity.mode,
+        downloadPath,
+      });
       return json({
         ok: true,
         slug: meta.slug,
         expiresAt: meta.expiresAt,
-        downloadPath: `${DL_PAGE_PREFIX}/${meta.slug}`,
+        downloadPath,
+        sessionUsedBytes: sessionUsedBytes ?? undefined,
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "complete failed";

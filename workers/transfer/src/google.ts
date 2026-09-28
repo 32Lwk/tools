@@ -9,6 +9,7 @@ const SCOPES = [
   "email",
   "profile",
   "https://www.googleapis.com/auth/drive.file",
+  "https://www.googleapis.com/auth/gmail.send",
 ].join(" ");
 
 export type StoredGoogleTokens = {

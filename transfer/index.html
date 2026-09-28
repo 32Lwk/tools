@@ -15,7 +15,7 @@
       <h1>ファイル転送</h1>
       <button type="button" id="settings-btn" class="icon-btn" aria-label="設定" title="設定">設定</button>
     </div>
-    <p class="lead">端末間でファイルを受け渡します。アップロードは本人のみ。ダウンロードはパスワード必須です。</p>
+    <p class="lead">端末間でファイルを受け渡します。アップロードは共有パスワードまたは所有者ログイン。ダウンロードはファイル用パスワード必須です。</p>
 
     <nav class="tabs" role="tablist" aria-label="転送モード">
       <button type="button" class="tab active" data-tab="r2" role="tab" aria-selected="true">一時（R2）</button>
@@ -25,19 +25,26 @@
     </nav>
 
     <div id="auth-gate" class="auth-gate" hidden>
-      <p class="muted">アップロードには所有者認証が必要です。</p>
+      <p class="muted">アップロードには認証が必要です。共有パスワード、または所有者ログインを使えます。</p>
+      <form id="gate-login-form" class="stack gate-login" hidden>
+        <label>
+          共有パスワード
+          <input id="gate-password" type="password" required autocomplete="current-password" />
+        </label>
+        <button type="submit" id="gate-login-btn">パスワードで入る</button>
+      </form>
       <div id="auth-actions" class="auth-actions">
         <a id="auth-access-btn" class="auth-btn" hidden href="#">Cloudflare Zero Trust でログイン</a>
         <a id="auth-google-btn" class="auth-btn" hidden href="/share/api/auth/google/start">Google でログイン</a>
       </div>
       <p id="auth-config-hint" class="muted" hidden>
-        認証が未設定です。Cloudflare Access（ACCESS_AUD / TEAM_DOMAIN）または Google OAuth を設定してください（docs/transfer-ops.md）。
+        認証が未設定です。UPLOAD_GATE（共有パスワード）、Cloudflare Access、または Google OAuth を設定してください（docs/transfer-ops.md）。
       </p>
       <p id="auth-msg" class="msg" hidden></p>
     </div>
 
     <section id="panel-r2" class="panel" role="tabpanel">
-      <p class="muted">合計最大 10 GiB（R2 無料枠）・並列無制限・保管 24 時間。スラッグ付き URL とパスワードで共有します。</p>
+      <p class="muted" id="r2-limits-hint">合計最大 10 GiB（R2 無料枠）・並列無制限・保管 24 時間。スラッグ付き URL とパスワードで共有します。</p>
       <p id="status-line" class="muted">状態を確認中…</p>
 
       <div id="upload-area" hidden>
@@ -192,7 +199,7 @@
       <h2>転送管理</h2>
       <button type="submit" class="icon-btn" value="close" aria-label="閉じる">閉じる</button>
     </form>
-    <p id="settings-auth-hint" class="muted" hidden>一覧・削除には所有者認証が必要です。Zero Trust または Google でログインしてください。</p>
+    <p id="settings-auth-hint" class="muted" hidden>一覧・削除には認証が必要です。共有パスワード、Zero Trust、または Google でログインしてください。</p>
     <p id="settings-summary" class="muted">読み込み中…</p>
     <div class="settings-actions">
       <button type="button" id="settings-refresh" class="secondary-btn">再読み込み</button>

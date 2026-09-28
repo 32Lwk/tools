@@ -8,6 +8,8 @@ const SESSION_KV_PREFIX = "upses:";
 export type UploadSessionInfo = {
   email?: string;
   mode: "google" | "gate" | "dev" | "session";
+  /** Bytes successfully uploaded in this session (gate limits). */
+  usedBytes?: number;
 };
 
 export type AuthIdentity = {
@@ -15,6 +17,9 @@ export type AuthIdentity = {
   email?: string;
   mode: "access" | "google" | "gate" | "dev" | "session";
   accessLogoutUrl?: string;
+  /** Present when authenticated via upload session cookie. */
+  sessionToken?: string;
+  sessionUsedBytes?: number;
 };
 
 function b64url(buf: ArrayBuffer | Uint8Array): string {
@@ -52,12 +57,20 @@ export function clearSessionCookieHeader(): string {
   return sessionCookieHeader("", 0);
 }
 
+function sessionKvKey(token: string): string {
+  return `${SESSION_KV_PREFIX}${token}`;
+}
+
 export async function createUploadSession(
   env: Env,
   info: UploadSessionInfo = { mode: "session" },
 ): Promise<{ token: string; setCookie: string }> {
   const token = b64url(crypto.getRandomValues(new Uint8Array(32)));
-  await env.META.put(`${SESSION_KV_PREFIX}${token}`, JSON.stringify(info), {
+  const payload: UploadSessionInfo = {
+    ...info,
+    usedBytes: info.usedBytes ?? 0,
+  };
+  await env.META.put(sessionKvKey(token), JSON.stringify(payload), {
     expirationTtl: SESSION_TTL_SEC,
   });
   return { token, setCookie: sessionCookieHeader(token) };
@@ -66,24 +79,42 @@ export async function createUploadSession(
 export async function destroyUploadSession(request: Request, env: Env): Promise<string> {
   const cookies = parseCookies(request);
   const token = cookies[SESSION_COOKIE];
-  if (token) await env.META.delete(`${SESSION_KV_PREFIX}${token}`);
+  if (token) await env.META.delete(sessionKvKey(token));
   return clearSessionCookieHeader();
 }
 
 async function readUploadSession(
   request: Request,
   env: Env,
-): Promise<UploadSessionInfo | null> {
+): Promise<{ token: string; info: UploadSessionInfo } | null> {
   const token = parseCookies(request)[SESSION_COOKIE];
   if (!token || token.length < 16) return null;
-  const hit = await env.META.get(`${SESSION_KV_PREFIX}${token}`);
+  const hit = await env.META.get(sessionKvKey(token));
   if (!hit) return null;
-  if (hit === "1") return { mode: "session" };
+  if (hit === "1") return { token, info: { mode: "session", usedBytes: 0 } };
   try {
-    return JSON.parse(hit) as UploadSessionInfo;
+    const info = JSON.parse(hit) as UploadSessionInfo;
+    return { token, info: { ...info, usedBytes: info.usedBytes ?? 0 } };
   } catch {
-    return { mode: "session" };
+    return { token, info: { mode: "session", usedBytes: 0 } };
   }
+}
+
+/** Add completed upload bytes to the session (for gate caps). No-op if no session. */
+export async function addSessionUsedBytes(
+  request: Request,
+  env: Env,
+  delta: number,
+): Promise<number | null> {
+  if (!Number.isFinite(delta) || delta <= 0) return null;
+  const session = await readUploadSession(request, env);
+  if (!session) return null;
+  const usedBytes = (session.info.usedBytes ?? 0) + delta;
+  const next: UploadSessionInfo = { ...session.info, usedBytes };
+  await env.META.put(sessionKvKey(session.token), JSON.stringify(next), {
+    expirationTtl: SESSION_TTL_SEC,
+  });
+  return usedBytes;
 }
 
 function allowlistEmails(env: Env): string[] {
@@ -136,13 +167,13 @@ export function accessLogoutUrl(env: Env): string | null {
 export function authMethods(env: Env): {
   access: boolean;
   google: boolean;
-  gateEmergency: boolean;
+  gate: boolean;
   accessLoginHint?: string;
 } {
   return {
     access: accessConfigured(env),
     google: googleConfigured(env),
-    gateEmergency: !!env.UPLOAD_GATE,
+    gate: !!env.UPLOAD_GATE,
   };
 }
 
@@ -224,8 +255,15 @@ export async function resolveAuthIdentity(
   if (session) {
     return {
       authenticated: true,
-      mode: session.mode === "google" ? "google" : session.mode === "gate" ? "gate" : "session",
-      email: session.email,
+      mode:
+        session.info.mode === "google"
+          ? "google"
+          : session.info.mode === "gate"
+            ? "gate"
+            : "session",
+      email: session.info.email,
+      sessionToken: session.token,
+      sessionUsedBytes: session.info.usedBytes ?? 0,
       accessLogoutUrl: accessLogoutUrl(env) || undefined,
     };
   }
@@ -251,7 +289,7 @@ export async function resolveAuthIdentity(
 
 /**
  * Fail-closed upload gate.
- * Allows: DEV_OPEN_UPLOAD | Access JWT | upload session (Google / emergency gate).
+ * Allows: DEV_OPEN_UPLOAD | Access JWT | upload session (Google / gate password).
  */
 export async function requireUploadAccess(request: Request, env: Env): Promise<Response | null> {
   const identity = await resolveAuthIdentity(request, env);
@@ -276,11 +314,11 @@ export async function requireUploadAccess(request: Request, env: Env): Promise<R
   }
 
   const methods = authMethods(env);
-  if (!methods.access && !methods.google && !methods.gateEmergency) {
+  if (!methods.access && !methods.google && !methods.gate) {
     return json(
       {
         error:
-          "アップロード認証が未設定です（Cloudflare Access または Google OAuth を設定してください）",
+          "アップロード認証が未設定です（ゲートパスワード UPLOAD_GATE、Cloudflare Access、または Google OAuth を設定してください）",
         authRequired: true,
       },
       503,

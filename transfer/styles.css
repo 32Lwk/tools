@@ -180,6 +180,11 @@ button[type="submit"]:disabled {
   margin-top: 0.75rem;
 }
 
+.gate-login {
+  margin-top: 0.75rem;
+  max-width: 22rem;
+}
+
 a.auth-btn {
   display: inline-block;
   border: 1px solid var(--border, #333);

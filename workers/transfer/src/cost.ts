@@ -8,6 +8,10 @@ export const FREE_STORAGE_BYTES = 10 * 1024 * 1024 * 1024;
 export const MAX_BYTES = FREE_STORAGE_BYTES;
 export const RETENTION_HOURS = 24;
 export const PART_SIZE = 32 * 1024 * 1024; // 32 MiB (under Workers body limit)
+
+/** Stricter caps for password-gate upload sessions (external share). */
+export const GATE_MAX_FILE_BYTES = 500 * 1024 * 1024; // 500 MiB
+export const GATE_MAX_SESSION_BYTES = 1024 * 1024 * 1024; // 1 GiB
 export const FREE_STORAGE_GB_MONTH = 10;
 export const FREE_CLASS_A = 1_000_000;
 export const STORAGE_USD_PER_GB_MONTH = 0.015;

@@ -39,6 +39,12 @@
   "triggers": {
     "crons": ["0 * * * *"]
   },
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_destination_addresses": ["yuto.k051028@gmail.com"]
+    }
+  ],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1

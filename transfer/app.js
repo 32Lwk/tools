@@ -1,4 +1,4 @@
-import { estimateR2Cost, formatBytes, FREE_STORAGE_BYTES, MAX_BYTES, PART_SIZE } from "./cost.js";
+import { estimateR2Cost, formatBytes, FREE_STORAGE_BYTES, GATE_MAX_FILE_BYTES, GATE_MAX_SESSION_BYTES, MAX_BYTES, PART_SIZE } from "./cost.js";
 import { uploadToDriveResumable } from "./drive.js";
 import {
   isValidSlug,
@@ -12,8 +12,15 @@ import {
 const $ = (id) => document.getElementById(id);
 
 let qrModulePromise = null;
-let authState = { authenticated: false, email: null, mode: null, accessLogoutUrl: null };
-let authMethodsState = { access: false, google: false };
+let authState = {
+  authenticated: false,
+  email: null,
+  mode: null,
+  accessLogoutUrl: null,
+  sessionUsedBytes: 0,
+  limits: null,
+};
+let authMethodsState = { access: false, google: false, gate: false };
 let r2SlugManual = false;
 let driveSlugManual = false;
 
@@ -79,10 +86,25 @@ function setAuthenticated(ok, identity = null) {
     authState.email = identity.email || null;
     authState.mode = identity.mode || null;
     authState.accessLogoutUrl = identity.accessLogoutUrl || null;
+    authState.sessionUsedBytes =
+      typeof identity.sessionUsedBytes === "number"
+        ? identity.sessionUsedBytes
+        : typeof identity.limits?.sessionUsedBytes === "number"
+          ? identity.limits.sessionUsedBytes
+          : 0;
+    authState.limits = identity.limits || (identity.mode === "gate"
+      ? {
+          maxFileBytes: GATE_MAX_FILE_BYTES,
+          maxSessionBytes: GATE_MAX_SESSION_BYTES,
+          sessionUsedBytes: authState.sessionUsedBytes,
+        }
+      : null);
   }
   if (!ok) {
     authState.email = null;
     authState.mode = null;
+    authState.sessionUsedBytes = 0;
+    authState.limits = null;
   }
 
   $("auth-gate").hidden = ok;
@@ -96,6 +118,36 @@ function setAuthenticated(ok, identity = null) {
     const who = authState.email ? `（${authState.email}）` : "";
     const mode = authState.mode ? ` · ${authState.mode}` : "";
     label.textContent = `認証済み${who}${mode}`;
+  }
+
+  updateGateLimitsHint();
+  updateDriveTabForAuth();
+}
+
+function updateGateLimitsHint() {
+  const hint = $("r2-limits-hint");
+  if (!hint) return;
+  if (authState.mode === "gate") {
+    const used = authState.sessionUsedBytes || 0;
+    hint.textContent =
+      `ゲート認証: 1ファイル最大 ${formatBytes(GATE_MAX_FILE_BYTES)} / セッション合計 ${formatBytes(GATE_MAX_SESSION_BYTES)}` +
+      `（使用 ${formatBytes(used)}）・全体枠 10 GiB・保管 24 時間。`;
+  } else {
+    hint.textContent =
+      "合計最大 10 GiB（R2 無料枠）・並列無制限・保管 24 時間。スラッグ付き URL とパスワードで共有します。";
+  }
+}
+
+function updateDriveTabForAuth() {
+  const driveTab = document.querySelector('.tab[data-tab="drive"]');
+  if (!driveTab) return;
+  const gateOnly = authState.authenticated && authState.mode === "gate";
+  driveTab.disabled = gateOnly;
+  driveTab.title = gateOnly
+    ? "ゲートパスワードでは Drive 保管は使えません（Google ログインが必要）"
+    : "";
+  if (gateOnly && !document.getElementById("panel-drive").hidden) {
+    activateTab("r2");
   }
 }
 
@@ -173,6 +225,30 @@ function renderCost(files) {
     li.textContent = `注意: ${w}`;
     list.appendChild(li);
   }
+  if (authState.mode === "gate") {
+    const maxFile = authState.limits?.maxFileBytes || GATE_MAX_FILE_BYTES;
+    const maxSession = authState.limits?.maxSessionBytes || GATE_MAX_SESSION_BYTES;
+    const sessionUsed = authState.sessionUsedBytes || 0;
+    const gateWarns = [];
+    for (const f of listFiles) {
+      if (f.size > maxFile) {
+        gateWarns.push(`${f.name}: ゲート上限 ${formatBytes(maxFile)} 超過`);
+      }
+    }
+    if (sessionUsed + totalSize > maxSession) {
+      gateWarns.push(
+        `セッション合計が上限 ${formatBytes(maxSession)} を超えます（使用中 ${formatBytes(sessionUsed)}）`,
+      );
+    }
+    for (const w of gateWarns) {
+      const li = document.createElement("li");
+      li.textContent = `制限: ${w}`;
+      list.appendChild(li);
+    }
+    estimate.gateBlocked = gateWarns.length > 0;
+  } else {
+    estimate.gateBlocked = false;
+  }
   box.hidden = false;
   summary.hidden = false;
   if (listFiles.length === 1) {
@@ -185,7 +261,7 @@ function renderCost(files) {
     summary.textContent = `${listFiles.length} 件: ${sample}${listFiles.length > 3 ? " …" : ""}`;
   }
   const overCap = totalSize > MAX_BYTES || listFiles.some((f) => f.size > MAX_BYTES);
-  btn.disabled = !(ack.checked && !overCap);
+  btn.disabled = !(ack.checked && !overCap && !estimate.gateBlocked);
   return estimate;
 }
 
@@ -244,11 +320,19 @@ async function loadAuthMethods() {
     authMethodsState = {
       access: !!data.access,
       google: !!data.google,
+      gate: !!data.gate,
     };
 
     const accessBtn = $("auth-access-btn");
     const googleBtn = $("auth-google-btn");
+    const gateForm = $("gate-login-form");
     const hint = $("auth-config-hint");
+
+    if (data.gate) {
+      gateForm.hidden = false;
+    } else {
+      gateForm.hidden = true;
+    }
 
     if (data.access && data.accessLoginUrl) {
       accessBtn.hidden = false;
@@ -266,7 +350,7 @@ async function loadAuthMethods() {
       googleBtn.hidden = true;
     }
 
-    hint.hidden = !!(data.access || data.google);
+    hint.hidden = !!(data.access || data.google || data.gate);
     return data;
   } catch (e) {
     showAuthMsg(e.message || String(e));
@@ -374,6 +458,11 @@ async function uploadFile(file, slug, password, { onPartProgress } = {}) {
   });
   const done = await readJsonResponse(doneRes);
   if (!doneRes.ok) throw new Error(done.error || "complete failed");
+  if (typeof done.sessionUsedBytes === "number") {
+    authState.sessionUsedBytes = done.sessionUsedBytes;
+    if (authState.limits) authState.limits.sessionUsedBytes = done.sessionUsedBytes;
+    updateGateLimitsHint();
+  }
   return done;
 }
 
@@ -470,6 +559,37 @@ function wireShare() {
 }
 
 function wireAuth() {
+  $("gate-login-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    showAuthMsg("");
+    const password = $("gate-password").value;
+    const btn = $("gate-login-btn");
+    btn.disabled = true;
+    try {
+      const res = await fetch("/share/api/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await readJsonResponse(res);
+      if (!res.ok) throw new Error(data.error || "認証に失敗しました");
+      $("gate-password").value = "";
+      setAuthenticated(true, {
+        mode: data.mode || "gate",
+        limits: data.limits || null,
+        sessionUsedBytes: 0,
+      });
+      showAuthMsg("ログインしました", true);
+      await refreshStatus();
+    } catch (e) {
+      showAuthMsg(e.message || String(e));
+      setAuthenticated(false);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
   $("logout-btn").addEventListener("click", async () => {
     try {
       const res = await fetch("/share/api/auth/logout", {
@@ -477,13 +597,15 @@ function wireAuth() {
         credentials: "include",
       });
       const data = await readJsonResponse(res).catch(() => ({}));
+      const accessLogout = data.accessLogoutUrl || authState.accessLogoutUrl;
+      const wasAccess = authState.mode === "access";
       setAuthenticated(false);
       $("status-line").textContent = "ログアウトしました";
       $("drive-area").hidden = true;
       $("drive-connect").hidden = false;
       $("drive-status-line").textContent = "未認証です";
-      const accessLogout = data.accessLogoutUrl || authState.accessLogoutUrl;
-      if (accessLogout && authState.mode === "access") {
+      await loadAuthMethods();
+      if (accessLogout && wasAccess) {
         location.href = accessLogout;
       }
     } catch {
@@ -617,6 +739,13 @@ async function refreshDriveStatus() {
 
     if (!data.googleConfigured) {
       line.textContent = "Google OAuth が未設定です（GOOGLE_CLIENT_ID 等）";
+      $("drive-connect").hidden = true;
+      $("drive-area").hidden = true;
+      return;
+    }
+
+    if (data.gateBlocked) {
+      line.textContent = data.message || "ゲート認証では Drive は使えません";
       $("drive-connect").hidden = true;
       $("drive-area").hidden = true;
       return;
@@ -883,7 +1012,7 @@ async function loadSettingsList() {
     if (res.status === 401) {
       setAuthenticated(false);
       $("settings-summary").textContent =
-        "未認証です。Zero Trust または Google でログインしてください。";
+        "未認証です。共有パスワード、Zero Trust、または Google でログインしてください。";
       $("settings-list").innerHTML = "";
       return;
     }
