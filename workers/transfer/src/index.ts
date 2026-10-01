@@ -14,9 +14,12 @@ import {
   addSessionUsedBytes,
   authMethods,
   corsHeaders,
+  createLoginUnlock,
   createUploadSession,
   destroyUploadSession,
+  hasLoginUnlock,
   json,
+  loginPathSecretMatches,
   requireUploadAccess,
   requireUploadIdentity,
   resolveAuthIdentity,
@@ -70,6 +73,13 @@ import { resolveDlInfo } from "./listing";
 const SHARE_PREFIX = "/share";
 const DL_PAGE_PREFIX = `${SHARE_PREFIX}/d`;
 const DL_API_PREFIX = `${SHARE_PREFIX}/api/dl`;
+
+/** Reachable before login only with the entry cookie; everything else needs a session. */
+const LOGIN_SURFACE_PATHS = [
+  /^\/(share|transfer)(\/index\.html)?$/,
+  /^\/(share|transfer)\/[\w-]+\.(js|css)$/,
+  /^\/(share|transfer)\/api\/auth(\/.*)?$/,
+];
 
 const SLUG_RULE_ERROR =
   "スラッグは英小文字・数字・ハイフンのセグメント（/ 区切り可、合計 200 文字以内）です";
@@ -1054,6 +1064,20 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
   return json({ error: "Not found" }, 404);
 }
 
+/** Same 404 GitHub Pages returns for any missing path, so hidden routes are indistinguishable. */
+async function originNotFound(url: URL): Promise<Response> {
+  try {
+    const res = await fetch(new URL("/__not_found__/", url.origin), {
+      cf: { cacheTtlByStatus: { "404": 3600 } },
+    });
+    const headers = new Headers(res.headers);
+    headers.set("cache-control", "no-store");
+    return new Response(res.body, { status: 404, headers });
+  } catch {
+    return new Response("Not found", { status: 404 });
+  }
+}
+
 function downloadPageHtml(slug: string): string {
   const safeSlug = slug.replace(/</g, "");
   return `<!DOCTYPE html>
@@ -1096,15 +1120,37 @@ function downloadPageHtml(slug: string): string {
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
-    // Keep trailing slash for /share/ so relative asset URLs resolve under /share/
-    if (url.pathname === "/share") {
-      return Response.redirect(`${url.origin}/share/`, 302);
-    }
     let path = url.pathname;
     if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
 
     try {
-      // Public share assets (outside Cloudflare Access on /transfer*)
+      const entryMatch = path.match(/^\/share\/enter\/([^/]+)$/);
+      if (entryMatch && request.method === "GET" && loginPathSecretMatches(env, entryMatch[1]!)) {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            location: `${url.origin}${SHARE_PREFIX}/`,
+            "set-cookie": await createLoginUnlock(env),
+            "cache-control": "no-store",
+          },
+        });
+      }
+      if (!(await resolveAuthIdentity(request, env))) {
+        if (!(await hasLoginUnlock(request, env))) return originNotFound(url);
+        if (!LOGIN_SURFACE_PATHS.some((re) => re.test(path))) {
+          if (/^\/(share|transfer)\/api\//.test(path)) {
+            return json({ error: "アップロードには認証が必要です", authRequired: true }, 401);
+          }
+          return originNotFound(url);
+        }
+      }
+
+      // Keep trailing slash for /share/ so relative asset URLs resolve under /share/
+      if (url.pathname === "/share") {
+        return Response.redirect(`${url.origin}/share/`, 302);
+      }
+
+      // /share/*.js and styles.css are aliases of the /transfer/ assets
       const shareStatic = path.match(
         new RegExp(`^${SHARE_PREFIX}/(app|cost|drive|slug|download)\\.js$`),
       );

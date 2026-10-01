@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-09-06",
   "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": true,
+  "workers_dev": false,
+  "preview_urls": false,
   "routes": [
     {
       "pattern": "tools.yutok.dev/transfer*",
@@ -20,7 +21,7 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/transfer/api/*", "/transfer/d/*", "/share", "/share/*"]
+    "run_worker_first": true
   },
   "r2_buckets": [
     {

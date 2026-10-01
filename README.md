@@ -4,13 +4,12 @@
 
 - **公開 URL:** https://tools.yutok.dev/
 - **Pages 設定:** Custom domain `tools.yutok.dev`（branch `main` / root）
-- **転送 API:** `/transfer*` は Cloudflare Worker（R2 / Drive / P2P）。アップロードはゲート認証必須。手順は [docs/transfer-ops.md](./docs/transfer-ops.md)、設計は [docs/transfer-plan.md](./docs/transfer-plan.md)
+- **転送（非公開）:** `/transfer*` `/share*` は Cloudflare Worker（R2 / Drive）。未ログインでは 404。手順は [docs/transfer-ops.md](./docs/transfer-ops.md)、設計は [docs/transfer-plan.md](./docs/transfer-plan.md)
 
 ## 収録ツール
 
 | パス | 内容 | 開発リポジトリ |
 |------|------|----------------|
-| [`/transfer/`](./transfer/) | 端末間ファイル転送（一時 R2 / Drive / P2P） | 本リポジトリ `workers/transfer` |
 | [`/laue/`](./laue/) | X-ray Laue simulator（円筒 IP / Cylindrical） | [32Lwk/xray-laue-backscattering-simulator](https://github.com/32Lwk/xray-laue-backscattering-simulator) |
 | [`/kek-mca/`](./kek-mca/) | KEK MCA 生データ（.mca / .csv、raw のみ） | — |
 | [`/kek-mca/3D/`](./kek-mca/3D/) | He-3 検出器 PHITS 4dtrack 3D 可視化 | — |

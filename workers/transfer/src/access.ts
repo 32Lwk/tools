@@ -287,6 +287,31 @@ export async function resolveAuthIdentity(
   return null;
 }
 
+const LOGIN_UNLOCK_COOKIE = "tools_transfer_entry";
+const LOGIN_UNLOCK_TTL_SEC = 30 * 60;
+const LOGIN_UNLOCK_KV_PREFIX = "entry:";
+
+export function loginPathSecretMatches(env: Env, given: string): boolean {
+  const expected = (env.LOGIN_PATH_SECRET || "").trim();
+  if (expected.length < 16) return false;
+  return timingSafeEqual(given, expected);
+}
+
+/** Short-lived cookie that lets the login UI render before any session exists. */
+export async function createLoginUnlock(env: Env): Promise<string> {
+  const token = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  await env.META.put(`${LOGIN_UNLOCK_KV_PREFIX}${token}`, "1", {
+    expirationTtl: LOGIN_UNLOCK_TTL_SEC,
+  });
+  return `${LOGIN_UNLOCK_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${LOGIN_UNLOCK_TTL_SEC}`;
+}
+
+export async function hasLoginUnlock(request: Request, env: Env): Promise<boolean> {
+  const token = parseCookies(request)[LOGIN_UNLOCK_COOKIE];
+  if (!token || token.length < 16) return false;
+  return (await env.META.get(`${LOGIN_UNLOCK_KV_PREFIX}${token}`)) !== null;
+}
+
 /**
  * Fail-closed upload gate.
  * Allows: DEV_OPEN_UPLOAD | Access JWT | upload session (Google / gate password).

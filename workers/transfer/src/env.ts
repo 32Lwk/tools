@@ -12,6 +12,8 @@ export interface Env {
   UPLOAD_ALLOW_EMAILS?: string;
   /** Shared upload gate password (primary auth for external uploaders). */
   UPLOAD_GATE?: string;
+  /** Secret segment of the hidden login entry `/share/enter/<secret>`. Unset = no way to reach the login UI. */
+  LOGIN_PATH_SECRET?: string;
   /** Set to "1" only for local wrangler dev. */
   DEV_OPEN_UPLOAD?: string;
   /** Google OAuth client (Drive + upload session). */

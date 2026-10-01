@@ -47,7 +47,21 @@ npx wrangler kv namespace create TOOLS_TRANSFER_META --preview
 | Cloudflare Access / Google | 所有者（自分） | 全体 10 GiB のみ |
 | Google OAuth | Drive 保管にも必須 | — |
 
-公開 UI: **`https://tools.yutok.dev/share/`**（パスワード入力フォームあり）。
+### 非公開化（隠し入口）
+
+`/transfer*` と `/share*` は **未ログインだと全経路が GitHub Pages と同じ 404** を返す（UI・JS・API・DL ページすべて）。`workers_dev` / `preview_urls` は無効。
+
+- 入口: `https://tools.yutok.dev/share/enter/<LOGIN_PATH_SECRET>` を開くと 30 分有効の入口 Cookie が付き、`/share/` のログイン画面（共有パスワード / Google）が表示される
+- 入口 Cookie だけで見えるのは UI・JS/CSS・`/api/auth/*` のみ。DL ページ・状態・管理はログイン後
+- Google ログインは `UPLOAD_ALLOW_EMAILS` のアカウントのみ
+- 入口 URL はリポジトリ直下 `.env` の `TRANSFER_LOGIN_URL`（Git 管理外）
+
+```bash
+npx wrangler secret put LOGIN_PATH_SECRET    # 16 文字以上のランダム値。変更すると旧 URL は 404
+npx wrangler secret put UPLOAD_ALLOW_EMAILS  # 例: yuto.k051028@gmail.com
+```
+
+UI: `https://tools.yutok.dev/share/`（入口 Cookie またはログインセッションが必要）。
 
 ### A. 共有パスワード（UPLOAD_GATE・外部公開の主経路）
 
@@ -168,8 +182,8 @@ npx wrangler deploy
 
 ## 6. 動作確認
 
-1. `https://tools.yutok.dev/share/api/auth/methods` が JSON（`access` / `google` / `gate`）であること
-2. 未認証で `https://tools.yutok.dev/share/` が開き、共有パスワード入力できること（イラスト選択を設定済みなら 3 択が表示されること）
+1. Cookie なしで `/share/`・`/transfer/`・`/share/api/auth/methods`・`/share/d/x` がすべて 404 であること
+2. 隠し入口を開いた後 `/share/` が開き、共有パスワード入力できること（イラスト選択を設定済みなら 3 択が表示されること）
 3. ゲートログイン後、小ファイル upload → `yuto.k051028@gmail.com` に通知
 4. 501 MiB 相当・セッション合計 1 GiB 超が拒否されること
 5. `/share/d/{slug}` でファイル用パスワード DL
