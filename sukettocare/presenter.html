@@ -35,6 +35,12 @@
   footer { padding:10px 24px; border-top:1px solid var(--line); font-size:13px; color:var(--sub); display:flex; gap:18px; flex-wrap:wrap; align-items:center; }
   footer button { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font:inherit; font-size:14px; cursor:pointer; }
   #warn { color:var(--bad); }
+  #setup { position:fixed; inset:0; background:rgba(10,12,16,.88); display:flex; align-items:center; justify-content:center; padding:16px; z-index:5; }
+  #setup[hidden] { display:none; }
+  #setup .box { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px 32px; max-width:640px; width:100%; line-height:1.7; }
+  #setup h1 { font-size:24px; margin-bottom:14px; }
+  #setup ol { padding-left:1.3em; margin-bottom:18px; font-size:16px; }
+  #setup button { width:100%; font:inherit; font-size:17px; padding:14px; border-radius:10px; cursor:pointer; border:1px solid #1a73e8; background:#1a73e8; color:#fff; font-weight:700; }
   @media (max-width: 800px) { main { grid-template-columns:1fr; } .big { font-size:40px; } .line { font-size:24px; } }
 </style>
 </head>
@@ -57,9 +63,22 @@
   <button data-a="prev">← 戻る</button><button data-a="next">次へ →</button>
   <button data-a="start">タイマー開始 (S)</button><button data-a="reset">タイマーを 0 に (T)</button>
   <button data-a="replay">映像を最初から (R)</button><button data-a="black">黒画面 (B)</button>
+  <button id="openDeck2">スライドを開き直す</button>
   <span>キー操作はこの画面でもスライド側でも同じです。</span>
   <span id="warn"></span>
 </footer>
+<div id="setup" hidden>
+  <div class="box">
+    <h1>発表者モード</h1>
+    <ol>
+      <li>会場の画面を<b>拡張ディスプレイ</b>でつなぐ（ミラーリングだと、この原稿が客席に見えます）。</li>
+      <li>下のボタンでスライドのウィンドウを開き、プロジェクターの画面へドラッグする。</li>
+      <li>スライドのウィンドウで「ここで全画面にして始める」を押す。</li>
+      <li>話し始めたら、ここで <b>S</b>（または最初の <b>→</b>）でタイマーが始まります。</li>
+    </ol>
+    <button id="openDeck" class="primary">スライドを開く（プロジェクター用）</button>
+  </div>
+</div>
 <script src="data.js"></script>
 <script>
 const D = window.DECK, LIMIT = window.LIMIT, TOTAL = D[D.length - 1].cumEnd;
@@ -109,11 +128,21 @@ let lastState = 0;
 function onState(m) { m = m || {}; if (m.type === 'state') { st = m; skew = m.now - Date.now(); lastState = Date.now(); tick(); } }
 addEventListener('message', (e) => onState(e.data));
 let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {}
+let deckWin = null;
 function act(a) {
   const m = { type: 'act', act: a };
-  if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*');
+  if (deckWin && !deckWin.closed) deckWin.postMessage(m, '*');
+  else if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*');
   else if (bc) bc.postMessage(m);
 }
+function openDeck() {
+  deckWin = window.open('index.html?from=presenter', 'sukettocare-deck', 'width=1280,height=760');
+  $('setup').hidden = true;
+}
+$('openDeck').addEventListener('click', openDeck);
+$('openDeck2').addEventListener('click', openDeck);
+// スライドとつながっていなければ、準備の手順を出す
+setTimeout(() => { if (!st) $('setup').hidden = false; }, 1200);
 const KEYS = { ArrowRight:'next', ' ':'next', PageDown:'next', Enter:'next', ArrowDown:'next',
   ArrowLeft:'prev', PageUp:'prev', ArrowUp:'prev', Backspace:'prev', Home:'first',
   s:'start', t:'reset', r:'replay', b:'black', '.':'black' };
