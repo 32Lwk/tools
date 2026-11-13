@@ -75,12 +75,13 @@
     <h1>このウィンドウをプロジェクターへ</h1>
     <ol>
       <li>原稿の「発表者画面」が別のウィンドウで開きました。手元の画面に置いてください。</li>
-      <li>この<b>スライドのウィンドウ</b>を、プロジェクターの画面へドラッグします。</li>
-      <li>下のボタンを押すと、その画面で全画面になります。</li>
+      <li>下のボタンを押すと、スライドが外のモニターで全画面になります（Chrome・Dia）。</li>
+      <li>Safari では、先にこのウィンドウをモニターへドラッグしてから押します。</li>
     </ol>
     <p class="conn" id="conn">発表者画面: まだつながっていません</p>
     <p class="sub" id="fallback">発表者画面が開かないときは <a href="presenter.html" target="_blank" id="openLink">ここを押して新しいタブで開く</a>（ポップアップが止められていても開けます。開いたタブは別のウィンドウに切り離して手元に置いてください）。</p>
-    <button id="goFull" class="primary">ここで全画面にして始める</button>
+    <p class="conn" id="scr" style="color:#8ab4f8"></p>
+    <button id="goFull" class="primary">外のモニターで全画面にして始める</button>
     <p class="sub">操作は発表者画面からもできます（→ 次へ、← 戻る、S タイマー開始）。</p>
   </div>
 </div>
@@ -163,8 +164,11 @@ function startTimer(restartSlide) {
   startedAt = Date.now(); if (restartSlide) { slideAt = Date.now(); play(i); } send();
 }
 function state() { return { type: 'state', i, step, startedAt, slideAt, now: Date.now() }; }
-let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onMsg(e.data, null); } catch (e) {}
+// 発表者画面の中に映す「鏡」: 自分からは何も送らず、発表者画面から来た位置に合わせて動くだけ
+const MIRROR = new URLSearchParams(location.search).has('mirror');
+let bc = null; if (!MIRROR) { try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onMsg(e.data, null); } catch (e) {} }
 function send() {
+  if (MIRROR) return;
   const m = state();
   if (presenter && !presenter.closed) { try { presenter.postMessage(m, '*'); } catch (e) {} }
   if (bc) { try { bc.postMessage(m); } catch (e) {} }
@@ -187,7 +191,7 @@ function act(k) {
     case 'reset': startedAt = null; send(); break;
     case 'replay': play(i); slideAt = Date.now(); send(); break;
     case 'black': document.getElementById('black').classList.toggle('on'); break;
-    case 'full': if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); else document.exitFullscreen(); break;
+    case 'full': if (!document.fullscreenElement) fullscreenHere(); else document.exitFullscreen(); break;
     case 'presenter': {
       let w = null;
       try { w = window.open('presenter.html', 'sukettocare-presenter', 'width=1280,height=800'); } catch (e) {}
@@ -201,12 +205,13 @@ const KEYS = { ArrowRight:'next', ' ':'next', PageDown:'next', Enter:'next', Arr
   ArrowLeft:'prev', PageUp:'prev', ArrowUp:'prev', Backspace:'prev', Home:'first',
   s:'start', t:'reset', r:'replay', b:'black', '.':'black', f:'full', p:'presenter', h:'help' };
 function onKey(key) { const a = KEYS[key] || KEYS[key.toLowerCase()]; if (a) { act(a); return true; } return false; }
-addEventListener('keydown', (e) => { if (e.metaKey || e.ctrlKey || e.altKey) return; if (onKey(e.key)) e.preventDefault(); });
+addEventListener('keydown', (e) => { if (MIRROR || e.metaKey || e.ctrlKey || e.altKey) return; if (onKey(e.key)) e.preventDefault(); });
 stage.addEventListener('click', () => act('next'));
 stage.addEventListener('contextmenu', (e) => { e.preventDefault(); act('prev'); });
 let lastPing = 0;
 function onMsg(m, source) {
   m = m || {};
+  if (MIRROR) { if (m.type === 'mirror') { if (m.i !== i) show(m.i, false, m.step > 0, m.step); else if (m.step !== step) setStep(m.step); } return; }
   if (m.type === 'hello' || m.type === 'ping') {
     if (source && m.type === 'hello') presenter = source;
     lastPing = Date.now(); markConn(); if (m.type === 'hello') send();
@@ -229,16 +234,42 @@ show(Number.isFinite(h) ? h - 1 : 0, false);
 const startEl = document.getElementById('start');
 let screens = null;
 function hideStart() { startEl.classList.add('hide'); document.getElementById('help').classList.add('hide'); }
+// 外のモニターの見つけ方: Chrome 系の「ウィンドウの管理」（複数画面）を使う。使えなければ今の画面で全画面
+async function loadScreens(ask) {
+  if (!window.getScreenDetails) return null;
+  try {
+    if (!ask && navigator.permissions) { const st = await navigator.permissions.query({ name: 'window-management' }); if (st.state !== 'granted') return null; }
+    screens = await window.getScreenDetails(); showScreenInfo(); return screens;
+  } catch (e) { showScreenInfo(); return null; }
+}
+function externalScreen() {
+  if (!screens || !screens.screens || screens.screens.length < 2) return null;
+  const cur = screens.currentScreen;
+  if (cur && !cur.isInternal && screens.screens.some((s) => s.isInternal)) return null; // もう外のモニターにいる
+  return screens.screens.find((s) => s !== cur && !s.isInternal) || screens.screens.find((s) => s !== cur) || null;
+}
+function showScreenInfo() {
+  const el = document.getElementById('scr'); if (!el) return;
+  if (!window.getScreenDetails) { el.textContent = 'このブラウザでは外のモニターを自動で選べません。このウィンドウをモニターへドラッグしてから押してください（Chrome なら自動で出せます）。'; return; }
+  const ext = externalScreen();
+  if (ext) el.textContent = '外のモニターが見つかりました（' + (ext.label || ext.width + '×' + ext.height) + '）。押すとそこで全画面になります。';
+  else if (screens && screens.currentScreen && !screens.currentScreen.isInternal) el.textContent = 'このウィンドウは外のモニターにあります。押すとここで全画面になります。';
+  else if (screens) el.textContent = '外のモニターが見つかりません。つなぎ方（拡張ディスプレイ）を確かめてください。';
+  else el.textContent = '押すと、ブラウザが「ウィンドウの管理」の許可を求めます。「許可」を選んでください。';
+}
 function fullscreenHere() {
-  const el = document.documentElement;
-  let opt;
-  // 複数画面の API が使えて、いまの画面が内蔵の画面なら、外の画面で全画面にする
-  if (screens && screens.screens && screens.screens.length > 1 && screens.currentScreen && screens.currentScreen.isInternal) {
-    const ext = screens.screens.find((s) => !s.isInternal);
-    if (ext) opt = { screen: ext };
+  const el = document.documentElement, ext = externalScreen();
+  const p = ext ? el.requestFullscreen({ screen: ext }) : el.requestFullscreen();
+  if (p) p.then(() => hideStart()).catch(() => { const s = document.getElementById('scr'); if (s) s.textContent = '全画面にできませんでした。もう一度押してください。'; });
+  else hideStart();
+}
+async function goFull() {
+  if (window.getScreenDetails && !screens) {
+    // 初回は許可を求める。許可の後はユーザー操作の扱いが切れるので、もう一度押してもらう
+    const got = await loadScreens(true);
+    if (got) { document.getElementById('goFull').textContent = 'もう一度押して、全画面にする'; return; }
   }
-  const p = opt ? el.requestFullscreen(opt) : el.requestFullscreen();
-  if (p) p.catch(() => {});
+  fullscreenHere();
 }
 const fromPresenter = new URLSearchParams(location.search).has('from');
 function stepB(note) {
@@ -252,8 +283,8 @@ if (fromPresenter) {
   hideStart();
 }
 function goPresenter() {
-  if (window.getScreenDetails) window.getScreenDetails().then((s) => { screens = s; }).catch(() => {});
   const opened = act('presenter');
+  loadScreens(true);
   if (opened) stepB();
   else {
     // ポップアップが止められたときは、ふつうのリンクで新しいタブに開く（タブ同士は BroadcastChannel でつながる）
@@ -264,14 +295,15 @@ function goPresenter() {
 document.getElementById('goPresenter').addEventListener('click', goPresenter);
 document.getElementById('openLink').addEventListener('click', (e) => e.stopPropagation());
 document.getElementById('goSlides').addEventListener('click', () => { hideStart(); });
-document.getElementById('goFull').addEventListener('click', () => { fullscreenHere(); hideStart(); });
+document.getElementById('goFull').addEventListener('click', goFull);
+if (MIRROR) hideStart(); else loadScreens(false).then(showScreenInfo);
 startEl.addEventListener('click', (e) => e.stopPropagation());
 startEl.addEventListener('keydown', (e) => e.stopPropagation(), true);
 addEventListener('keydown', (e) => {
   if (startEl.classList.contains('hide')) return;
   e.stopImmediatePropagation();
   if (e.key === 'Tab' || e.key === 'Enter' || e.key === ' ') return; // ボタンはキーボードでも押せる
-  if (e.key === 'f' || e.key === 'F') { fullscreenHere(); hideStart(); }
+  if (e.key === 'f' || e.key === 'F') goFull();
   else if ((e.key === 'p' || e.key === 'P') && !document.getElementById('startA').hidden) goPresenter();
   else if (e.key === 'Escape') hideStart();
   e.preventDefault();

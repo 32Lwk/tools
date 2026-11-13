@@ -20,7 +20,7 @@
   #bar { height:8px; background:var(--line); border-radius:4px; flex:1; min-width:200px; position:relative; overflow:hidden; }
   #bar i { position:absolute; left:0; top:0; bottom:0; background:var(--ok); }
   #bar b { position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff; }
-  main { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr); gap:20px; padding:20px 24px; min-height:0; }
+  main { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(320px,1fr); gap:20px; padding:20px 24px; min-height:0; }
   #script { overflow:auto; min-height:0; }
   #title { font-size:18px; color:var(--sub); margin-bottom:10px; }
   #title b { color:var(--ink); }
@@ -29,7 +29,8 @@
   .line.done { color:#6c747d; }
   aside { display:flex; flex-direction:column; gap:14px; min-height:0; overflow:auto; }
   .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; }
-  .card img { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:6px; display:block; background:#000; }
+  .mir { position:relative; width:100%; aspect-ratio:16/9; border-radius:6px; overflow:hidden; background:#000; }
+  .mir iframe { position:absolute; inset:0; width:100%; height:100%; border:0; pointer-events:none; }
   .card p { font-size:15px; color:var(--sub); margin-top:8px; line-height:1.5; }
   .card p b { color:var(--ink); }
   footer { padding:10px 24px; border-top:1px solid var(--line); font-size:13px; color:var(--sub); display:flex; gap:18px; flex-wrap:wrap; align-items:center; }
@@ -60,15 +61,14 @@
 <main>
   <section id="script"><div id="title"></div><div id="lines"></div></section>
   <aside>
-    <div class="card"><img id="curImg" alt=""><p id="curCap"></p></div>
-    <div class="card"><img id="nextImg" alt=""><p id="nextCap"></p></div>
+    <div class="card"><div class="mir"><iframe id="mirror" src="index.html?mirror=1" tabindex="-1" title="いまのスライド"></iframe></div><p id="curCap"></p></div>
   </aside>
 </main>
 <footer>
   <button data-a="prev">← 戻る</button><button data-a="next">次へ →</button>
   <button data-a="start">タイマー開始 (S)</button><button data-a="reset">タイマーを 0 に (T)</button>
   <button data-a="replay">映像を最初から (R)</button><button data-a="black">黒画面 (B)</button>
-  <button id="openDeck2">スライドを開き直す</button>
+  <button id="openDeck2">スライドを外のモニターに出す</button>
   <span>キー操作はこの画面でもスライド側でも同じです。</span>
   <span id="warn"></span>
 </footer>
@@ -77,11 +77,11 @@
     <h1>発表者モード</h1>
     <ol>
       <li>会場の画面を<b>拡張ディスプレイ</b>でつなぐ（ミラーリングだと、この原稿が客席に見えます）。</li>
-      <li>下のボタンでスライドのウィンドウを開き、プロジェクターの画面へドラッグする。</li>
-      <li>スライドのウィンドウで「ここで全画面にして始める」を押す。</li>
+      <li>下のボタンを押す。Chrome・Dia では、スライドが外のモニターに出ます（初回だけ「ウィンドウの管理」を許可）。Safari では、出たウィンドウをモニターへドラッグする。</li>
+      <li>外のモニターのスライドで「外のモニターで全画面にして始める」を押す。</li>
       <li>話し始めたら、ここで <b>S</b>（または最初の <b>→</b>）でタイマーが始まります。</li>
     </ol>
-    <button id="openDeck" class="primary">スライドを開く（プロジェクター用）</button>
+    <button id="openDeck" class="primary">スライドを外のモニターに出す</button>
     <p class="fb">開かないときは <a href="index.html?from=presenter" target="_blank" id="deckLink">ここを押して新しいタブで開く</a>。すでにスライドを別のタブで開いているなら、そのままで自動でつながります。</p>
   </div>
 </div>
@@ -98,11 +98,8 @@ function renderSlide() {
   $('lines').innerHTML = s.lines.map((l, k) => `<div class="line" data-k="${k}">${l}</div>`).join('');
   if (s.links) $('lines').innerHTML += '<div class="jumps">' + s.links.map((L, k) => `<button data-k="${k}">${L.label}</button>`).join('') + '</div>';
   document.querySelectorAll('.jumps button').forEach((b) => b.addEventListener('click', () => post({ type: 'jump', k: +b.dataset.k })));
-  $('curImg').src = 'media/' + s.id + '.jpg';
   $('curCap').innerHTML = '<b>いま</b>　' + s.title;
-  if (n) { $('nextImg').src = 'media/' + n.id + '.jpg'; $('nextImg').style.visibility = 'visible';
-    $('nextCap').innerHTML = '<b>次</b>　' + n.title + (n.backup ? '（予備。発表はここまで）' : '<br>「' + n.lines[0] + '」'); }
-  else { $('nextImg').style.visibility = 'hidden'; $('nextCap').innerHTML = '<b>次</b>　（最後のページです）'; }
+
   shown = st.i;
 }
 function tick() {
@@ -134,7 +131,7 @@ function tick() {
 }
 setInterval(tick, 200);
 let lastState = 0;
-function onState(m) { m = m || {}; if (m.type === 'state') { st = m; skew = m.now - Date.now(); lastState = Date.now(); $('setup').hidden = true; tick(); } }
+function onState(m) { m = m || {}; if (m.type === 'state') { try { $('mirror').contentWindow.postMessage({ type: 'mirror', i: m.i, step: m.step || 0 }, '*'); } catch (e) {} st = m; skew = m.now - Date.now(); lastState = Date.now(); $('setup').hidden = true; tick(); } }
 addEventListener('message', (e) => onState(e.data));
 let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {}
 let deckWin = null;
@@ -144,10 +141,19 @@ function post(m) {
   else if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*');
   else if (bc) bc.postMessage(m);
 }
-function openDeck() {
+async function openDeck() {
   try { deckWin = window.open('index.html?from=presenter', 'sukettocare-deck', 'width=1280,height=760'); } catch (e) { deckWin = null; }
-  if (!deckWin) $('deckLink').click(); // ポップアップが止められたら新しいタブで開く
+  if (!deckWin) { $('deckLink').click(); $('setup').hidden = true; return; } // ポップアップが止められたら新しいタブで開く
   $('setup').hidden = true;
+  // Chrome 系なら、スライドのウィンドウを外のモニターへ移す（「ウィンドウの管理」の許可が要る）
+  if (window.getScreenDetails) {
+    try {
+      const sd = await window.getScreenDetails();
+      const cur = sd.currentScreen;
+      const ext = sd.screens.find((x) => x !== cur && !x.isInternal) || sd.screens.find((x) => x !== cur);
+      if (ext) { deckWin.moveTo(ext.availLeft, ext.availTop); deckWin.resizeTo(ext.availWidth, ext.availHeight); }
+    } catch (e) {}
+  }
 }
 $('deckLink').addEventListener('click', () => { $('setup').hidden = true; });
 function ping() {
