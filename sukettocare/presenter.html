@@ -47,6 +47,11 @@
   #setup a { color:#8ab4f8; }
   #setup ol { padding-left:1.3em; margin-bottom:18px; font-size:16px; }
   #setup button { width:100%; font:inherit; font-size:17px; padding:14px; border-radius:10px; cursor:pointer; border:1px solid #1a73e8; background:#1a73e8; color:#fff; font-weight:700; }
+  .line[contenteditable="true"] { outline:1px dashed #5c6470; cursor:text; color:#fff; }
+  .line[contenteditable="true"]:focus { outline:2px solid #8ab4f8; background:rgba(138,180,248,.08); }
+  .edbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:0 0 12px; font-size:14px; color:var(--sub); }
+  .edbar button { font:inherit; font-size:14px; padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--ink); cursor:pointer; }
+  #editBtn.on { background:#1a73e8; border-color:#1a73e8; }
   @media (max-width: 800px) { main { grid-template-columns:1fr; } .big { font-size:40px; } .line { font-size:24px; } }
 </style>
 </head>
@@ -56,6 +61,7 @@
   <div><div class="lab">予定とのずれ</div><div class="delta" id="delta">—</div></div>
   <div><div class="lab">このページ</div><div class="delta" id="slideT">0 / 0 秒</div></div>
   <div><div class="lab">4:00 まで</div><div class="delta" id="left">4:00</div></div>
+  <div><div class="lab">原稿の合計（目安）</div><div class="delta" id="total">—</div></div>
   <div id="bar" title="緑: 経過　白線: 予定"><i></i><b></b></div>
 </header>
 <main>
@@ -68,7 +74,7 @@
   <button data-a="prev">← 戻る</button><button data-a="next">次へ →</button>
   <button data-a="start">タイマー開始 (S)</button><button data-a="reset">タイマーを 0 に (T)</button>
   <button data-a="replay">映像を最初から (R)</button><button data-a="black">黒画面 (B)</button>
-  <button data-a="swap">表示を入れ替え (X)</button><button data-a="full">この画面を全画面 (F)</button>
+  <button id="editBtn">原稿を編集 (E)</button><button data-a="swap">表示を入れ替え (X)</button><button data-a="full">この画面を全画面 (F)</button>
   <button id="openDeck2">スライドを外のモニターに出す</button>
   
   <span id="warn"></span>
@@ -87,6 +93,7 @@
   </div>
 </div>
 <script src="data.js"></script>
+<script src="edits.js"></script>
 <script>
 const D = window.DECK, LIMIT = window.LIMIT, MAIN = D.filter((x) => !x.backup).length;
 let st = null, skew = 0;
@@ -95,14 +102,42 @@ const fmt = (s) => { const neg = s < 0; s = Math.abs(Math.round(s)); return (neg
 let shown = -1;
 function renderSlide() {
   const s = D[st.i], n = D[st.i + 1];
-  $('title').innerHTML = s.backup ? `<b>予備　${s.title}</b>　時間外（質疑用）` : `<b>${st.i + 1} / ${MAIN}　${s.title}</b>　目安 ${s.target} 秒（ここまでで ${fmt(s.cumEnd)}）` + (s.steps ? '　<span style="color:#ffd666">→ で次のまとまりへ</span>' : '');
-  $('lines').innerHTML = s.lines.map((l, k) => `<div class="line" data-k="${k}">${l}</div>`).join('');
+  updateTitle();
+  const box = $('lines'); box.innerHTML = '';
+  if (EDIT) {
+    const bar = document.createElement('div'); bar.className = 'edbar';
+    bar.innerHTML = '<span>行を押して書き換え。このブラウザに自動で保存されます。</span><button id="exp">書き出し</button><button id="rst">すべて元に戻す</button>';
+    box.appendChild(bar);
+    bar.querySelector('#exp').addEventListener('click', () => ScriptEdits.exportJson());
+    bar.querySelector('#rst').addEventListener('click', () => { if (confirm('編集した原稿をすべて元に戻しますか？')) { ScriptEdits.reset(); shown = -1; tick(); updateTotal(); } });
+  }
+  s.lines.forEach((l, k) => {
+    const d = document.createElement('div'); d.className = 'line'; d.dataset.k = k; d.textContent = l;
+    if (EDIT && !s.backup) {
+      d.contentEditable = 'true'; d.spellcheck = false;
+      d.addEventListener('blur', () => { const t = d.textContent.replace(/\s*\n\s*/g, '').trim(); if (t && t !== D[st.i].lines[k]) { ScriptEdits.setLine(s.id, k, t); updateTitle(); updateTotal(); } });
+      d.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); d.blur(); } if (e.key === 'Escape') { d.textContent = D[st.i].lines[k]; d.blur(); } });
+    }
+    box.appendChild(d);
+  });
   if (s.links) $('lines').innerHTML += '<div class="jumps">' + s.links.map((L, k) => `<button data-k="${k}">${L.label}</button>`).join('') + '</div>';
   document.querySelectorAll('.jumps button').forEach((b) => b.addEventListener('click', () => post({ type: 'jump', k: +b.dataset.k })));
   $('curCap').innerHTML = '<b>いま</b>　' + s.title;
 
   shown = st.i;
 }
+let EDIT = false;
+function updateTitle() {
+  const s = D[st.i];
+  $('title').innerHTML = s.backup ? `<b>予備　${s.title}</b>　時間外（質疑用）` : `<b>${st.i + 1} / ${MAIN}　${s.title}</b>　目安 ${s.target} 秒（ここまでで ${fmt(s.cumEnd)}）` + (s.steps ? '　<span style="color:#ffd666">→ で次のまとまりへ</span>' : '');
+}
+function updateTotal() {
+  const t = ScriptEdits.total();
+  $('total').textContent = fmt(t) + '（' + ScriptEdits.chars().toLocaleString() + '字）' + (ScriptEdits.edited() ? ' 編集あり' : '');
+  $('total').className = 'delta ' + (t > LIMIT ? 'bad' : t > LIMIT - 10 ? 'warn' : 'ok');
+}
+function toggleEdit() { EDIT = !EDIT; $('editBtn').classList.toggle('on', EDIT); $('editBtn').textContent = EDIT ? '編集を終える (E)' : '原稿を編集 (E)'; shown = -1; tick(); }
+window.onScriptEdited = () => { if (!document.activeElement || !document.activeElement.isContentEditable) { shown = -1; tick(); } updateTotal(); };
 function tick() {
   if (!st) return;
   if (shown !== st.i) renderSlide();
@@ -175,12 +210,14 @@ setTimeout(() => { if (!st && !EMB) $('setup').hidden = false; }, 1200);
 const KEYS = { ArrowRight:'next', ' ':'next', PageDown:'next', Enter:'next', ArrowDown:'next',
   ArrowLeft:'prev', PageUp:'prev', ArrowUp:'prev', Backspace:'prev', Home:'first',
   s:'start', t:'reset', r:'replay', b:'black', '.':'black', x:'swap', f:'full' };
-addEventListener('keydown', (e) => { if (e.metaKey || e.ctrlKey || e.altKey) return; const a = KEYS[e.key] || KEYS[e.key.toLowerCase()]; if (a) { e.preventDefault(); act(a); } });
+addEventListener('keydown', (e) => { if (e.metaKey || e.ctrlKey || e.altKey) return; if (e.target && e.target.isContentEditable) return; if (e.key === 'e' || e.key === 'E') { e.preventDefault(); toggleEdit(); return; } const a = KEYS[e.key] || KEYS[e.key.toLowerCase()]; if (a) { e.preventDefault(); act(a); } });
 document.querySelectorAll('footer button[data-a]').forEach((b) => b.addEventListener('click', () => act(b.dataset.a)));
 if (EMB) window.parent.postMessage({ type: 'hello' }, '*');
 else { if (window.opener) window.opener.postMessage({ type: 'hello' }, '*'); if (bc) bc.postMessage({ type: 'hello' }); }
 setInterval(tick, 1000);
 $('warn').textContent = '';
+$('editBtn').addEventListener('click', toggleEdit);
+updateTotal();
 </script>
 </body>
 </html>

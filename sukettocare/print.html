@@ -30,6 +30,7 @@
 <div id="list"></div>
 </main>
 <script src="data.js"></script>
+<script src="edits.js"></script>
 <script>
 const MAINS = window.DECK.filter((s) => !s.backup); const CH = MAINS.reduce((a, s) => a + s.lines.join('').length, 0);
 const fmt = (s) => Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0');

@@ -89,17 +89,19 @@ window.DECK=[
    "だから私たちは、「助っ人ケア」を作りました。欠員対応を、三つの手順で自動にします。",
    "ひとつめ。職員が、アプリで欠員を連絡。",
    "ふたつめ。AIが代わりを探して、順に打診。",
-   "みっつめ。変更が最小になるように、シフトを組み直す。"
+   "みっつめ。変更が最小になるように、シフトを組み直す。",
+   "リーダーが悩み続ける必要は、ありません。"
   ],
-  "target": 19.8,
+  "target": 23.5,
   "clip": 23.39,
   "lineStart": [
    0.0,
    7.6,
    11.1,
-   15.0
+   15.0,
+   19.8
   ],
-  "cumEnd": 63.2,
+  "cumEnd": 66.9,
   "kind": "html",
   "src": "slides/ov.html",
   "steps": true
@@ -118,7 +120,7 @@ window.DECK=[
    6.8
   ],
   "rate": 0.93,
-  "cumEnd": 71.4
+  "cumEnd": 75.1
  },
  {
   "id": "d03",
@@ -134,7 +136,7 @@ window.DECK=[
    7.2
   ],
   "rate": 1.17,
-  "cumEnd": 81.5
+  "cumEnd": 85.2
  },
  {
   "id": "d04",
@@ -154,7 +156,7 @@ window.DECK=[
    17.2
   ],
   "rate": 1.33,
-  "cumEnd": 101.5
+  "cumEnd": 105.2
  },
  {
   "id": "d05",
@@ -172,7 +174,7 @@ window.DECK=[
    11.7
   ],
   "rate": 1.54,
-  "cumEnd": 117.6
+  "cumEnd": 121.3
  },
  {
   "id": "make",
@@ -188,7 +190,7 @@ window.DECK=[
    4.2
   ],
   "rate": 0.8,
-  "cumEnd": 126.8
+  "cumEnd": 130.5
  },
  {
   "id": "sv1",
@@ -207,7 +209,7 @@ window.DECK=[
    9.2,
    14.6
   ],
-  "cumEnd": 145.1,
+  "cumEnd": 148.8,
   "kind": "html",
   "src": "slides/sv1.html",
   "steps": true
@@ -227,7 +229,7 @@ window.DECK=[
    1.4,
    5.4
   ],
-  "cumEnd": 154.1,
+  "cumEnd": 157.8,
   "kind": "html",
   "src": "slides/sv3.html",
   "steps": true
@@ -247,7 +249,7 @@ window.DECK=[
    2.3,
    6.4
   ],
-  "cumEnd": 164.6,
+  "cumEnd": 168.3,
   "kind": "html",
   "src": "slides/sv4.html",
   "steps": true
@@ -271,7 +273,7 @@ window.DECK=[
    33.4,
    42.8
   ],
-  "cumEnd": 212.0,
+  "cumEnd": 215.7,
   "kind": "html",
   "src": "slides/ar-d.html",
   "steps": true
@@ -288,7 +290,7 @@ window.DECK=[
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 218.0
+  "cumEnd": 221.7
  },
  {
   "id": "g5",
@@ -302,7 +304,7 @@ window.DECK=[
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 221.5
+  "cumEnd": 225.2
  },
  {
   "id": "cl",
@@ -318,7 +320,7 @@ window.DECK=[
    9.8
   ],
   "rate": 1.0,
-  "cumEnd": 234.8
+  "cumEnd": 238.5
  },
  {
   "id": "qa",
@@ -362,7 +364,7 @@ window.DECK=[
    }
   ],
   "target": 0,
-  "cumEnd": 234.8,
+  "cumEnd": 238.5,
   "lineStart": [
    0
   ]
@@ -377,7 +379,7 @@ window.DECK=[
    "作る（Terraform・GitHub Actions）→ 出す（Cloud Build・Artifact Registry・プレビュー）→ 見守る（Cloud Monitoring・Cloud Logging・AI の品質）。守るは IAM の最小権限。"
   ],
   "target": 0,
-  "cumEnd": 234.8,
+  "cumEnd": 238.5,
   "lineStart": [
    0
   ]
@@ -392,7 +394,7 @@ window.DECK=[
    "（クリックした所を拡大、もう一度クリックで戻る）"
   ],
   "target": 0,
-  "cumEnd": 234.8,
+  "cumEnd": 238.5,
   "lineStart": [
    0
   ]
