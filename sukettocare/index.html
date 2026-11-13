@@ -39,7 +39,7 @@
 const D = window.DECK, stage = document.getElementById('stage');
 const vids = D.map((s) => {
   const v = document.createElement('video');
-  v.src = 'media/' + s.id + '.mp4?v=2'; v.poster = 'media/' + s.id + '.jpg';
+  v.src = 'media/' + s.id + '.mp4?v=pres1114'; v.poster = 'media/' + s.id + '.jpg';
   v.muted = true; v.playsInline = true; v.preload = 'auto';
   stage.insertBefore(v, document.getElementById('black')); return v;
 });
