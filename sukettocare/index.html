@@ -16,6 +16,15 @@
     opacity:0; transition:opacity .25s ease; background:#F7F5EE; pointer-events:none; }
   #stage .sl.on { opacity:1; }
   #stage .zoomwrap { overflow:hidden; background:#fff; }
+  #stage .hub { background:#F7F5EE; color:#202124; padding:80px 60px; }
+  #stage .hub.on { pointer-events:auto; cursor:default; }
+  #stage .hh { font-size:28px; color:#5F6368; margin-bottom:26px; }
+  #stage .hh span { display:inline-block; font-size:64px; font-weight:900; color:#202124; margin-right:28px; vertical-align:middle; }
+  #stage .hg { display:grid; grid-template-columns:repeat(4, 1fr); gap:56px 30px; margin-top:40px; }
+  #stage .hc { border:4px solid #DADCE0; border-radius:18px; background:#fff; padding:10px; cursor:pointer; font:inherit; text-align:left; transition:border-color .2s, transform .2s; }
+  #stage .hc:hover { border-color:#1A73E8; transform:translateY(-3px); }
+  #stage .hc img { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; }
+  #stage .hc span { display:block; font-size:24px; font-weight:700; margin:10px 4px 4px; color:#202124; }
   #stage .zoomwrap img { position:absolute; left:0; top:0; width:100%; height:100%; object-fit:contain;
     transition:transform .35s ease; transform-origin:50% 50%; }
   #stage .zoomwrap.on { pointer-events:auto; cursor:zoom-in; }
@@ -84,6 +93,11 @@ const els = D.map((s) => {
   let el;
   if (kind(s) === 'html') {
     el = document.createElement('iframe'); el.src = s.src; el.setAttribute('scrolling', 'no'); el.tabIndex = -1;
+  } else if (kind(s) === 'hub') {
+    el = document.createElement('div'); el.className = 'hub';
+    el.innerHTML = `<div class="hh"><span>質疑対応</span>画像を押すとそのページへ。そこで ← を押すとここに戻ります。</div><div class="hg">` +
+      s.links.map((L, k) => `<button class="hc" data-k="${k}"><img src="${L.img}" alt=""><span>${L.label}</span></button>`).join('') + '</div>';
+    el.querySelectorAll('.hc').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); jump(+b.dataset.k); }));
   } else if (kind(s) === 'image') {
     el = document.createElement('div'); el.className = 'zoomwrap';
     el.innerHTML = `<span class="tag">予備</span><img src="${s.src}" alt="${s.title}">`;
@@ -96,7 +110,14 @@ const els = D.map((s) => {
   el.classList.add('sl'); stage.insertBefore(el, document.getElementById('black')); return el;
 });
 const vids = els; // 互換のため
-let i = 0, step = 0, startedAt = null, slideAt = null, presenter = null;
+let i = 0, step = 0, startedAt = null, slideAt = null, presenter = null, jumpFrom = null;
+const idx = (id) => D.findIndex((x) => x.id === id);
+// 質疑スライドから飛ぶ: 段階表示のページは最後（または指定）の段で、映像は最後の場面で止めて見せる
+function jump(k) {
+  const hub = i, L = D[hub].links[k], n = idx(L.id); if (n < 0) return;
+  show(n, false, true, L.step, true); jumpFrom = hub;
+  if (kind(D[n]) === 'video') { const v = els[n]; v.pause(); const end = () => { if (isFinite(v.duration)) v.currentTime = Math.max(0, v.duration - 0.3); }; if (v.readyState >= 1) end(); else v.addEventListener('loadedmetadata', end, { once: true }); }
+}
 function toggleZoom(el, e) {
   const img = el.querySelector('img');
   if (el.classList.toggle('zoomed')) {
@@ -126,14 +147,15 @@ function play(n) {
   v.playbackRate = D[n].rate;
 }
 const MAIN = D.filter((s) => !s.backup).length;
-function show(n, fromUser, atEnd) {
+function show(n, fromUser, atEnd, stepAt, noPlay) {
+  jumpFrom = null;
   n = Math.max(0, Math.min(D.length - 1, n));
   if (fromUser && startedAt === null && n > i) startTimer(false);
   els.forEach((v, k) => { if (k !== n) { v.classList.remove('on'); if (v.pause) v.pause(); } });
   const zw = els[n]; if (zw.classList.contains('zoomed')) toggleZoom(zw, null);
-  i = n; step = (atEnd && D[n].steps) ? D[n].lines.length - 1 : 0;
-  els[n].classList.add('on'); play(n); slideAt = Date.now();
-  document.getElementById('count').textContent = D[n].backup ? '予備' : (n + 1) + ' / ' + MAIN;
+  i = n; step = (atEnd && D[n].steps) ? (stepAt != null ? stepAt : D[n].lines.length - 1) : 0;
+  els[n].classList.add('on'); if (!noPlay || kind(D[n]) !== 'video') play(n); slideAt = Date.now();
+  document.getElementById('count').textContent = D[n].backup ? (kind(D[n]) === 'hub' ? '質疑' : '予備') : (n + 1) + ' / ' + MAIN;
   try { history.replaceState(null, '', '#' + (n + 1)); } catch (e) {}
   send();
 }
@@ -156,6 +178,7 @@ function act(k) {
       else show(i + 1, true);
       break;
     case 'prev':
+      if (jumpFrom !== null) { show(jumpFrom, false); break; }
       if (D[i].steps && step > 0) setStep(step - 1);
       else show(i - 1, true, true);
       break;
@@ -189,6 +212,7 @@ function onMsg(m, source) {
     lastPing = Date.now(); markConn(); if (m.type === 'hello') send();
   }
   if (m.type === 'act') act(m.act);
+  if (m.type === 'jump' && kind(D[i]) === 'hub') jump(m.k);
 }
 function markConn() {
   const c = document.getElementById('conn'); if (!c) return;

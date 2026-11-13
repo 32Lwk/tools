@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="ar-common.css">
 <style>
   .eb { top:18px; } .tt { top:70px; font-size:66px; }
-  .gc { position:absolute; left:285px; top:205px; width:1610px; height:740px; border:4px solid var(--gblue); border-radius:26px; background:#fff; }
+  .gc { position:absolute; left:285px; top:205px; width:1610px; height:632px; border:4px solid var(--gblue); border-radius:26px; background:#fff; }
   .gcl { position:absolute; left:315px; top:182px; background:var(--bg); padding:0 14px; font-size:30px; font-weight:700; color:var(--gblue); }
   .gcl span { font-size:22px; color:var(--blue); background:#E8F0FE; border-radius:999px; padding:2px 14px; margin-left:10px; vertical-align:middle; }
   .layer { border-width:4px; border-radius:22px; background:color-mix(in srgb, var(--c) 7%, #fff); border-color:color-mix(in srgb, var(--c) 40%, #fff); }
@@ -28,7 +28,7 @@
   .ops .ln { position:static; flex:none; margin-right:8px; }
   .chip { background:#fff; border:3px solid #DADCE0; border-radius:14px; padding:6px 14px; line-height:1.2; }
   .chip b { display:block; font-size:21px; } .chip small { display:block; font-size:16px; color:var(--mute); font-weight:500; }
-  .msg { top:962px; font-size:40px; }
+  .msg { top:880px; font-size:46px; }
   .dt img { width:46px; height:46px; } .dt b { font-size:22px; }
 </style>
 </head>
@@ -75,16 +75,6 @@
 <div class="svc tile dt" data-s="bq" style="--c:#00796B; left:1302px; top:596px; width:175px; height:150px"><div class="num">4</div><img src="icons/bq.svg" alt=""><b>BigQuery</b><small>記録を貯める<br>欠員を予測（ML）</small></div>
 <div class="svc tile dt" data-s="pipe" style="--c:#00796B; left:1491px; top:596px; width:175px; height:150px"><div class="num">4</div><img src="icons/vertex.svg" alt=""><b>Vertex AI Pipelines</b><small>施設ごとに学習</small></div>
 <div class="svc tile dt" data-s="rules" style="--c:#00796B; left:1680px; top:596px; width:175px; height:150px"><img src="icons/bq.svg" alt=""><b>ルール候補</b><small>手修正のくり返し<br>から提案</small></div>
-
-<!-- 運用・監視 -->
-<div class="layer ops" style="--c:#5F6368; left:305px; top:828px; width:1570px; height:100px" data-has="ops">
-  <div class="ln">運用・監視</div>
-  <div class="chip"><b>Cloud Monitoring</b><small>稼働目標・アラート</small></div>
-  <div class="chip"><b>Cloud Logging</b><small>ログとログ指標</small></div>
-  <div class="chip"><b>Artifact Registry</b><small>コンテナを保管</small></div>
-  <div class="chip"><b>Cloud Storage</b><small>学習済みモデル</small></div>
-  <div class="chip"><b>Terraform</b><small>インフラをコードで管理</small></div>
-</div>
 
 <svg class="l">
   <path class="k" d="M278 410 H306"/><polygon class="k" points="264,410 282,399 282,421"/><polygon class="k" points="321,410 303,399 303,421"/>

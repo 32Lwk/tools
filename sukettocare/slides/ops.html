@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>運用・監視</title>
+<link rel="stylesheet" href="ar-common.css">
+<style>
+  .eb { background:#5F6368; } .tt { font-size:76px; }
+  .col { position:absolute; top:250px; width:560px; height:600px; border:4px solid color-mix(in srgb, var(--c) 40%, #fff);
+    background:color-mix(in srgb, var(--c) 7%, #fff); border-radius:24px; padding:22px 24px; }
+  .col h2 { font-size:38px; font-weight:900; color:color-mix(in srgb, var(--c) 80%, #000); margin-bottom:4px; }
+  .col h2 small { font-size:22px; color:var(--mute); font-weight:700; margin-left:10px; }
+  .it { background:#fff; border:3px solid color-mix(in srgb, var(--c) 30%, #fff); border-radius:18px; padding:14px 18px; margin-top:16px; display:flex; gap:16px; align-items:flex-start; }
+  .it img { width:56px; height:56px; flex:none; }
+  .it b { display:block; font-size:28px; line-height:1.2; }
+  .it p { font-size:21px; line-height:1.45; color:var(--sub); margin-top:4px; }
+  .arrow { position:absolute; top:520px; font-size:56px; color:#3C4043; font-weight:900; }
+  .band { position:absolute; left:90px; top:880px; width:1740px; height:110px; border-radius:22px; background:#F1F3F4; border:4px solid #DADCE0;
+    display:flex; align-items:center; gap:28px; padding:0 28px; }
+  .band h3 { font-size:32px; font-weight:900; color:#3C4043; flex:none; }
+  .band div { font-size:23px; line-height:1.4; color:var(--sub); }
+  .band b { color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="eb">予備</div>
+<div class="tt">運用・監視</div>
+<img class="badge" src="badge.png" alt="">
+
+<div class="col" style="--c:#1A73E8; left:90px">
+  <h2>作る<small>コードで管理</small></h2>
+  <div class="it"><img src="icons/iam.svg" alt=""><div><b>Terraform</b><p>インフラをコードで定義・適用<br>状態は Cloud Storage に保存</p></div></div>
+  <div class="it"><img src="icons/web.svg" alt=""><div><b>GitHub Actions</b><p>テスト → ビルド → デプロイ<br>WIF 連携で鍵ファイルなし</p></div></div>
+</div>
+
+
+<div class="col" style="--c:#188038; left:680px">
+  <h2>出す<small>確認してから公開</small></h2>
+  <div class="it"><img src="icons/run.svg" alt=""><div><b>Cloud Build</b><p>コンテナを作る</p></div></div>
+  <div class="it"><img src="icons/db.svg" alt=""><div><b>Artifact Registry</b><p>コンテナを保管</p></div></div>
+  <div class="it"><img src="icons/web.svg" alt=""><div><b>Cloud Run・Firebase Hosting</b><p>プレビューで確認してから公開</p></div></div>
+</div>
+<svg style="position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none"><polygon points="676,550 652,534 652,566" fill="#3C4043"/><polygon points="1266,550 1242,534 1242,566" fill="#3C4043"/></svg>
+
+<div class="col" style="--c:#E37400; left:1270px">
+  <h2>見守る<small>止まる前に気づく</small></h2>
+  <div class="it"><img src="icons/bq.svg" alt=""><div><b>Cloud Monitoring</b><p>稼働確認・稼働目標（可用性 99%）<br>アラート 10 種・ダッシュボード</p></div></div>
+  <div class="it"><img src="icons/tasks.svg" alt=""><div><b>Cloud Logging</b><p>ログ指標: ソルバーの混雑・AI の拒否・<br>個人情報マスクの失敗 など</p></div></div>
+  <div class="it"><img src="icons/vertex.svg" alt=""><div><b>AI の品質</b><p>別の Gemini が回答を採点して記録</p></div></div>
+</div>
+
+<div class="band">
+  <h3>守る</h3>
+  <div><b>IAM</b>　サービスごとに専用のサービスアカウント（最小権限）　／　<b>Cloud Storage</b>　学習済みモデルと成果物を保管　／　データは東京リージョン</div>
+</div>
+</body>
+</html>

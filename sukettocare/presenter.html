@@ -35,6 +35,9 @@
   footer { padding:10px 24px; border-top:1px solid var(--line); font-size:13px; color:var(--sub); display:flex; gap:18px; flex-wrap:wrap; align-items:center; }
   footer button { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font:inherit; font-size:14px; cursor:pointer; }
   #warn { color:var(--bad); }
+  .jumps { display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px; }
+  .jumps button { font:inherit; font-size:20px; text-align:left; padding:12px 14px; border-radius:10px; border:1px solid var(--line); background:var(--panel); color:var(--ink); cursor:pointer; }
+  .jumps button:hover { border-color:#8ab4f8; }
   #setup { position:fixed; inset:0; background:rgba(10,12,16,.88); display:flex; align-items:center; justify-content:center; padding:16px; z-index:5; }
   #setup[hidden] { display:none; }
   #setup .box { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px 32px; max-width:640px; width:100%; line-height:1.7; }
@@ -93,6 +96,8 @@ function renderSlide() {
   const s = D[st.i], n = D[st.i + 1];
   $('title').innerHTML = s.backup ? `<b>予備　${s.title}</b>　時間外（質疑用）` : `<b>${st.i + 1} / ${MAIN}　${s.title}</b>　目安 ${s.target} 秒（ここまでで ${fmt(s.cumEnd)}）` + (s.steps ? '　<span style="color:#ffd666">→ で次のまとまりへ</span>' : '');
   $('lines').innerHTML = s.lines.map((l, k) => `<div class="line" data-k="${k}">${l}</div>`).join('');
+  if (s.links) $('lines').innerHTML += '<div class="jumps">' + s.links.map((L, k) => `<button data-k="${k}">${L.label}</button>`).join('') + '</div>';
+  document.querySelectorAll('.jumps button').forEach((b) => b.addEventListener('click', () => post({ type: 'jump', k: +b.dataset.k })));
   $('curImg').src = 'media/' + s.id + '.jpg';
   $('curCap').innerHTML = '<b>いま</b>　' + s.title;
   if (n) { $('nextImg').src = 'media/' + n.id + '.jpg'; $('nextImg').style.visibility = 'visible';
@@ -133,8 +138,8 @@ function onState(m) { m = m || {}; if (m.type === 'state') { st = m; skew = m.no
 addEventListener('message', (e) => onState(e.data));
 let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {}
 let deckWin = null;
-function act(a) {
-  const m = { type: 'act', act: a };
+function act(a) { post({ type: 'act', act: a }); }
+function post(m) {
   if (deckWin && !deckWin.closed) deckWin.postMessage(m, '*');
   else if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*');
   else if (bc) bc.postMessage(m);

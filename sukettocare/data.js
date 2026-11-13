@@ -99,8 +99,10 @@ window.DECK=[
    11.1,
    15.0
   ],
-  "rate": 1.18,
-  "cumEnd": 63.2
+  "cumEnd": 63.2,
+  "kind": "html",
+  "src": "slides/ov.html",
+  "steps": true
  },
  {
   "id": "d02",
@@ -319,13 +321,85 @@ window.DECK=[
   "cumEnd": 234.8
  },
  {
+  "id": "qa",
+  "title": "質疑対応",
+  "kind": "hub",
+  "backup": true,
+  "lines": [
+   "質問に合わせて画像を押す（発表者画面のボタンでも飛べる）。飛んだ先で ← を押すと、ここに戻る。"
+  ],
+  "links": [
+   {
+    "id": "pz",
+    "step": 3,
+    "img": "png/05_シフトは解けないパズル.png",
+    "label": "5. シフトは、解けないパズル"
+   },
+   {
+    "id": "ov",
+    "img": "png/06_連絡から組み直しまで自動で.png",
+    "label": "6. 連絡から組み直しまで"
+   },
+   {
+    "id": "d04",
+    "img": "png/09_AIが順に打診.png",
+    "label": "9. AI が順に打診"
+   },
+   {
+    "id": "sv1",
+    "img": "png/12_条件を満たすシフトを自動で.png",
+    "label": "12. 条件を満たすシフトを、自動で"
+   },
+   {
+    "id": "sv4",
+    "img": "png/14_足りない時間を埋める.png",
+    "label": "14. 足りない時間を埋める"
+   },
+   {
+    "id": "ar",
+    "img": "png/15_GoogleCloudで動く仕組み.png",
+    "label": "15. Google Cloud で動く仕組み"
+   },
+   {
+    "id": "ops",
+    "img": "png/20_運用と監視.png",
+    "label": "20. 運用・監視"
+   },
+   {
+    "id": "arch-full",
+    "img": "media/arch-full.jpg",
+    "label": "21. 詳しい構成図"
+   }
+  ],
+  "target": 0,
+  "cumEnd": 234.8,
+  "lineStart": [
+   0
+  ]
+ },
+ {
+  "id": "ops",
+  "title": "予備: 運用・監視",
+  "kind": "html",
+  "src": "slides/ops.html",
+  "backup": true,
+  "lines": [
+   "作る（Terraform・GitHub Actions）→ 出す（Cloud Build・Artifact Registry・プレビュー）→ 見守る（Cloud Monitoring・Cloud Logging・AI の品質）。守るは IAM の最小権限。"
+  ],
+  "target": 0,
+  "cumEnd": 234.8,
+  "lineStart": [
+   0
+  ]
+ },
+ {
   "id": "arch-full",
   "title": "予備: 詳しい構成図",
   "kind": "image",
   "src": "media/arch-full.png",
   "backup": true,
   "lines": [
-   "（質疑で構成を聞かれたときだけ出す。クリックした所を拡大、もう一度クリックで戻る）"
+   "（クリックした所を拡大、もう一度クリックで戻る）"
   ],
   "target": 0,
   "cumEnd": 234.8,
