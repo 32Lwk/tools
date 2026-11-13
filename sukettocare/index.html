@@ -31,6 +31,10 @@
   #start button { display:block; width:100%; font:inherit; font-size:17px; padding:14px; border-radius:10px; cursor:pointer;
     border:1px solid #3a404a; background:#262a31; color:#fff; margin-top:6px; }
   #start button.primary { background:#1a73e8; border-color:#1a73e8; font-weight:700; }
+  #start a { color:#8ab4f8; }
+  #start .conn { font-size:15px; font-weight:700; color:#ffb347; margin-bottom:4px; }
+  #start .conn.ok { color:#4cd28a; }
+  #start .ver { font-size:12px; color:var(--muted); margin-top:14px; text-align:right; }
   #count { position:fixed; right:16px; bottom:12px; z-index:10; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
 </style>
 </head>
@@ -50,6 +54,7 @@
     <button id="goPresenter" class="primary">発表者モードで始める（2画面）</button>
     <p class="sub">手元の PC に原稿と時間、プロジェクターにスライドを出します。<br>先に会場の画面を「拡張ディスプレイ」でつないでおいてください（ミラーリングだと原稿が客席に見えます）。</p>
     <button id="goSlides">スライドだけで始める</button>
+    <p class="ver">版 2026-11-14c</p>
   </div>
   <div class="box" id="startB" hidden>
     <h1>このウィンドウをプロジェクターへ</h1>
@@ -58,6 +63,8 @@
       <li>この<b>スライドのウィンドウ</b>を、プロジェクターの画面へドラッグします。</li>
       <li>下のボタンを押すと、その画面で全画面になります。</li>
     </ol>
+    <p class="conn" id="conn">発表者画面: まだつながっていません</p>
+    <p class="sub" id="fallback">発表者画面が開かないときは <a href="presenter.html" target="_blank" id="openLink">ここを押して新しいタブで開く</a>（ポップアップが止められていても開けます。開いたタブは別のウィンドウに切り離して手元に置いてください）。</p>
     <button id="goFull" class="primary">ここで全画面にして始める</button>
     <p class="sub">操作は発表者画面からもできます（→ 次へ、← 戻る、S タイマー開始）。</p>
   </div>
@@ -115,9 +122,12 @@ function act(k) {
     case 'replay': play(i); slideAt = Date.now(); send(); break;
     case 'black': document.getElementById('black').classList.toggle('on'); break;
     case 'full': if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); else document.exitFullscreen(); break;
-    case 'presenter':
-      presenter = window.open('presenter.html', 'sukettocare-presenter', 'width=1280,height=800');
-      setTimeout(send, 400); break;
+    case 'presenter': {
+      let w = null;
+      try { w = window.open('presenter.html', 'sukettocare-presenter', 'width=1280,height=800'); } catch (e) {}
+      if (w) presenter = w;
+      setTimeout(send, 400); return !!w;
+    }
     case 'help': document.getElementById('help').classList.toggle('hide'); break;
   }
 }
@@ -128,11 +138,22 @@ function onKey(key) { const a = KEYS[key] || KEYS[key.toLowerCase()]; if (a) { a
 addEventListener('keydown', (e) => { if (e.metaKey || e.ctrlKey || e.altKey) return; if (onKey(e.key)) e.preventDefault(); });
 stage.addEventListener('click', () => act('next'));
 stage.addEventListener('contextmenu', (e) => { e.preventDefault(); act('prev'); });
+let lastPing = 0;
 function onMsg(m, source) {
   m = m || {};
-  if (m.type === 'hello') { if (source) presenter = source; send(); }
+  if (m.type === 'hello' || m.type === 'ping') {
+    if (source && m.type === 'hello') presenter = source;
+    lastPing = Date.now(); markConn(); if (m.type === 'hello') send();
+  }
   if (m.type === 'act') act(m.act);
 }
+function markConn() {
+  const c = document.getElementById('conn'); if (!c) return;
+  const ok = Date.now() - lastPing < 4000;
+  c.textContent = ok ? '発表者画面: つながりました ✓' : '発表者画面: まだつながっていません';
+  c.classList.toggle('ok', ok);
+}
+setInterval(markConn, 1000);
 addEventListener('message', (e) => onMsg(e.data, e.source));
 const h = parseInt(location.hash.slice(1), 10);
 show(Number.isFinite(h) ? h - 1 : 0, false);
@@ -152,18 +173,29 @@ function fullscreenHere() {
   const p = opt ? el.requestFullscreen(opt) : el.requestFullscreen();
   if (p) p.catch(() => {});
 }
-const fromPresenter = new URLSearchParams(location.search).has('from') && window.opener;
+const fromPresenter = new URLSearchParams(location.search).has('from');
+function stepB(note) {
+  document.getElementById('startA').hidden = true; document.getElementById('startB').hidden = false;
+  if (note) document.querySelector('#startB li').textContent = note;
+}
 if (fromPresenter) {
-  presenter = window.opener; document.getElementById('startA').hidden = true; document.getElementById('startB').hidden = false;
-  document.querySelector('#startB li').textContent = '発表者画面は手元の画面に置いたままにします。';
+  if (window.opener) presenter = window.opener;
+  stepB('発表者画面は手元の画面に置いたままにします。');
 } else if (location.hash && location.hash !== '#1') {
   hideStart();
 }
-document.getElementById('goPresenter').addEventListener('click', () => {
+function goPresenter() {
   if (window.getScreenDetails) window.getScreenDetails().then((s) => { screens = s; }).catch(() => {});
-  act('presenter');
-  document.getElementById('startA').hidden = true; document.getElementById('startB').hidden = false;
-});
+  const opened = act('presenter');
+  if (opened) stepB();
+  else {
+    // ポップアップが止められたときは、ふつうのリンクで新しいタブに開く（タブ同士は BroadcastChannel でつながる）
+    document.getElementById('openLink').click();
+    stepB('発表者画面を新しいタブで開きました（ポップアップが止められていたため）。そのタブを別のウィンドウに切り離して、手元の画面に置いてください。');
+  }
+}
+document.getElementById('goPresenter').addEventListener('click', goPresenter);
+document.getElementById('openLink').addEventListener('click', (e) => e.stopPropagation());
 document.getElementById('goSlides').addEventListener('click', () => { hideStart(); });
 document.getElementById('goFull').addEventListener('click', () => { fullscreenHere(); hideStart(); });
 startEl.addEventListener('click', (e) => e.stopPropagation());
@@ -173,6 +205,7 @@ addEventListener('keydown', (e) => {
   e.stopImmediatePropagation();
   if (e.key === 'Tab' || e.key === 'Enter' || e.key === ' ') return; // ボタンはキーボードでも押せる
   if (e.key === 'f' || e.key === 'F') { fullscreenHere(); hideStart(); }
+  else if ((e.key === 'p' || e.key === 'P') && !document.getElementById('startA').hidden) goPresenter();
   else if (e.key === 'Escape') hideStart();
   e.preventDefault();
 }, true);

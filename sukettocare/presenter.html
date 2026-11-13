@@ -39,6 +39,8 @@
   #setup[hidden] { display:none; }
   #setup .box { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px 32px; max-width:640px; width:100%; line-height:1.7; }
   #setup h1 { font-size:24px; margin-bottom:14px; }
+  #setup .fb { font-size:14px; color:var(--sub); margin-top:12px; line-height:1.6; }
+  #setup a { color:#8ab4f8; }
   #setup ol { padding-left:1.3em; margin-bottom:18px; font-size:16px; }
   #setup button { width:100%; font:inherit; font-size:17px; padding:14px; border-radius:10px; cursor:pointer; border:1px solid #1a73e8; background:#1a73e8; color:#fff; font-weight:700; }
   @media (max-width: 800px) { main { grid-template-columns:1fr; } .big { font-size:40px; } .line { font-size:24px; } }
@@ -77,6 +79,7 @@
       <li>話し始めたら、ここで <b>S</b>（または最初の <b>→</b>）でタイマーが始まります。</li>
     </ol>
     <button id="openDeck" class="primary">スライドを開く（プロジェクター用）</button>
+    <p class="fb">開かないときは <a href="index.html?from=presenter" target="_blank" id="deckLink">ここを押して新しいタブで開く</a>。すでにスライドを別のタブで開いているなら、そのままで自動でつながります。</p>
   </div>
 </div>
 <script src="data.js"></script>
@@ -125,7 +128,7 @@ function tick() {
 }
 setInterval(tick, 200);
 let lastState = 0;
-function onState(m) { m = m || {}; if (m.type === 'state') { st = m; skew = m.now - Date.now(); lastState = Date.now(); tick(); } }
+function onState(m) { m = m || {}; if (m.type === 'state') { st = m; skew = m.now - Date.now(); lastState = Date.now(); $('setup').hidden = true; tick(); } }
 addEventListener('message', (e) => onState(e.data));
 let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {}
 let deckWin = null;
@@ -136,9 +139,18 @@ function act(a) {
   else if (bc) bc.postMessage(m);
 }
 function openDeck() {
-  deckWin = window.open('index.html?from=presenter', 'sukettocare-deck', 'width=1280,height=760');
+  try { deckWin = window.open('index.html?from=presenter', 'sukettocare-deck', 'width=1280,height=760'); } catch (e) { deckWin = null; }
+  if (!deckWin) $('deckLink').click(); // ポップアップが止められたら新しいタブで開く
   $('setup').hidden = true;
 }
+$('deckLink').addEventListener('click', () => { $('setup').hidden = true; });
+function ping() {
+  const m = { type: 'ping' };
+  try { if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*'); } catch (e) {}
+  try { if (deckWin && !deckWin.closed) deckWin.postMessage(m, '*'); } catch (e) {}
+  if (bc) { try { bc.postMessage(m); } catch (e) {} }
+}
+setInterval(ping, 1500); ping();
 $('openDeck').addEventListener('click', openDeck);
 $('openDeck2').addEventListener('click', openDeck);
 // スライドとつながっていなければ、準備の手順を出す
