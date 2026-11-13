@@ -22,11 +22,12 @@
     font-weight:700; font-size:22px; display:flex; align-items:center; justify-content:center; }
   .promise { margin-top:12px; background:#E6F4EA; color:#137333; border-radius:12px; padding:8px 12px; font-size:24px; font-weight:900; line-height:1.3; }
   svg.l path.k { stroke:#3C4043; stroke-width:7; } svg.l polygon.k { fill:#3C4043; }
+  .rw { position:absolute; font-size:20px; font-weight:700; color:#3C4043; }
   .tile.row { flex-direction:row; justify-content:flex-start; text-align:left; gap:14px; padding:10px 16px; }
   .tile.row img { width:58px; height:58px; }
   .tile.row b { font-size:24px; } .tile.row small { font-size:19px; }
   .lane { position:absolute; font-size:18px; font-weight:700; color:#fff; background:#3C4043; border-radius:999px; padding:0 10px; z-index:3; }
-  .learn { position:absolute; left:1200px; top:888px; font-size:22px; font-weight:700; color:var(--green); }
+  .learn { position:absolute; left:1260px; top:872px; font-size:22px; font-weight:700; color:var(--green); }
 </style>
 </head>
 <body>
@@ -48,40 +49,42 @@
 
 <!-- 入口・セキュリティ -->
 <div class="layer" style="--c:#1A73E8; left:305px; top:262px; width:380px; height:676px" data-has="hosting armor alb"><div class="ln">入口・セキュリティ</div></div>
-<div class="svc tile" data-s="armor" style="--c:#D93025; left:325px; top:322px; width:158px; height:380px"><div class="num">1</div><img src="icons/iam.svg" alt=""><b>Cloud Armor</b><small>（WAF）</small><small style="margin-top:8px">攻撃を遮断<br>回数を制限</small></div>
-<div class="svc tile" data-s="alb" style="--c:#1A73E8; left:507px; top:322px; width:158px; height:380px"><div class="num">1</div><img src="icons/net.svg" alt=""><b>ロード<br>バランサ</b><small>（ALB）</small><small style="margin-top:8px">API の入口</small></div>
-<div class="svc tile" data-s="hosting" style="--c:#1A73E8; left:325px; top:728px; width:340px; height:190px"><div class="num">1</div><img src="icons/web.svg" alt=""><b>Firebase Hosting</b><small>CDN で画面を配信</small></div>
-<div class="lane" style="left:268px; top:470px">API</div>
-<div class="lane" style="left:268px; top:790px">画面</div>
+<div class="svc tile" data-s="armor" style="--c:#D93025; left:325px; top:318px; width:158px; height:290px"><div class="num">1</div><img src="icons/iam.svg" alt=""><b>Cloud Armor</b><small>（WAF）</small><small style="margin-top:8px">攻撃を遮断<br>回数を制限</small></div>
+<div class="svc tile" data-s="alb" style="--c:#1A73E8; left:507px; top:318px; width:158px; height:290px"><div class="num">1</div><img src="icons/net.svg" alt=""><b>ロード<br>バランサ</b><small>（ALB）</small><small style="margin-top:8px">API の入口</small></div>
+<div class="svc tile" data-s="hosting" style="--c:#1A73E8; left:325px; top:628px; width:340px; height:290px"><div class="num">1</div><img src="icons/web.svg" alt=""><b>Firebase Hosting</b><small>CDN で画面を配信</small></div>
+<div class="lane" style="left:270px; top:414px">API</div>
+<div class="lane" style="left:268px; top:724px">画面</div>
 
 <!-- アプリケーション -->
 <div class="layer" style="--c:#188038; left:725px; top:262px; width:420px; height:676px" data-has="run firestore"><div class="ln">アプリケーション</div></div>
-<div class="svc tile" data-s="run" style="--c:#188038; left:745px; top:320px; width:380px; height:398px"><div class="num">2</div><img src="icons/run.svg" alt="" style="width:96px;height:96px"><b style="font-size:32px">Cloud Run</b><small>最適化ソルバー<br>（OR-Tools CP-SAT）</small><div class="promise">ルールを破る案は<br>出さない</div></div>
+<div class="svc tile" data-s="run" style="--c:#188038; left:745px; top:318px; width:380px; height:362px"><div class="num">2</div><img src="icons/run.svg" alt="" style="width:96px;height:96px"><b style="font-size:32px">Cloud Run</b><small>最適化ソルバー<br>（OR-Tools CP-SAT）</small><div class="promise">ルールを破る案は<br>出さない</div></div>
 <div class="svc tile" data-s="firestore" style="--c:#188038; left:745px; top:736px; width:380px; height:182px"><div class="num">1</div><img src="icons/db.svg" alt=""><b>Firestore</b><small>職員・欠員・打診／画面を同期</small></div>
 
 <!-- AI とガードレール -->
-<div class="layer" style="--c:#8E24AA; left:1185px; top:262px; width:690px; height:330px" data-has="sdp gemini marmor"><div class="ln">AI（Vertex AI）とガードレール</div></div>
+<div class="layer" style="--c:#8E24AA; left:1185px; top:262px; width:690px; height:328px" data-has="sdp gemini marmor"><div class="ln">AI（Vertex AI）とガードレール</div></div>
 <div class="svc tile" data-s="sdp" style="--c:#8E24AA; left:1205px; top:322px; width:206px; height:250px"><div class="num">3</div><img src="icons/iam.svg" alt=""><b>Sensitive Data Protection</b><small>個人情報を伏せる</small></div>
 <div class="svc tile" data-s="gemini" style="--c:#8E24AA; left:1427px; top:322px; width:206px; height:250px"><div class="num">3</div><img src="icons/vertex.svg" alt=""><b>Gemini</b><small>言葉をルールに<br>理由を説明</small></div>
 <div class="svc tile" data-s="marmor" style="--c:#8E24AA; left:1649px; top:322px; width:206px; height:250px"><img src="icons/iam.svg" alt=""><b>Model Armor</b><small>入出力を検査</small></div>
 
 <!-- データ・学習 -->
-<div class="layer" style="--c:#00796B; left:1185px; top:612px; width:690px; height:326px" data-has="pubsub bq pipe"><div class="ln">データ・学習</div></div>
-<div class="svc tile" data-s="pubsub" style="--c:#00796B; left:1205px; top:670px; width:206px; height:200px"><div class="num">4</div><img src="icons/tasks.svg" alt=""><b>Pub/Sub</b><small>打診の結果を記録</small></div>
-<div class="svc tile" data-s="bq" style="--c:#00796B; left:1427px; top:670px; width:206px; height:200px"><div class="num">4</div><img src="icons/bq.svg" alt=""><b>BigQuery</b><small>記録を貯める</small></div>
-<div class="svc tile" data-s="pipe" style="--c:#00796B; left:1649px; top:670px; width:206px; height:200px"><div class="num">4</div><img src="icons/vertex.svg" alt=""><b>Vertex AI Pipelines</b><small>施設ごとに学習</small></div>
+<div class="layer" style="--c:#00796B; left:1185px; top:610px; width:690px; height:328px" data-has="pubsub bq pipe"><div class="ln">データ・学習</div></div>
+<div class="svc tile" data-s="pubsub" style="--c:#00796B; left:1205px; top:666px; width:206px; height:196px"><div class="num">4</div><img src="icons/tasks.svg" alt=""><b>Pub/Sub</b><small>打診の結果を記録</small></div>
+<div class="svc tile" data-s="bq" style="--c:#00796B; left:1427px; top:666px; width:206px; height:196px"><div class="num">4</div><img src="icons/bq.svg" alt=""><b>BigQuery</b><small>記録を貯める</small></div>
+<div class="svc tile" data-s="pipe" style="--c:#00796B; left:1649px; top:666px; width:206px; height:196px"><div class="num">4</div><img src="icons/vertex.svg" alt=""><b>Vertex AI Pipelines</b><small>施設ごとに学習</small></div>
 
 <svg class="l">
-  <path class="k" d="M262 505 H306"/><polygon class="k" points="322,505 302,493 302,517"/>
-  <path class="k" d="M262 825 H306"/><polygon class="k" points="322,825 302,813 302,837"/>
-  <path class="k" d="M483 505 H491"/><polygon class="k" points="505,505 489,495 489,515"/>
-  <path class="k" d="M665 505 H728"/><polygon class="k" points="744,505 724,493 724,517"/>
-  <path class="k" d="M1146 430 H1168"/><polygon class="k" points="1184,430 1164,418 1164,442"/>
-  <path class="k" d="M1146 760 H1168"/><polygon class="k" points="1184,760 1164,748 1164,772"/>
-  <path d="M1411 770 H1423"/><polygon points="1427,770 1415,763 1415,777"/>
-  <path d="M1633 770 H1645"/><polygon points="1649,770 1637,763 1637,777"/>
-  <path class="g" d="M1185 905 H1160"/><polygon class="gp" points="1146,905 1164,895 1164,915"/>
+<path class="k" d="M278 463 H308"/><polygon class="k" points="264,463 282,452 282,474"/><polygon class="k" points="322,463 304,452 304,474"/>
+<path class="k" d="M278 773 H308"/><polygon class="k" points="264,773 282,762 282,784"/><polygon class="k" points="322,773 304,762 304,784"/>
+<path class="k" d="M484 463 H490"/><polygon class="k" points="505,463 487,453 487,473"/>
+<path class="k" d="M681 463 H729"/><polygon class="k" points="667,463 685,452 685,474"/><polygon class="k" points="743,463 725,452 725,474"/>
+<path class="k" d="M1141 430 H1189"/><polygon class="k" points="1127,430 1145,419 1145,441"/><polygon class="k" points="1203,430 1185,419 1185,441"/>
+<path class="k" d="M935 696 V720"/><polygon class="k" points="935,682 924,700 946,700"/><polygon class="k" points="935,734 924,716 946,716"/>
+<path class="k" d="M1127 632 H1170"/><polygon class="k" points="1186,632 1166,620 1166,644"/>
+<path d="M1411 764 H1423"/><polygon points="1427,764 1415,757 1415,771"/>
+<path d="M1633 764 H1645"/><polygon points="1649,764 1637,757 1637,771"/>
+<path class="g" d="M1752 862 V915 H1195 V668 H1148"/><polygon class="gp" points="1129,668 1149,657 1149,679"/>
 </svg>
+<div class="rw" style="left:952px; top:694px">読み書き</div>
 <div class="learn">学習したモデルで、打診の順番を決める</div>
 
 <div class="msg">AI は<em>提案</em>　正しさは<em>ソルバー</em>　決めるのは<em>人</em></div>
