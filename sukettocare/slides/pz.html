@@ -1,0 +1,39 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+<style>
+body{background:#F7F5EE}
+.eb{position:absolute;left:90px;top:30px;font-size:28px;font-weight:700;color:#fff;border-radius:999px;padding:4px 22px;font-family:"Noto Sans JP",Inter}.tt{position:absolute;left:90px;top:88px;font-size:88px;font-weight:900;line-height:1.1;white-space:nowrap;color:#202124}
+.sub{position:absolute;left:90px;top:150px;font-size:34px;color:var(--sub)}
+#b{position:absolute;left:112px;top:190px;width:1100px;height:640px;transform:scale(1.6);transform-origin:0 0}
+#b svg{position:absolute;left:0;top:0;overflow:visible}
+.pc{opacity:0;transition:opacity .5s,transform .9s cubic-bezier(.2,.9,.25,1.1)}
+.pc.on{opacity:1;transform:none!important}
+</style></head><body>
+<div class="eb rv" data-cue="0" style="background:#8E24AA">課題</div><div class="tt rv" data-cue="0">シフトは、解けないパズル</div>
+
+<div id="b"></div>
+<script>
+const BG=true;if(BG){const st=document.createElement('style');st.textContent='body{background:url(clip3.png) center/cover!important}body:before{content:"";position:absolute;inset:0;background:rgba(20,22,26,.45);backdrop-filter:blur(6px)}.tt{color:#fff!important;text-shadow:0 2px 12px rgba(0,0,0,.5)}';document.head.appendChild(st)}const S=230,H=.30,P0=70;
+const v=[1,-1,1,-1],h=[[1,-1,1],[1,-1,1]];
+const labs=[['希望','#1A73E8'],['スキル','#188038'],[['夜勤の','公平性'],'#8E24AA'],['法律','#E37400'],['休憩','#0B8A9B'],['連勤','#D93025'],[['引き','継ぎ'],'#5F6368'],['欠員','#D93025']];
+function edge(x,y,dx,dy,nx,ny,s){ if(!s) return `L${x+dx*S},${y+dy*S}`;
+ const T=[[.40,0],[.40,.06,.30,.08,.30,.18],[.30,.30,.42,.34,.50,.34],[.58,.34,.70,.30,.70,.18],[.70,.08,.60,.06,.60,0]];
+ const m=(t,u)=>`${(x+dx*S*t+nx*S*u*s*.72).toFixed(1)},${(y+dy*S*t+ny*S*u*s*.72).toFixed(1)}`;
+ let d=`L${m(.40,0)}`; for(let i=1;i<5;i++){const a=T[i];d+=` C${m(a[0],a[1])} ${m(a[2],a[3])} ${m(a[4],a[5])}`} return d+` L${x+dx*S},${y+dy*S}`;}
+function path(r,c){const x=P0+c*S,y=P0+r*S; const top=r?-v[c]:0,right=c<3?h[r][c]:0,bot=r<1?v[c]:0,left=c?-h[r][c-1]:0;
+ return `M${x},${y} `+edge(x,y,1,0,0,-1,top)+' '+edge(x+S,y,0,1,1,0,right)+' '+edge(x+S,y+S,-1,0,0,1,bot)+' '+edge(x,y+S,0,-1,-1,0,left)+' Z';}
+const fly=[[-900,-300,-14],[-600,500,10],[900,-400,12],[1000,300,-9],[-800,200,8],[700,600,-12],[300,700,15],[0,-500,0]];
+const cues=[1,1,2,2,3,3,3,4];let html='';
+for(let i=0;i<8;i++){const r=i>>2,c=i&3,[t,col]=labs[i],miss=i==7;const cx=P0+c*S+S/2,cy=P0+r*S+S/2;
+ const tp=r?-v[c]:0,rt=c<3?h[r][c]:0,bt=r<1?v[c]:0,lf=c?-h[r][c-1]:0;
+ const dx=0,dy=0;const L=Array.isArray(t)?t:[t],fs=32,lh=40;
+ const y0=cy+dy-(L.length-1)*lh/2;
+ const txt=L.map((x,k)=>`<text x="${cx+dx}" y="${y0+k*lh}" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-weight="700" fill="${col}" font-family="Noto Sans JP">${x}</text>`).join('');
+ html+=`<svg class="pc" data-cue="${cues[i]}" width="1100" height="640" viewBox="0 0 1100 640" style="transform:translate(${fly[i][0]}px,${fly[i][1]}px) rotate(${fly[i][2]}deg);transform-origin:${cx}px ${cy}px"><path d="${path(r,c)}" fill="#fff" fill-opacity="${BG?.95:0}"/><path d="${path(r,c)}" fill="${miss?'#FCE8E6':col}" fill-opacity="${miss?1:.18}" stroke="${col}" stroke-width="${miss?6:5}" stroke-linejoin="round" ${miss?'stroke-dasharray="16 12"':''}/>${txt}</svg>`}
+document.getElementById('b').innerHTML=html;
+window.go=(at)=>{at.forEach((s,i)=>setTimeout(()=>{if(i==5){document.querySelectorAll('svg.pc').forEach((e,k)=>{e.style.transition='transform 1.3s cubic-bezier(.5,0,.9,.6) '+(k*0.06)+'s, opacity 1.3s ease '+(k*0.06)+'s';e.style.setProperty('transform','translate('+((k%3-1)*260+(k*37%90))+'px,'+(560+k*40)+'px) rotate('+((k*53%70)-35)+'deg)','important');e.style.opacity=.15})}else document.querySelectorAll('[data-cue="'+i+'"]').forEach(e=>e.classList.add('on'))},Math.max(0,s*1000-250)))};
+</script><img src="badge.png" alt="" style="position:absolute;left:1500px;top:0;width:400px;height:215px;z-index:50">
+<script>window.STEPS=[[[0,0]],[[1,0]],[[2,0]],[[3,0]],[[4,0],[()=>document.querySelectorAll('svg.pc').forEach((e,k)=>{e.style.transition='transform 1.3s cubic-bezier(.5,0,.9,.6) '+(k*0.06)+'s, opacity 1.3s ease '+(k*0.06)+'s';e.style.setProperty('transform','translate('+((k%3-1)*260+(k*37%90))+'px,'+(560+k*40)+'px) rotate('+((k*53%70)-35)+'deg)','important');e.style.opacity=.15}),1300]]];</script>
+<script src="stepper.js"></script>
+</body></html>

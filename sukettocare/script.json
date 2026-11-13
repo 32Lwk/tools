@@ -20,14 +20,14 @@
    "これは、私が介護体験で、現場の方から聞いた話です。",
    "午前二時。コールが鳴りやまない中、夜勤の職員が、走り続けます。"
   ],
-  "target": 10.5,
+  "target": 10.6,
   "clip": 10.81,
   "lineStart": [
    0.0,
    4.7
   ],
   "rate": 1.0,
-  "cumEnd": 15.0
+  "cumEnd": 15.1
  },
  {
   "id": "g2",
@@ -41,7 +41,7 @@
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 19.8
+  "cumEnd": 19.9
  },
  {
   "id": "g3",
@@ -55,7 +55,7 @@
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 26.8
+  "cumEnd": 26.9
  },
  {
   "id": "pz",
@@ -76,8 +76,10 @@
    7.1,
    9.2
   ],
-  "rate": 1.55,
-  "cumEnd": 43.3
+  "cumEnd": 43.4,
+  "kind": "html",
+  "src": "slides/pz.html",
+  "steps": true
  },
  {
   "id": "ov",
@@ -88,16 +90,16 @@
    "ふたつめ。AIが代わりを探して、順に打診。",
    "みっつめ。変更が最小になるように、シフトを組み直す。"
   ],
-  "target": 19.7,
+  "target": 19.8,
   "clip": 23.39,
   "lineStart": [
    0.0,
-   7.5,
-   11.0,
-   14.9
+   7.6,
+   11.1,
+   15.0
   ],
-  "rate": 1.19,
-  "cumEnd": 63.0
+  "rate": 1.18,
+  "cumEnd": 63.2
  },
  {
   "id": "d02",
@@ -113,7 +115,7 @@
    6.8
   ],
   "rate": 0.93,
-  "cumEnd": 71.2
+  "cumEnd": 71.4
  },
  {
   "id": "d03",
@@ -122,14 +124,14 @@
    "リーダーのiPadに届いたら、「承認して、シフト作成君に任せる」を押すだけ。",
    "ここから先は、AIの仕事です。"
   ],
-  "target": 10.0,
+  "target": 10.1,
   "clip": 11.79,
   "lineStart": [
    0.0,
    7.2
   ],
-  "rate": 1.18,
-  "cumEnd": 81.2
+  "rate": 1.17,
+  "cumEnd": 81.5
  },
  {
   "id": "d04",
@@ -140,16 +142,16 @@
    "加藤さんが「入れる」と返信。欠員が埋まり、日次も月次も自動で更新。",
    "美咲さんにも、通知が届きます。"
   ],
-  "target": 19.9,
+  "target": 20.0,
   "clip": 26.57,
   "lineStart": [
    0.0,
-   7.9,
+   8.0,
    11.1,
-   17.1
+   17.2
   ],
-  "rate": 1.34,
-  "cumEnd": 101.1
+  "rate": 1.33,
+  "cumEnd": 101.5
  },
  {
   "id": "d05",
@@ -167,7 +169,7 @@
    11.7
   ],
   "rate": 1.54,
-  "cumEnd": 117.2
+  "cumEnd": 117.6
  },
  {
   "id": "make",
@@ -183,7 +185,7 @@
    4.2
   ],
   "rate": 0.8,
-  "cumEnd": 126.4
+  "cumEnd": 126.8
  },
  {
   "id": "sv1",
@@ -194,16 +196,18 @@
    "スキルの条件。医療的ケアや認知症ケアのスキルを見て、配置。",
    "希望と公平性。夜勤の回数も、そろえます。"
   ],
-  "target": 18.2,
+  "target": 18.3,
   "clip": 21.97,
   "lineStart": [
    0.0,
-   4.8,
-   9.1,
-   14.5
+   4.9,
+   9.2,
+   14.6
   ],
-  "rate": 1.21,
-  "cumEnd": 144.6
+  "cumEnd": 145.1,
+  "kind": "html",
+  "src": "slides/sv1.html",
+  "steps": true
  },
  {
   "id": "sv3",
@@ -220,8 +224,10 @@
    1.4,
    5.4
   ],
-  "rate": 1.4,
-  "cumEnd": 153.6
+  "cumEnd": 154.1,
+  "kind": "html",
+  "src": "slides/sv3.html",
+  "steps": true
  },
  {
   "id": "sv4",
@@ -238,30 +244,34 @@
    2.3,
    6.4
   ],
-  "rate": 1.19,
-  "cumEnd": 164.1
+  "cumEnd": 164.6,
+  "kind": "html",
+  "src": "slides/sv4.html",
+  "steps": true
  },
  {
   "id": "ar",
   "title": "Google Cloud で動く仕組み",
   "lines": [
-   "画面は、Firebase Hosting。",
-   "探して組むのは、Cloud Run 上の最適化ソルバー。",
-   "AIに渡す前に、Sensitive Data Protection で個人情報を伏せます。Gemini は Vertex AI 上で、言葉をルールに翻訳し、理由を説明。勤務表は勝手に変えません。",
-   "変更は Firestore に追記で記録し、Pub/Sub から BigQuery へ。",
-   "毎週学習して、施設ごとに、打診の順番が育ちます。"
+   "画面は Firebase Hosting の CDN から。API は Cloud Armor の WAF とロードバランサを通り、データは Firestore へ。",
+   "組むのは、Cloud Run 上の最適化ソルバー。ルールを破る案は出しません。",
+   "Gemini は、言葉をルールに翻訳し、理由を説明。個人情報は、Sensitive Data Protection で伏せて渡します。",
+   "打診の結果は Pub/Sub から BigQuery へ。記録から学習し、順番が育ちます。",
+   "AI は提案。正しさはソルバー。決めるのは、人です。"
   ],
-  "target": 38.2,
+  "target": 46.1,
   "clip": 44.94,
   "lineStart": [
    0.0,
-   3.7,
-   8.7,
-   26.1,
-   33.9
+   14.7,
+   21.6,
+   33.5,
+   41.5
   ],
-  "rate": 1.18,
-  "cumEnd": 202.3
+  "cumEnd": 210.7,
+  "kind": "html",
+  "src": "slides/ar-d.html",
+  "steps": true
  },
  {
   "id": "g4",
@@ -275,7 +285,7 @@
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 208.3
+  "cumEnd": 216.7
  },
  {
   "id": "g5",
@@ -289,7 +299,7 @@
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 211.8
+  "cumEnd": 220.2
  },
  {
   "id": "cl",
@@ -298,13 +308,28 @@
    "あの夜を、終わらせたい。電話をかけ続ける人を、もう、ひとりにしない。助っ人ケアが、その仕事を引き受けます。",
    "ご覧いただき、ありがとうございました。"
   ],
-  "target": 13.2,
+  "target": 13.3,
   "clip": 13.77,
   "lineStart": [
    0.0,
-   9.7
+   9.8
   ],
   "rate": 1.0,
-  "cumEnd": 225.0
+  "cumEnd": 233.5
+ },
+ {
+  "id": "arch-full",
+  "title": "予備: 詳しい構成図",
+  "kind": "image",
+  "src": "media/arch-full.png",
+  "backup": true,
+  "lines": [
+   "（質疑で構成を聞かれたときだけ出す。クリックした所を拡大、もう一度クリックで戻る）"
+  ],
+  "target": 0,
+  "cumEnd": 233.5,
+  "lineStart": [
+   0
+  ]
  }
 ]

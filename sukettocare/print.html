@@ -25,16 +25,18 @@
 <body>
 <main>
 <nav><a href="index.html">スライド</a>　<a href="qa.html">想定問答</a>　<a href="javascript:print()">印刷する</a></nav>
-<h1>助っ人ケア 発表原稿（3分45秒・約1,200字）</h1>
+<h1 id="h">助っ人ケア 発表原稿</h1>
 <p class="lead">右の「ここまで」は、そのページを終える目安の経過時間。制限は 4:00。</p>
 <div id="list"></div>
 </main>
 <script src="data.js"></script>
 <script>
+const MAINS = window.DECK.filter((s) => !s.backup); const CH = MAINS.reduce((a, s) => a + s.lines.join('').length, 0);
 const fmt = (s) => Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0');
+document.getElementById('h').textContent = `助っ人ケア 発表原稿（${fmt(MAINS[MAINS.length - 1].cumEnd)}・約${CH.toLocaleString()}字）`;
 document.getElementById('list').innerHTML = window.DECK.map((s, i) => `
   <div class="s"><img src="media/${s.id}.jpg" alt="">
-  <div><div class="meta"><b>${i + 1}. ${s.title}</b>　目安 ${Math.round(s.target)} 秒　ここまで ${fmt(s.cumEnd)}</div>
+  <div><div class="meta"><b>${s.backup ? '予備' : (i + 1) + '.'} ${s.title}</b>　${s.backup ? '時間外（質疑用）' : '目安 ' + Math.round(s.target) + ' 秒　ここまで ' + fmt(s.cumEnd)}${s.steps ? '　（→ で 1 文ずつ光る）' : ''}</div>
   ${s.lines.map((l) => `<p>${l}</p>`).join('')}</div></div>`).join('');
 </script>
 </body>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>構成（案B: 上から下の層）</title>
+<link rel="stylesheet" href="ar-common.css">
+<style>
+  .layer { left:70px; width:1780px; height:100px; }
+  .layer .ln { left:24px; top:50%; transform:translateY(-50%); }
+  .svc { height:80px; }
+</style>
+</head>
+<body>
+<div class="eb">構成</div>
+<div class="tt">Google Cloud で動く仕組み</div>
+<img class="badge" src="badge.png" alt="">
+
+<div class="layer" style="--c:#5F6368; top:228px" data-has="user"><div class="ln">利用者</div></div>
+<div class="layer" style="--c:#1A73E8; top:340px" data-has="hosting auth armor"><div class="ln">入口<small>画面・サインイン</small></div></div>
+<div class="layer" style="--c:#E37400; top:452px" data-has="run"><div class="ln">処理<small>シフトを組む</small></div></div>
+<div class="layer" style="--c:#8E24AA; top:564px" data-has="sdp gemini marmor"><div class="ln">AI<small>前後で守る</small></div></div>
+<div class="layer" style="--c:#00796B; top:676px" data-has="firestore pubsub bq"><div class="ln">データ<small>記録・同期</small></div></div>
+<div class="layer" style="--c:#188038; top:788px" data-has="pipe"><div class="ln">学習<small>施設ごとに育つ</small></div></div>
+
+<!-- 利用者 -->
+<div class="svc user" data-s="user" style="left:330px; top:238px"><div><b>職員のスマホ</b><small>休みの連絡・打診に返信</small></div></div>
+<div class="svc user" data-s="user" style="left:720px; top:238px"><div><b>リーダーの PC・iPad</b><small>承認するだけ</small></div></div>
+<!-- 入口 -->
+<div class="svc" data-s="hosting" style="--c:#1A73E8; left:330px; top:350px"><img src="icons/web.svg" alt=""><div><b>Firebase Hosting</b><small>画面を届ける</small></div></div>
+<div class="svc" data-s="auth" style="--c:#1A73E8; left:800px; top:350px"><img src="icons/iam.svg" alt=""><div><b>Firebase Authentication</b><small>サインイン</small></div></div>
+<div class="svc" data-s="armor" style="--c:#1A73E8; left:1310px; top:350px"><img src="icons/iam.svg" alt=""><div><b>Cloud Armor</b><small>攻撃・使いすぎを制限</small></div></div>
+<!-- 処理 -->
+<div class="svc" data-s="run" style="--c:#E37400; left:330px; top:462px; width:1000px"><img src="icons/run.svg" alt=""><div><b>Cloud Run　最適化ソルバー（OR-Tools CP-SAT）</b><small>1 か月分を 2〜19 秒で組む（合成データ）</small></div></div>
+<div class="svc" data-s="run" style="--c:#E37400; left:1360px; top:462px; background:#FFF4E5; border-color:#F6C26B"><div><b style="color:#B26A00">ルールを破る案は出さない</b><small>AI の誤りが勤務表に入らない</small></div></div>
+<!-- AI -->
+<div class="svc" data-s="sdp" style="--c:#8E24AA; left:330px; top:574px"><img src="icons/iam.svg" alt=""><div><b>Sensitive Data Protection</b><small>個人情報を伏せてから渡す</small></div></div>
+<div class="svc" data-s="gemini" style="--c:#8E24AA; left:860px; top:574px"><img src="icons/vertex.svg" alt=""><div><b>Gemini（Vertex AI）</b><small>言葉をルールに・理由を説明</small></div></div>
+<div class="svc" data-s="marmor" style="--c:#8E24AA; left:1360px; top:574px"><img src="icons/iam.svg" alt=""><div><b>Model Armor</b><small>危ない入力・出力を止める</small></div></div>
+<!-- データ -->
+<div class="svc" data-s="firestore" style="--c:#00796B; left:330px; top:686px"><img src="icons/db.svg" alt=""><div><b>Firestore</b><small>職員・欠員・打診／画面をリアルタイムに同期</small></div></div>
+<div class="svc" data-s="pubsub" style="--c:#00796B; left:980px; top:686px"><img src="icons/tasks.svg" alt=""><div><b>Pub/Sub</b><small>打診の結果を記録</small></div></div>
+<div class="svc" data-s="bq" style="--c:#00796B; left:1390px; top:686px"><img src="icons/bq.svg" alt=""><div><b>BigQuery</b><small>記録を貯める</small></div></div>
+<!-- 学習 -->
+<div class="svc" data-s="pipe" style="--c:#188038; left:330px; top:798px"><img src="icons/vertex.svg" alt=""><div><b>Vertex AI Pipelines</b><small>施設ごとに、打診に応じてくれる見込みを学習</small></div></div>
+
+<svg class="l">
+  <path d="M800 614 H842"/><polygon points="858,614 842,605 842,623"/>
+  <path d="M1300 614 H1342"/><polygon points="1358,614 1342,605 1342,623"/>
+  <path d="M1300 726 H1372"/><polygon points="1388,726 1372,717 1372,735"/>
+  <path class="g" d="M1040 838 H1800 V512 H1768"/><polygon class="gp" points="1752,512 1770,502 1770,522"/>
+</svg>
+<div class="lab g" style="left:1090px; top:826px">学習したモデルで、打診の順番を決める</div>
+
+<div class="msg">AI は<em>提案</em>　正しさは<em>ソルバー</em>　決めるのは<em>人</em></div>
+<script src="ar-step.js"></script>
+</body>
+</html>

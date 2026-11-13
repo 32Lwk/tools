@@ -1,0 +1,10 @@
+window.SH={
+ col:{'夜':['#EDE0F5','#8E24AA'],'日':['#E3EEFD','#1A73E8'],'早':['#FFF1D6','#C77700'],'休':['#F1F3F4','#9AA0A6']},
+ table(rows,opts={}){const cw=opts.cw||60,ch=opts.ch||48,days=opts.days||['月','火','水','木','金','土','日'],nm=opts.nm!==false,mark=opts.mark||[],fs=opts.fs==null?24:opts.fs,nw=opts.nw||110;
+  let h='<div style="display:inline-block;font-family:Noto Sans JP">';
+  if(opts.head!==false){h+='<div style="display:flex;margin-left:'+(nm?nw:0)+'px">'+days.map((d,i)=>'<div style="width:'+cw+'px;text-align:center;font-size:'+Math.max(fs-4,0)+'px;font-weight:700;color:'+(opts.hl===i?'#1A73E8':'#5F6368')+'">'+d+'</div>').join('')+'</div>'}
+  rows.forEach(([n,cells],r)=>{h+='<div style="display:flex;align-items:center;margin-top:6px">'+(nm?'<div style="width:'+nw+'px;font-size:'+fs+'px;font-weight:700">'+n+'</div>':'')+cells.split('').map((c,i)=>{const [bg,fg]=SH.col[c]||SH.col['休'];const m=mark.find(x=>x[0]==r&&x[1]==i);return '<div style="width:'+(cw-6)+'px;height:'+ch+'px;margin-right:6px;border-radius:10px;background:'+bg+';color:'+fg+';font-weight:700;font-size:'+fs+'px;display:flex;align-items:center;justify-content:center;'+(m?'outline:5px solid '+m[2]+';outline-offset:2px;':'')+(opts.dim&&!m?'opacity:.6':'')+'">'+c+'</div>'}).join('')+'</div>'});
+  return h+'</div>'},
+ person(shirt,mood){const sad=mood=='sad';const eye=sad?'<path d="M44 44 q6 -5 12 0 M68 44 q6 -5 12 0" stroke="#3b2f2a" stroke-width="3" fill="none" stroke-linecap="round"/>':'<circle cx="50" cy="46" r="3.2" fill="#3b2f2a"/><circle cx="74" cy="46" r="3.2" fill="#3b2f2a"/>';const mouth=sad?'<path d="M52 62 q10 -7 20 0" stroke="#3b2f2a" stroke-width="3" fill="none" stroke-linecap="round"/>':'<path d="M52 58 q10 9 20 0" stroke="#3b2f2a" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  return '<svg viewBox="0 0 124 124" width="100%" height="100%"><path d="M12 124 Q12 82 62 82 Q112 82 112 124Z" fill="'+shirt+'"/><circle cx="62" cy="48" r="26" fill="#F2C9A5"/><path d="M34 44 Q36 14 62 14 Q90 14 90 44 Q80 28 62 28 Q44 28 34 44Z" fill="#3b2f2a"/>'+eye+mouth+'</svg>'}
+};

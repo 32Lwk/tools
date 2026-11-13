@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>構成（以前の動画の形）</title>
+<link rel="stylesheet" href="ar-common.css">
+<style>
+  .user { position:absolute; left:40px; width:260px; text-align:center; font-size:28px; line-height:1.35; font-weight:500; }
+  .gc { position:absolute; left:330px; top:228px; width:1560px; height:742px; border:4px solid var(--gblue); border-radius:26px; background:#fff; }
+  .gcl { position:absolute; left:360px; top:204px; background:var(--bg); padding:0 14px; font-size:32px; font-weight:700; color:var(--gblue); }
+  .gcl span { font-size:24px; color:var(--blue); background:#E8F0FE; border-radius:999px; padding:2px 16px; margin-left:10px; vertical-align:middle; }
+  /* 層の帯 */
+  .layer { left:350px; width:1520px; }
+  .layer .ln { left:18px; top:10px; font-size:24px; }
+  /* 札（以前の動画と同じ、縦に並ぶ形） */
+  .card { flex-direction:column; justify-content:center; text-align:center; gap:6px; padding:12px 14px; border-width:4px; border-radius:22px; }
+  .card img { width:76px; height:76px; }
+  .card b { font-size:30px; white-space:normal; }
+  .card small { font-size:23px; white-space:normal; }
+  .card .num { position:absolute; left:-18px; top:-18px; width:46px; height:46px; border-radius:50%; background:#202124; color:#fff;
+    font-weight:700; font-size:26px; display:flex; align-items:center; justify-content:center; }
+  .card .lt { position:absolute; right:12px; top:10px; font-size:18px; font-weight:700; color:#fff; background:var(--c); border-radius:999px; padding:1px 12px; }
+  .card .sub2 { margin-top:6px; padding-top:6px; border-top:2px dashed var(--line); font-size:19px; color:var(--mute); line-height:1.35; }
+  .card .sub2 b { font-size:20px; color:var(--sub); display:inline; }
+  .strip { position:absolute; left:1140px; top:880px; width:710px; height:70px; display:flex; align-items:center; gap:14px; padding:0 18px; flex-direction:row; text-align:left; }
+  .strip img { width:48px; height:48px; } .strip b { font-size:24px; } .strip small { font-size:19px; }
+</style>
+</head>
+<body>
+<div class="eb">構成</div>
+<div class="tt">Google Cloud で動く仕組み</div>
+<img class="badge" src="badge.png" alt="">
+
+<div class="user" style="top:300px"><svg width="64" height="110" viewBox="0 0 70 120"><rect x="6" y="4" width="58" height="112" rx="12" fill="#fff" stroke="#202124" stroke-width="4"/><rect x="26" y="10" width="18" height="5" rx="2.5" fill="#202124"/></svg><br>職員のスマホ</div>
+<div class="user" style="top:560px"><svg width="120" height="92" viewBox="0 0 130 100"><rect x="4" y="4" width="122" height="92" rx="10" fill="#fff" stroke="#202124" stroke-width="4"/></svg><br>リーダーの<br>PC・iPad</div>
+
+<div class="gc"></div>
+<div class="gcl">Google Cloud<span>東京リージョン</span></div>
+
+<div class="layer" style="--c:#1A73E8; top:250px; height:360px" data-has="hosting run sdp gemini"><div class="ln">アプリの層　入口 → 処理 → AI</div></div>
+<div class="layer" style="--c:#188038; top:626px; height:330px" data-has="firestore pubsub bq pipe"><div class="ln">データ・学習の層</div></div>
+
+<!-- 上の層 -->
+<div class="svc card" data-s="hosting" style="--c:#1A73E8; left:380px; top:300px; width:330px; height:290px">
+  <div class="num">1</div><span class="lt">入口</span>
+  <img src="icons/web.svg" alt=""><b>Firebase Hosting</b><small>画面を届ける</small>
+  <div class="sub2"><b>Authentication・Cloud Armor</b><br>サインインと攻撃の制限</div>
+</div>
+<div class="svc card" data-s="run" style="--c:#E37400; left:770px; top:300px; width:330px; height:640px">
+  <div class="num">2</div><span class="lt">処理</span>
+  <img src="icons/run.svg" alt=""><b>Cloud Run</b><small>最適化ソルバー<br>（OR-Tools CP-SAT）</small>
+  <div style="margin-top:18px; background:#FFF4E5; color:#B26A00; border-radius:14px; padding:12px; font-size:26px; font-weight:900; line-height:1.35">ルールを破る案は<br>出さない</div>
+</div>
+<div class="svc card" data-s="sdp" style="--c:#8E24AA; left:1160px; top:300px; width:330px; height:290px">
+  <div class="num">3</div><span class="lt">AI</span>
+  <img src="icons/iam.svg" alt=""><b>Sensitive Data Protection</b><small>個人情報を伏せる</small>
+</div>
+<div class="svc card" data-s="gemini" style="--c:#8E24AA; left:1530px; top:300px; width:330px; height:290px">
+  <div class="num">3</div><span class="lt">AI</span>
+  <img src="icons/vertex.svg" alt=""><b>Gemini（Vertex AI）</b><small>言葉をルールに<br>理由を説明</small>
+  <div class="sub2"><b>Model Armor</b>　入出力を検査</div>
+</div>
+
+<!-- 下の層 -->
+<div class="svc card" data-s="firestore" style="--c:#00796B; left:380px; top:676px; width:330px; height:264px">
+  <div class="num">1</div><span class="lt">データ</span>
+  <img src="icons/db.svg" alt=""><b>Firestore</b><small>職員・欠員・打診<br>画面をリアルタイムに同期</small>
+</div>
+<div class="svc card" data-s="pubsub" style="--c:#00796B; left:1160px; top:676px; width:330px; height:180px">
+  <div class="num">4</div><span class="lt">データ</span>
+  <img src="icons/tasks.svg" alt=""><b>Pub/Sub</b><small>打診の結果を記録</small>
+</div>
+<div class="svc card" data-s="bq" style="--c:#00796B; left:1530px; top:676px; width:330px; height:180px">
+  <div class="num">4</div><span class="lt">データ</span>
+  <img src="icons/bq.svg" alt=""><b>BigQuery</b><small>記録を貯める</small>
+</div>
+<div class="svc strip" data-s="pipe" style="--c:#188038">
+  <img src="icons/vertex.svg" alt=""><div><b>Vertex AI Pipelines</b>　<small>施設ごとに学習</small></div>
+  <span style="margin-left:auto; font-size:18px; font-weight:700; color:#fff; background:#188038; border-radius:999px; padding:1px 12px">学習</span>
+</div>
+
+<svg class="l">
+  <path d="M300 380 H335 V640 H300 M335 445 H362"/><polygon points="378,445 360,435 360,455"/>
+  <path d="M710 445 H752"/><polygon points="768,445 750,435 750,455"/>
+  <path d="M1100 445 H1142"/><polygon points="1158,445 1140,435 1140,455"/>
+  <path d="M1490 445 H1512"/><polygon points="1528,445 1510,435 1510,455"/>
+  <path d="M770 808 H728"/><polygon points="712,808 730,798 730,818"/><polygon points="770,808 752,798 752,818"/>
+  <path d="M1100 766 H1142"/><polygon points="1158,766 1140,756 1140,776"/>
+  <path d="M1490 766 H1512"/><polygon points="1528,766 1510,756 1510,776"/>
+  <path class="g" d="M1695 856 V872"/><polygon class="gp" points="1695,880 1685,864 1705,864"/>
+  <path class="g" d="M1140 915 H1118"/><polygon class="gp" points="1102,915 1120,905 1120,925"/>
+</svg>
+<div class="lab g" style="left:1110px; top:946px; background:#fff">学習したモデルで、打診の順番を決める</div>
+
+<div class="msg">AI は<em>提案</em>　正しさは<em>ソルバー</em>　決めるのは<em>人</em></div>
+<script src="ar-step.js"></script>
+</body>
+</html>

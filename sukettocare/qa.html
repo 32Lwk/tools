@@ -74,7 +74,8 @@
 <p class="say">介護職員は 2040 年度に約 272 万人が必要で、2022 年度から約 57 万人増やす必要があるとされています（厚生労働省、第 9 期介護保険事業計画に基づく推計）。介護福祉士の登録者は約 200 万人で、そのうち約 2 割は介護の仕事に就いていません。</p></details>
 <details><summary>使っている Google の技術は？</summary>
 <ul>
-<li>Firebase Hosting（画面）、Cloud Run（最適化ソルバー・画面の同期）</li>
+<li>入口: Firebase Hosting（CDN で画面を配信）、Firebase Authentication（サインイン）、外部アプリケーション ロードバランサ＋Cloud Armor（WAF・回数の制限）</li>
+<li>Cloud Run（最適化ソルバー・画面の同期）</li>
 <li>Vertex AI の Gemini（ルールの翻訳・理由の説明・チャット）、Vertex AI Pipelines・Model Registry（応諾予測の学習）</li>
 <li>Sensitive Data Protection・Model Armor（個人情報と入出力の検査）</li>
 <li>Firestore（データと追記の記録）、Pub/Sub → BigQuery（イベントの蓄積）、BigQuery ML（比較用の学習・欠員数の予測）</li>

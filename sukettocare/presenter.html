@@ -84,19 +84,19 @@
 </div>
 <script src="data.js"></script>
 <script>
-const D = window.DECK, LIMIT = window.LIMIT, TOTAL = D[D.length - 1].cumEnd;
+const D = window.DECK, LIMIT = window.LIMIT, MAIN = D.filter((x) => !x.backup).length;
 let st = null, skew = 0;
 const $ = (id) => document.getElementById(id);
 const fmt = (s) => { const neg = s < 0; s = Math.abs(Math.round(s)); return (neg ? '-' : '') + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 let shown = -1;
 function renderSlide() {
   const s = D[st.i], n = D[st.i + 1];
-  $('title').innerHTML = `<b>${st.i + 1} / ${D.length}　${s.title}</b>　目安 ${s.target} 秒（ここまでで ${fmt(s.cumEnd)}）`;
+  $('title').innerHTML = s.backup ? `<b>予備　${s.title}</b>　時間外（質疑用）` : `<b>${st.i + 1} / ${MAIN}　${s.title}</b>　目安 ${s.target} 秒（ここまでで ${fmt(s.cumEnd)}）` + (s.steps ? '　<span style="color:#ffd666">→ で次のまとまりへ</span>' : '');
   $('lines').innerHTML = s.lines.map((l, k) => `<div class="line" data-k="${k}">${l}</div>`).join('');
   $('curImg').src = 'media/' + s.id + '.jpg';
   $('curCap').innerHTML = '<b>いま</b>　' + s.title;
   if (n) { $('nextImg').src = 'media/' + n.id + '.jpg'; $('nextImg').style.visibility = 'visible';
-    $('nextCap').innerHTML = '<b>次</b>　' + n.title + '<br>「' + n.lines[0] + '」'; }
+    $('nextCap').innerHTML = '<b>次</b>　' + n.title + (n.backup ? '（予備。発表はここまで）' : '<br>「' + n.lines[0] + '」'); }
   else { $('nextImg').style.visibility = 'hidden'; $('nextCap').innerHTML = '<b>次</b>　（最後のページです）'; }
   shown = st.i;
 }
@@ -122,7 +122,8 @@ function tick() {
     document.querySelector('#bar b').style.left = Math.min(100, plan / LIMIT * 100) + '%';
   } else { $('delta').textContent = 'S で開始'; $('delta').className = 'delta'; }
   // いま読む行の目安
-  let k = 0; s.lineStart.forEach((t, j) => { if (se >= t) k = j; });
+  let k = 0;
+  if (s.steps) k = st.step || 0; else s.lineStart.forEach((t, j) => { if (se >= t) k = j; });
   document.querySelectorAll('.line').forEach((e, j) => { e.classList.toggle('now', j === k); e.classList.toggle('done', j < k); });
   $('warn').textContent = (Date.now() - lastState > 2000) ? 'スライドの画面とつながっていません。スライド側で P を押して開き直してください。' : '';
 }

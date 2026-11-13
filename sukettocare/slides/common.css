@@ -1,0 +1,8 @@
+:root{--blue:#1A73E8;--ink:#202124;--sub:#5F6368;--line:#DADCE0;--soft:#F8F9FA;--green:#188038;--red:#D93025;--amber:#E37400;--purple:#8E24AA}
+*{box-sizing:border-box;margin:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#F7F5EE;font-family:'Noto Sans JP','Hiragino Sans',sans-serif;color:var(--ink)}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.rv.on{opacity:1;transform:none}
+.tag{display:inline-block;font-family:Inter,sans-serif;font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--blue);background:#E8F0FE;border-radius:999px;padding:8px 26px}
+.brand{position:absolute;left:90px;top:60px;font-size:34px;font-weight:700;display:flex;align-items:center;gap:14px}
+.dot{width:20px;height:20px;border-radius:50%;background:var(--blue)}

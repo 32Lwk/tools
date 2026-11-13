@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>構成（層のまとまり＋アイコン）</title>
+<link rel="stylesheet" href="ar-common.css">
+<style>
+  .gc { position:absolute; left:285px; top:232px; width:1610px; height:726px; border:4px solid var(--gblue); border-radius:26px; background:#fff; }
+  .gcl { position:absolute; left:315px; top:208px; background:var(--bg); padding:0 14px; font-size:30px; font-weight:700; color:var(--gblue); }
+  .gcl span { font-size:22px; color:var(--blue); background:#E8F0FE; border-radius:999px; padding:2px 14px; margin-left:10px; vertical-align:middle; }
+  /* 層のまとまり（参考の図のような、色つきの箱＋見出し） */
+  .layer { border-width:4px; border-radius:22px; background:color-mix(in srgb, var(--c) 7%, #fff); border-color:color-mix(in srgb, var(--c) 40%, #fff); }
+  .layer .ln { left:22px; top:12px; font-size:30px; color:color-mix(in srgb, var(--c) 80%, #000); }
+  /* アイコンのタイル */
+  .tile { flex-direction:column; justify-content:center; text-align:center; gap:4px; padding:10px; border-width:3px; border-radius:18px;
+    background:#fff; border-color:color-mix(in srgb, var(--c) 35%, #fff); box-shadow:0 3px 0 color-mix(in srgb, var(--c) 18%, #fff); }
+  .tile img { width:70px; height:70px; }
+  .tile b { font-size:25px; white-space:normal; line-height:1.15; }
+  .tile small { font-size:19px; white-space:normal; }
+  .num { position:absolute; right:-14px; top:-14px; width:40px; height:40px; border-radius:50%; background:#202124; color:#fff;
+    font-weight:700; font-size:22px; display:flex; align-items:center; justify-content:center; }
+  .promise { margin-top:12px; background:#E6F4EA; color:#137333; border-radius:12px; padding:8px 12px; font-size:24px; font-weight:900; line-height:1.3; }
+  svg.l path.k { stroke:#3C4043; stroke-width:7; } svg.l polygon.k { fill:#3C4043; }
+  .tile.row { flex-direction:row; justify-content:flex-start; text-align:left; gap:14px; padding:10px 16px; }
+  .tile.row img { width:58px; height:58px; }
+  .tile.row b { font-size:24px; } .tile.row small { font-size:19px; }
+  .lane { position:absolute; font-size:18px; font-weight:700; color:#fff; background:#3C4043; border-radius:999px; padding:0 10px; z-index:3; }
+  .learn { position:absolute; left:1200px; top:888px; font-size:22px; font-weight:700; color:var(--green); }
+</style>
+</head>
+<body>
+<div class="eb">構成</div>
+<div class="tt">Google Cloud で動く仕組み</div>
+<img class="badge" src="badge.png" alt="">
+
+<!-- 利用者 -->
+<div class="layer" style="--c:#B26A00; left:30px; top:330px; width:230px; height:560px" data-has="user"><div class="ln">利用者</div></div>
+<div class="svc tile" data-s="user" style="--c:#B26A00; left:50px; top:395px; width:190px; height:220px">
+  <svg width="54" height="92" viewBox="0 0 70 120"><rect x="6" y="4" width="58" height="112" rx="12" fill="#fff" stroke="#202124" stroke-width="5"/><rect x="26" y="10" width="18" height="5" rx="2.5" fill="#202124"/></svg>
+  <b>職員のスマホ</b><small>休みの連絡</small></div>
+<div class="svc tile" data-s="user" style="--c:#B26A00; left:50px; top:640px; width:190px; height:220px">
+  <svg width="100" height="76" viewBox="0 0 130 100"><rect x="4" y="4" width="122" height="92" rx="10" fill="#fff" stroke="#202124" stroke-width="5"/></svg>
+  <b>リーダーの PC・iPad</b><small>承認するだけ</small></div>
+
+<div class="gc"></div>
+<div class="gcl">Google Cloud<span>東京リージョン</span></div>
+
+<!-- 入口・セキュリティ -->
+<div class="layer" style="--c:#1A73E8; left:305px; top:262px; width:380px; height:676px" data-has="hosting auth armor alb"><div class="ln">入口・セキュリティ</div></div>
+<div class="svc tile row" data-s="hosting" style="--c:#1A73E8; left:325px; top:318px; width:340px; height:136px"><div class="num">1</div><img src="icons/web.svg" alt=""><div><b>Firebase Hosting</b><small>CDN で画面を配信</small></div></div>
+<div class="svc tile row" data-s="auth" style="--c:#1A73E8; left:325px; top:466px; width:340px; height:120px"><img src="icons/iam.svg" alt=""><div><b>Firebase Authentication</b><small>サインイン</small></div></div>
+<div class="svc tile row" data-s="armor" style="--c:#D93025; left:325px; top:612px; width:340px; height:136px"><div class="num">1</div><img src="icons/iam.svg" alt=""><div><b>Cloud Armor（WAF）</b><small>攻撃・使いすぎを遮断</small></div></div>
+<div class="svc tile row" data-s="alb" style="--c:#1A73E8; left:325px; top:782px; width:340px; height:136px"><div class="num">1</div><img src="icons/net.svg" alt=""><div><b>ロードバランサ（ALB）</b><small>API の入口</small></div></div>
+<div class="lane" style="left:268px; top:352px">画面</div>
+<div class="lane" style="left:268px; top:646px">API</div>
+
+<!-- アプリケーション -->
+<div class="layer" style="--c:#188038; left:725px; top:262px; width:420px; height:676px" data-has="run firestore"><div class="ln">アプリケーション</div></div>
+<div class="svc tile" data-s="run" style="--c:#188038; left:745px; top:320px; width:380px; height:398px"><div class="num">2</div><img src="icons/run.svg" alt="" style="width:96px;height:96px"><b style="font-size:32px">Cloud Run</b><small>最適化ソルバー<br>（OR-Tools CP-SAT）</small><div class="promise">ルールを破る案は<br>出さない</div></div>
+<div class="svc tile" data-s="firestore" style="--c:#188038; left:745px; top:736px; width:380px; height:182px"><div class="num">1</div><img src="icons/db.svg" alt=""><b>Firestore</b><small>職員・欠員・打診／画面を同期</small></div>
+
+<!-- AI とガードレール -->
+<div class="layer" style="--c:#8E24AA; left:1185px; top:262px; width:690px; height:330px" data-has="sdp gemini marmor"><div class="ln">AI（Vertex AI）とガードレール</div></div>
+<div class="svc tile" data-s="sdp" style="--c:#8E24AA; left:1205px; top:322px; width:206px; height:250px"><div class="num">3</div><img src="icons/iam.svg" alt=""><b>Sensitive Data Protection</b><small>個人情報を伏せる</small></div>
+<div class="svc tile" data-s="gemini" style="--c:#8E24AA; left:1427px; top:322px; width:206px; height:250px"><div class="num">3</div><img src="icons/vertex.svg" alt=""><b>Gemini</b><small>言葉をルールに<br>理由を説明</small></div>
+<div class="svc tile" data-s="marmor" style="--c:#8E24AA; left:1649px; top:322px; width:206px; height:250px"><img src="icons/iam.svg" alt=""><b>Model Armor</b><small>入出力を検査</small></div>
+
+<!-- データ・学習 -->
+<div class="layer" style="--c:#00796B; left:1185px; top:612px; width:690px; height:326px" data-has="pubsub bq pipe"><div class="ln">データ・学習</div></div>
+<div class="svc tile" data-s="pubsub" style="--c:#00796B; left:1205px; top:670px; width:206px; height:200px"><div class="num">4</div><img src="icons/tasks.svg" alt=""><b>Pub/Sub</b><small>打診の結果を記録</small></div>
+<div class="svc tile" data-s="bq" style="--c:#00796B; left:1427px; top:670px; width:206px; height:200px"><div class="num">4</div><img src="icons/bq.svg" alt=""><b>BigQuery</b><small>記録を貯める</small></div>
+<div class="svc tile" data-s="pipe" style="--c:#00796B; left:1649px; top:670px; width:206px; height:200px"><div class="num">4</div><img src="icons/vertex.svg" alt=""><b>Vertex AI Pipelines</b><small>施設ごとに学習</small></div>
+
+<svg class="l">
+  <path class="k" d="M262 386 H306"/><polygon class="k" points="322,386 302,374 302,398"/>
+  <path class="k" d="M262 680 H306"/><polygon class="k" points="322,680 302,668 302,692"/>
+  <path class="k" d="M495 748 V764"/><polygon class="k" points="495,780 483,760 507,760"/>
+  <path class="k" d="M665 850 H700 V520 H728"/><polygon class="k" points="744,520 724,508 724,532"/>
+  <path class="k" d="M1146 430 H1168"/><polygon class="k" points="1184,430 1164,418 1164,442"/>
+  <path class="k" d="M1146 760 H1168"/><polygon class="k" points="1184,760 1164,748 1164,772"/>
+  <path d="M1411 770 H1423"/><polygon points="1427,770 1415,763 1415,777"/>
+  <path d="M1633 770 H1645"/><polygon points="1649,770 1637,763 1637,777"/>
+  <path class="g" d="M1185 905 H1160"/><polygon class="gp" points="1146,905 1164,895 1164,915"/>
+</svg>
+<div class="learn">学習したモデルで、打診の順番を決める</div>
+
+<div class="msg">AI は<em>提案</em>　正しさは<em>ソルバー</em>　決めるのは<em>人</em></div>
+<script src="ar-step.js"></script>
+</body>
+</html>

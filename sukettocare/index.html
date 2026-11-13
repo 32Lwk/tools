@@ -12,9 +12,15 @@
     font-family:'Hiragino Sans','Noto Sans JP',system-ui,sans-serif; }
   #stage { position:absolute; left:50%; top:50%; width:1920px; height:1080px;
     transform-origin:0 0; background:#F7F5EE; overflow:hidden; cursor:none; }
-  #stage video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-    opacity:0; transition:opacity .25s ease; background:#F7F5EE; }
-  #stage video.on { opacity:1; }
+  #stage .sl { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border:0;
+    opacity:0; transition:opacity .25s ease; background:#F7F5EE; pointer-events:none; }
+  #stage .sl.on { opacity:1; }
+  #stage .zoomwrap { overflow:hidden; background:#fff; }
+  #stage .zoomwrap img { position:absolute; left:0; top:0; width:100%; height:100%; object-fit:contain;
+    transition:transform .35s ease; transform-origin:50% 50%; }
+  #stage .zoomwrap.on { pointer-events:auto; cursor:zoom-in; }
+  #stage .zoomwrap.zoomed { cursor:zoom-out; }
+  #stage .zoomwrap .tag { position:absolute; left:24px; top:18px; font-size:26px; font-weight:700; color:#fff; background:#5F6368; border-radius:999px; padding:4px 18px; z-index:2; }
   #black { position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; transition:opacity .2s; z-index:5; }
   #black.on { opacity:1; }
   #help { position:fixed; left:16px; bottom:16px; z-index:10; font-size:14px; line-height:1.7;
@@ -72,13 +78,38 @@
 <script src="data.js"></script>
 <script>
 const D = window.DECK, stage = document.getElementById('stage');
-const vids = D.map((s) => {
-  const v = document.createElement('video');
-  v.src = 'media/' + s.id + '.mp4?v=pres1114'; v.poster = 'media/' + s.id + '.jpg';
-  v.muted = true; v.playsInline = true; v.preload = 'auto';
-  stage.insertBefore(v, document.getElementById('black')); return v;
+// ページの種類: video（無音の映像）／ html（段階表示のページ）／ image（拡大できる画像・予備）
+const kind = (s) => s.kind || 'video';
+const els = D.map((s) => {
+  let el;
+  if (kind(s) === 'html') {
+    el = document.createElement('iframe'); el.src = s.src; el.setAttribute('scrolling', 'no'); el.tabIndex = -1;
+  } else if (kind(s) === 'image') {
+    el = document.createElement('div'); el.className = 'zoomwrap';
+    el.innerHTML = `<span class="tag">予備</span><img src="${s.src}" alt="${s.title}">`;
+    el.addEventListener('click', (e) => { e.stopPropagation(); toggleZoom(el, e); });
+  } else {
+    el = document.createElement('video');
+    el.src = 'media/' + s.id + '.mp4?v=pres1114'; el.poster = 'media/' + s.id + '.jpg';
+    el.muted = true; el.playsInline = true; el.preload = 'auto';
+  }
+  el.classList.add('sl'); stage.insertBefore(el, document.getElementById('black')); return el;
 });
-let i = 0, startedAt = null, slideAt = null, presenter = null;
+const vids = els; // 互換のため
+let i = 0, step = 0, startedAt = null, slideAt = null, presenter = null;
+function toggleZoom(el, e) {
+  const img = el.querySelector('img');
+  if (el.classList.toggle('zoomed')) {
+    const r = el.getBoundingClientRect();
+    img.style.transformOrigin = ((e.clientX - r.left) / r.width * 100) + '% ' + ((e.clientY - r.top) / r.height * 100) + '%';
+    img.style.transform = 'scale(2.6)';
+  } else img.style.transform = 'none';
+}
+function setStep(n) {
+  step = n; const el = els[i];
+  if (kind(D[i]) === 'html' && el.contentWindow) { try { el.contentWindow.postMessage({ type: 'step', n }, '*'); } catch (e) {} }
+  send();
+}
 
 function fit() {
   const k = Math.min(innerWidth / 1920, innerHeight / 1080);
@@ -87,23 +118,29 @@ function fit() {
 addEventListener('resize', fit); fit();
 
 function play(n) {
-  const v = vids[n]; v.playbackRate = D[n].rate; v.currentTime = 0;
+  const v = els[n];
+  if (kind(D[n]) === 'html') { try { v.contentWindow.postMessage({ type: 'step', n: step }, '*'); } catch (e) {} return; }
+  if (kind(D[n]) !== 'video') return;
+  v.playbackRate = D[n].rate; v.currentTime = 0;
   const p = v.play(); if (p) p.catch(() => {});
   v.playbackRate = D[n].rate;
 }
-function show(n, fromUser) {
+const MAIN = D.filter((s) => !s.backup).length;
+function show(n, fromUser, atEnd) {
   n = Math.max(0, Math.min(D.length - 1, n));
   if (fromUser && startedAt === null && n > i) startTimer(false);
-  vids.forEach((v, k) => { if (k !== n) { v.classList.remove('on'); if (k !== n) v.pause(); } });
-  i = n; vids[n].classList.add('on'); play(n); slideAt = Date.now();
-  document.getElementById('count').textContent = (n + 1) + ' / ' + D.length;
+  els.forEach((v, k) => { if (k !== n) { v.classList.remove('on'); if (v.pause) v.pause(); } });
+  const zw = els[n]; if (zw.classList.contains('zoomed')) toggleZoom(zw, null);
+  i = n; step = (atEnd && D[n].steps) ? D[n].lines.length - 1 : 0;
+  els[n].classList.add('on'); play(n); slideAt = Date.now();
+  document.getElementById('count').textContent = D[n].backup ? '予備' : (n + 1) + ' / ' + MAIN;
   try { history.replaceState(null, '', '#' + (n + 1)); } catch (e) {}
   send();
 }
 function startTimer(restartSlide) {
   startedAt = Date.now(); if (restartSlide) { slideAt = Date.now(); play(i); } send();
 }
-function state() { return { type: 'state', i, startedAt, slideAt, now: Date.now() }; }
+function state() { return { type: 'state', i, step, startedAt, slideAt, now: Date.now() }; }
 let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onMsg(e.data, null); } catch (e) {}
 function send() {
   const m = state();
@@ -114,8 +151,14 @@ setInterval(send, 500);
 
 function act(k) {
   switch (k) {
-    case 'next': show(i + 1, true); break;
-    case 'prev': show(i - 1, true); break;
+    case 'next':
+      if (D[i].steps && step < D[i].lines.length - 1) { if (startedAt === null) startTimer(false); setStep(step + 1); }
+      else show(i + 1, true);
+      break;
+    case 'prev':
+      if (D[i].steps && step > 0) setStep(step - 1);
+      else show(i - 1, true, true);
+      break;
     case 'first': show(0, true); break;
     case 'start': startTimer(true); break;
     case 'reset': startedAt = null; send(); break;
