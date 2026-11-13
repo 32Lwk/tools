@@ -200,7 +200,16 @@ function toSlave(m) {
 const LOCAL = ['full', 'help'];
 function doAct(k) { if (FOLLOW && !LOCAL.includes(k)) toMaster({ type: 'act', act: k }); else act(k); }
 let lastMaster = null, lastMasterAt = 0;
-let bc = null; if (!MIRROR) { try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onMsg(e.data, null); } catch (e) {} }
+let SID = FOLLOW ? (Q.get('sid') || '') : (SS.get('sukettocare-sid') || '');
+let bc = null;
+function openChannel() {
+  if (MIRROR) return;
+  try { if (bc) bc.close(); } catch (e) {}
+  // 2 画面の発表では、その発表だけの名前のチャンネルを使う。ほかのタブ（古い版を含む）からの指示は届かない
+  const name = (DUAL || FOLLOW) && SID ? 'sukettocare-' + SID : 'sukettocare-deck';
+  try { bc = new BroadcastChannel(name); bc.onmessage = (e) => onMsg(e.data, null); } catch (e) { bc = null; }
+}
+openChannel();
 function send() {
   if (MIRROR) return;
   if (FOLLOW) { if (lastMaster) toPv(lastMaster); return; }
@@ -344,14 +353,19 @@ if (fromPresenter) {
 } else if (location.hash && location.hash !== '#1') {
   hideStart();
 }
+function sameWindow(a, b) {
+  try { return a.screenX === b.screenX && a.screenY === b.screenY && a.outerWidth === b.outerWidth && a.outerHeight === b.outerHeight; } catch (e) { return false; }
+}
 function openSlides() {
   const w = 960, h = 600, left = Math.round(window.screenX + (window.outerWidth - w) / 2), top = Math.round(window.screenY + (window.outerHeight - h) / 2);
-  try { slideWin = window.open('index.html?follow=1', 'sukettocare-slides', `popup,width=${w},height=${h},left=${left},top=${top}`); } catch (e) { slideWin = null; }
+  try { slideWin = window.open('index.html?follow=1&sid=' + encodeURIComponent(SID), 'sukettocare-slides', `popup,width=${w},height=${h},left=${left},top=${top}`); } catch (e) { slideWin = null; }
+  setTimeout(() => { if (slideWin && !slideWin.closed && sameWindow(slideWin, window)) toPv({ type: 'notice', text: 'スライドが「別のウィンドウ」ではなく、このウィンドウのタブとして開きました。スライドのタブをウィンドウの外へドラッグして、別のウィンドウにしてください。' }); }, 800);
   if (!slideWin) { toPv({ type: 'notice', text: 'スライドのウィンドウが開けませんでした（ポップアップが止められています）。アドレスバー右のアイコンから、このサイトのポップアップを「常に許可」にして、もう一度「スライドを外のモニターに出す」を押してください。' }); return false; }
   return true;
 }
 function goPresenter() {
   DUAL = true; SS.set('sukettocare-dual', '1');
+  SID = Math.random().toString(36).slice(2, 10); SS.set('sukettocare-sid', SID); openChannel();
   hideStart(); setRole('presenter'); openSlides();
 }
 document.getElementById('goPresenter').addEventListener('click', goPresenter);
@@ -368,15 +382,20 @@ else if (FOLLOW) {
     const cur = screens.currentScreen;
     return screens.screens.find((s) => s !== cur && !s.isInternal) || screens.screens.find((s) => s !== cur) || null;
   };
+  const isTab = () => window.opener && !window.opener.closed && sameWindow(window, window.opener);
   const note = () => {
+    if (isTab()) { tapBtn.textContent = '別のウィンドウにしてから押してください'; tapNote.textContent = 'このスライドは発表者画面と同じウィンドウの「タブ」です。このまま全画面にすると、発表者画面も一緒に外へ移ってしまいます。このタブをウィンドウの外へドラッグして別のウィンドウにしてから押してください。'; return; }
+    tapBtn.textContent = tapBtn.textContent.startsWith('もう一度') ? tapBtn.textContent : 'クリックで外のモニターで全画面にして始める';
     if (!window.getScreenDetails) tapNote.textContent = 'このブラウザでは自動で外へ出せません。このウィンドウを外のモニターへドラッグしてから押してください。';
     else if (!screens) tapNote.textContent = '押すと「ウィンドウの管理」の許可を求められます。「許可」を選んでください。';
     else if (!extFromHere()) tapNote.textContent = '外のモニターが見つかりません。拡張ディスプレイでつないでいるか確かめてください。押すと、この画面で全画面になります。';
     else tapNote.textContent = '外のモニター（' + (extFromHere().label || '') + '）で全画面になります。発表者画面はこの PC に残ります。';
   };
   loadScreens(false).then(note); note();
+  setInterval(note, 1000);
   tapBtn.addEventListener('click', async (e) => {
     e.stopPropagation();
+    if (isTab()) { note(); return; }
     if (window.getScreenDetails && !screens) { await loadScreens(true); note(); if (screens) { tapBtn.textContent = 'もう一度押して、外のモニターで全画面にする'; return; } }
     const ext = extFromHere();
     const p = ext ? document.documentElement.requestFullscreen({ screen: ext }) : document.documentElement.requestFullscreen();

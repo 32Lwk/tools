@@ -170,7 +170,8 @@ let lastState = 0, noticeUntil = 0;
 const EMB = new URLSearchParams(location.search).has('embedded'); // スライドのページの中に入っている発表者画面
 function onState(m) { m = m || {}; if (m.type === 'notice') { $('warn').textContent = m.text; noticeUntil = Date.now() + 20000; return; } if (m.type === 'state') { try { $('mirror').contentWindow.postMessage({ type: 'mirror', i: m.i, step: m.step || 0 }, '*'); } catch (e) {} st = m; skew = m.now - Date.now(); lastState = Date.now(); $('setup').hidden = true; tick(); } }
 addEventListener('message', (e) => onState(e.data));
-let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {}
+// 埋め込みの発表者画面は、親のウィンドウからだけ受け取る（ほかのタブと混ざらないように）
+let bc = null; if (!new URLSearchParams(location.search).has('embedded')) { try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {} }
 let deckWin = null;
 function act(a) { post({ type: 'act', act: a }); }
 function post(m) {
