@@ -359,16 +359,6 @@ window.DECK=[
     "id": "ar",
     "img": "png/15_GoogleCloudで動く仕組み.png",
     "label": "15. Google Cloud で動く仕組み"
-   },
-   {
-    "id": "ops",
-    "img": "png/20_運用と監視.png",
-    "label": "20. 運用・監視"
-   },
-   {
-    "id": "arch-full",
-    "img": "media/arch-full.jpg",
-    "label": "21. 詳しい構成図"
    }
   ],
   "target": 0,
