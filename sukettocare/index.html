@@ -50,6 +50,11 @@
   #start .conn { font-size:15px; font-weight:700; color:#ffb347; margin-bottom:4px; }
   #start .conn.ok { color:#4cd28a; }
   #start .ver { font-size:12px; color:var(--muted); margin-top:14px; text-align:right; }
+  #pv { position:fixed; inset:0; width:100%; height:100%; border:0; z-index:15; background:#111317; }
+  #tap { position:fixed; inset:0; z-index:25; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; background:rgba(10,12,16,.85); color:#fff; padding:16px; text-align:center; }
+  #tap[hidden] { display:none; }
+  #tap button { font:inherit; font-size:28px; font-weight:700; padding:22px 40px; border-radius:16px; border:0; background:#1a73e8; color:#fff; cursor:pointer; }
+  #tap p { font-size:16px; color:rgba(255,255,255,.7); }
   #count { display:none; } #count-old { position:fixed; right:16px; bottom:12px; z-index:10; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
 </style>
 </head>
@@ -63,6 +68,8 @@
   <kbd>H</kbd>: この説明を消す／出す
 </div>
 <div id="count"></div>
+<iframe id="pv" title="発表者画面" hidden></iframe>
+<div id="tap" hidden><button id="tapBtn">クリックで全画面にして始める</button><p>このウィンドウがスライドです。外のモニターに出ていることを確かめてから押してください。</p></div>
 <div id="start">
   <div class="box" id="startA">
     <h1>助っ人ケア 発表</h1>
@@ -98,7 +105,7 @@ const els = D.map((s) => {
     el = document.createElement('div'); el.className = 'hub';
     el.innerHTML = `<div class="hh"><span>質疑対応</span></div><div class="hg">` +
       s.links.map((L, k) => `<button class="hc" data-k="${k}"><img src="${L.img}" alt=""><span>${L.label}</span></button>`).join('') + '</div>';
-    el.querySelectorAll('.hc').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); jump(+b.dataset.k); }));
+    el.querySelectorAll('.hc').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); if (FOLLOW) toMaster({ type: 'jump', k: +b.dataset.k }); else jump(+b.dataset.k); }));
   } else if (kind(s) === 'image') {
     el = document.createElement('div'); el.className = 'zoomwrap';
     el.innerHTML = `<span class="tag">予備</span><img src="${s.src}" alt="${s.title}">`;
@@ -163,13 +170,39 @@ function show(n, fromUser, atEnd, stepAt, noPlay) {
 function startTimer(restartSlide) {
   startedAt = Date.now(); if (restartSlide) { slideAt = Date.now(); play(i); } send();
 }
-function state() { return { type: 'state', i, step, startedAt, slideAt, now: Date.now() }; }
+function state() { return { type: 'state', i, step, startedAt, slideAt, now: Date.now(), black: document.getElementById('black').classList.contains('on') }; }
 // 発表者画面の中に映す「鏡」: 自分からは何も送らず、発表者画面から来た位置に合わせて動くだけ
-const MIRROR = new URLSearchParams(location.search).has('mirror');
+const Q = new URLSearchParams(location.search);
+const MIRROR = Q.has('mirror');
+// FOLLOW: 主のウィンドウが開いた 2 枚目。位置は主に合わせ、操作は主へ送る。中身（スライド／発表者画面）は入れ替えられる
+const FOLLOW = Q.has('follow');
+let ROLE = 'slides', slideWin = null;
+const pv = document.getElementById('pv');
+function setRole(r) {
+  ROLE = r; pv.hidden = r !== 'presenter';
+  if (r === 'presenter' && !pv.getAttribute('src')) pv.src = 'presenter.html?embedded=1';
+  if (r === 'presenter') { try { hideStart(); } catch (e) {} }
+  setTimeout(send, 50);
+}
+function toPv(m) { if (!pv.hidden && pv.contentWindow) { try { pv.contentWindow.postMessage(m, '*'); } catch (e) {} } }
+function toMaster(m) {
+  if (window.opener && !window.opener.closed) { try { window.opener.postMessage(m, '*'); return; } catch (e) {} }
+  if (bc) { try { bc.postMessage(m); } catch (e) {} }
+}
+function toSlave(m) {
+  if (slideWin && !slideWin.closed) { try { slideWin.postMessage(m, '*'); } catch (e) {} }
+  if (bc) { try { bc.postMessage(m); } catch (e) {} }
+}
+const LOCAL = ['full', 'help'];
+function doAct(k) { if (FOLLOW && !LOCAL.includes(k)) toMaster({ type: 'act', act: k }); else act(k); }
+let lastMaster = null, lastMasterAt = 0;
 let bc = null; if (!MIRROR) { try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onMsg(e.data, null); } catch (e) {} }
 function send() {
   if (MIRROR) return;
+  if (FOLLOW) { if (lastMaster) toPv(lastMaster); return; }
   const m = state();
+  toPv(m);
+  if (slideWin && !slideWin.closed) { try { slideWin.postMessage(m, '*'); } catch (e) {} }
   if (presenter && !presenter.closed) { try { presenter.postMessage(m, '*'); } catch (e) {} }
   if (bc) { try { bc.postMessage(m); } catch (e) {} }
 }
@@ -199,19 +232,33 @@ function act(k) {
       setTimeout(send, 400); return !!w;
     }
     case 'help': document.getElementById('help').classList.toggle('hide'); break;
+    case 'swap': {
+      const r = ROLE === 'presenter' ? 'slides' : 'presenter';
+      setRole(r); toSlave({ type: 'role', role: r === 'presenter' ? 'slides' : 'presenter' }); break;
+    }
+    case 'openSlides': openSlides(); break;
   }
 }
 const KEYS = { ArrowRight:'next', ' ':'next', PageDown:'next', Enter:'next', ArrowDown:'next',
   ArrowLeft:'prev', PageUp:'prev', ArrowUp:'prev', Backspace:'prev', Home:'first',
-  s:'start', t:'reset', r:'replay', b:'black', '.':'black', f:'full', p:'presenter', h:'help' };
-function onKey(key) { const a = KEYS[key] || KEYS[key.toLowerCase()]; if (a) { act(a); return true; } return false; }
+  s:'start', t:'reset', r:'replay', b:'black', '.':'black', f:'full', p:'presenter', h:'help', x:'swap' };
+function onKey(key) { const a = KEYS[key] || KEYS[key.toLowerCase()]; if (a) { doAct(a); return true; } return false; }
 addEventListener('keydown', (e) => { if (MIRROR || e.metaKey || e.ctrlKey || e.altKey) return; if (onKey(e.key)) e.preventDefault(); });
-stage.addEventListener('click', () => act('next'));
-stage.addEventListener('contextmenu', (e) => { e.preventDefault(); act('prev'); });
+stage.addEventListener('click', () => doAct('next'));
+stage.addEventListener('contextmenu', (e) => { e.preventDefault(); doAct('prev'); });
 let lastPing = 0;
 function onMsg(m, source) {
   m = m || {};
   if (MIRROR) { if (m.type === 'mirror') { if (m.i !== i) show(m.i, false, m.step > 0, m.step); else if (m.step !== step) setStep(m.step); } return; }
+  const fromPv = source && source === pv.contentWindow;
+  if (FOLLOW) {
+    if (fromPv) { if (m.type === 'act') { if (LOCAL.includes(m.act)) act(m.act); else toMaster(m); } else if (m.type === 'jump') toMaster(m); return; }
+    if (m.type === 'state') { lastMaster = m; lastMasterAt = Date.now(); applyState(m); toPv(m); }
+    if (m.type === 'role') setRole(m.role);
+    return;
+  }
+  if (m.type === 'slave-hello') { if (source) slideWin = source; toSlave({ type: 'role', role: ROLE === 'presenter' ? 'slides' : 'presenter' }); send(); return; }
+  if (fromPv && m.type === 'hello') { send(); return; }
   if (m.type === 'hello' || m.type === 'ping') {
     if (source && m.type === 'hello') presenter = source;
     lastPing = Date.now(); markConn(); if (m.type === 'hello') send();
@@ -227,6 +274,10 @@ function markConn() {
 }
 setInterval(markConn, 1000);
 addEventListener('message', (e) => onMsg(e.data, e.source));
+function applyState(m) {
+  if (m.i !== i) show(m.i, false, m.step > 0, m.step); else if (m.step !== step) setStep(m.step);
+  document.getElementById('black').classList.toggle('on', !!m.black);
+}
 const h = parseInt(location.hash.slice(1), 10);
 show(Number.isFinite(h) ? h - 1 : 0, false);
 
@@ -258,7 +309,7 @@ function showScreenInfo() {
   else el.textContent = '押すと、ブラウザが「ウィンドウの管理」の許可を求めます。「許可」を選んでください。';
 }
 function fullscreenHere() {
-  const el = document.documentElement, ext = externalScreen();
+  const el = document.documentElement, ext = (ROLE === 'presenter' || FOLLOW) ? null : externalScreen();
   const p = ext ? el.requestFullscreen({ screen: ext }) : el.requestFullscreen();
   if (p) p.then(() => hideStart()).catch(() => { const s = document.getElementById('scr'); if (s) s.textContent = '全画面にできませんでした。もう一度押してください。'; });
   else hideStart();
@@ -282,21 +333,34 @@ if (fromPresenter) {
 } else if (location.hash && location.hash !== '#1') {
   hideStart();
 }
+function openSlides() {
+  try { slideWin = window.open('index.html?follow=1', 'sukettocare-slides', 'popup,width=1280,height=720'); } catch (e) { slideWin = null; }
+  if (!slideWin) { toPv({ type: 'notice', text: 'スライドのウィンドウが開けませんでした（ポップアップが止められています）。アドレスバー右のアイコンから、このサイトのポップアップを「常に許可」にして、もう一度「スライドを外のモニターに出す」を押してください。' }); return false; }
+  // Chrome 系: スライドのウィンドウを外のモニターへ移して広げる（初回は「ウィンドウの管理」の許可）
+  if (window.getScreenDetails) {
+    window.getScreenDetails().then((sd) => {
+      const cur = sd.currentScreen;
+      const ext = sd.screens.find((x) => x !== cur && !x.isInternal) || sd.screens.find((x) => x !== cur);
+      if (ext && slideWin && !slideWin.closed) { slideWin.moveTo(ext.availLeft, ext.availTop); slideWin.resizeTo(ext.availWidth, ext.availHeight); }
+      else if (!ext) toPv({ type: 'notice', text: '外のモニターが見つかりません。モニターを「拡張ディスプレイ」でつないでから、もう一度押してください。' });
+    }).catch(() => toPv({ type: 'notice', text: '外のモニターへ自動で移せませんでした。スライドのウィンドウを外のモニターへドラッグしてください。' }));
+  } else toPv({ type: 'notice', text: 'このブラウザでは自動で移せません。スライドのウィンドウを外のモニターへドラッグしてください。' });
+  return true;
+}
 function goPresenter() {
-  const opened = act('presenter');
-  loadScreens(true);
-  if (opened) stepB();
-  else {
-    // ポップアップが止められたときは、ふつうのリンクで新しいタブに開く（タブ同士は BroadcastChannel でつながる）
-    document.getElementById('openLink').click();
-    stepB('発表者画面を新しいタブで開きました（ポップアップが止められていたため）。そのタブを別のウィンドウに切り離して、手元の画面に置いてください。');
-  }
+  hideStart(); setRole('presenter'); openSlides();
 }
 document.getElementById('goPresenter').addEventListener('click', goPresenter);
 document.getElementById('openLink').addEventListener('click', (e) => e.stopPropagation());
 document.getElementById('goSlides').addEventListener('click', () => { hideStart(); });
 document.getElementById('goFull').addEventListener('click', goFull);
-if (MIRROR) hideStart(); else loadScreens(false).then(showScreenInfo);
+if (MIRROR) hideStart();
+else if (FOLLOW) {
+  hideStart();
+  const tap = document.getElementById('tap'); tap.hidden = false;
+  document.getElementById('tapBtn').addEventListener('click', (e) => { e.stopPropagation(); const p = document.documentElement.requestFullscreen(); if (p) p.catch(() => {}); tap.hidden = true; });
+  toMaster({ type: 'slave-hello' }); setInterval(() => { if (!lastMaster || Date.now() - lastMasterAt > 3000) toMaster({ type: 'slave-hello' }); }, 2000);
+} else loadScreens(false).then(showScreenInfo);
 startEl.addEventListener('click', (e) => e.stopPropagation());
 startEl.addEventListener('keydown', (e) => e.stopPropagation(), true);
 addEventListener('keydown', (e) => {

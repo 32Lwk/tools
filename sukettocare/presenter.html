@@ -68,8 +68,9 @@
   <button data-a="prev">← 戻る</button><button data-a="next">次へ →</button>
   <button data-a="start">タイマー開始 (S)</button><button data-a="reset">タイマーを 0 に (T)</button>
   <button data-a="replay">映像を最初から (R)</button><button data-a="black">黒画面 (B)</button>
+  <button data-a="swap">表示を入れ替え (X)</button><button data-a="full">この画面を全画面 (F)</button>
   <button id="openDeck2">スライドを外のモニターに出す</button>
-  <span>キー操作はこの画面でもスライド側でも同じです。</span>
+  
   <span id="warn"></span>
 </footer>
 <div id="setup" hidden>
@@ -127,21 +128,24 @@ function tick() {
   let k = 0;
   if (s.steps) k = st.step || 0; else s.lineStart.forEach((t, j) => { if (se >= t) k = j; });
   document.querySelectorAll('.line').forEach((e, j) => { e.classList.toggle('now', j === k); e.classList.toggle('done', j < k); });
-  $('warn').textContent = (Date.now() - lastState > 2000) ? 'スライドの画面とつながっていません。スライド側で P を押して開き直してください。' : '';
+  if (Date.now() > noticeUntil) $('warn').textContent = (Date.now() - lastState > 2000) ? 'スライドの画面とつながっていません。' : '';
 }
 setInterval(tick, 200);
-let lastState = 0;
-function onState(m) { m = m || {}; if (m.type === 'state') { try { $('mirror').contentWindow.postMessage({ type: 'mirror', i: m.i, step: m.step || 0 }, '*'); } catch (e) {} st = m; skew = m.now - Date.now(); lastState = Date.now(); $('setup').hidden = true; tick(); } }
+let lastState = 0, noticeUntil = 0;
+const EMB = new URLSearchParams(location.search).has('embedded'); // スライドのページの中に入っている発表者画面
+function onState(m) { m = m || {}; if (m.type === 'notice') { $('warn').textContent = m.text; noticeUntil = Date.now() + 20000; return; } if (m.type === 'state') { try { $('mirror').contentWindow.postMessage({ type: 'mirror', i: m.i, step: m.step || 0 }, '*'); } catch (e) {} st = m; skew = m.now - Date.now(); lastState = Date.now(); $('setup').hidden = true; tick(); } }
 addEventListener('message', (e) => onState(e.data));
 let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {}
 let deckWin = null;
 function act(a) { post({ type: 'act', act: a }); }
 function post(m) {
+  if (EMB) { try { window.parent.postMessage(m, '*'); } catch (e) {} return; }
   if (deckWin && !deckWin.closed) deckWin.postMessage(m, '*');
   else if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*');
   else if (bc) bc.postMessage(m);
 }
 async function openDeck() {
+  if (EMB) { post({ type: 'act', act: 'openSlides' }); return; }
   try { deckWin = window.open('index.html?from=presenter', 'sukettocare-deck', 'width=1280,height=760'); } catch (e) { deckWin = null; }
   if (!deckWin) { $('deckLink').click(); $('setup').hidden = true; return; } // ポップアップが止められたら新しいタブで開く
   $('setup').hidden = true;
@@ -157,6 +161,7 @@ async function openDeck() {
 }
 $('deckLink').addEventListener('click', () => { $('setup').hidden = true; });
 function ping() {
+  if (EMB) return;
   const m = { type: 'ping' };
   try { if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*'); } catch (e) {}
   try { if (deckWin && !deckWin.closed) deckWin.postMessage(m, '*'); } catch (e) {}
@@ -166,14 +171,14 @@ setInterval(ping, 1500); ping();
 $('openDeck').addEventListener('click', openDeck);
 $('openDeck2').addEventListener('click', openDeck);
 // スライドとつながっていなければ、準備の手順を出す
-setTimeout(() => { if (!st) $('setup').hidden = false; }, 1200);
+setTimeout(() => { if (!st && !EMB) $('setup').hidden = false; }, 1200);
 const KEYS = { ArrowRight:'next', ' ':'next', PageDown:'next', Enter:'next', ArrowDown:'next',
   ArrowLeft:'prev', PageUp:'prev', ArrowUp:'prev', Backspace:'prev', Home:'first',
-  s:'start', t:'reset', r:'replay', b:'black', '.':'black' };
+  s:'start', t:'reset', r:'replay', b:'black', '.':'black', x:'swap', f:'full' };
 addEventListener('keydown', (e) => { if (e.metaKey || e.ctrlKey || e.altKey) return; const a = KEYS[e.key] || KEYS[e.key.toLowerCase()]; if (a) { e.preventDefault(); act(a); } });
-document.querySelectorAll('footer button').forEach((b) => b.addEventListener('click', () => act(b.dataset.a)));
-if (window.opener) window.opener.postMessage({ type: 'hello' }, '*');
-if (bc) bc.postMessage({ type: 'hello' });
+document.querySelectorAll('footer button[data-a]').forEach((b) => b.addEventListener('click', () => act(b.dataset.a)));
+if (EMB) window.parent.postMessage({ type: 'hello' }, '*');
+else { if (window.opener) window.opener.postMessage({ type: 'hello' }, '*'); if (bc) bc.postMessage({ type: 'hello' }); }
 setInterval(tick, 1000);
 $('warn').textContent = '';
 </script>
