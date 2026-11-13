@@ -69,7 +69,7 @@
 </div>
 <div id="count"></div>
 <iframe id="pv" title="発表者画面" hidden></iframe>
-<div id="tap" hidden><button id="tapBtn">クリックで全画面にして始める</button><p>このウィンドウがスライドです。外のモニターに出ていることを確かめてから押してください。</p></div>
+<div id="tap" hidden><button id="tapBtn">クリックで外のモニターで全画面にして始める</button><p></p></div>
 <div id="start">
   <div class="box" id="startA">
     <h1>助っ人ケア 発表</h1>
@@ -170,18 +170,22 @@ function show(n, fromUser, atEnd, stepAt, noPlay) {
 function startTimer(restartSlide) {
   startedAt = Date.now(); if (restartSlide) { slideAt = Date.now(); play(i); } send();
 }
-function state() { return { type: 'state', i, step, startedAt, slideAt, now: Date.now(), black: document.getElementById('black').classList.contains('on') }; }
+function state() { return { type: 'state', i, step, startedAt, slideAt, now: Date.now(), black: document.getElementById('black').classList.contains('on'), slaveRole: DUAL ? (ROLE === 'presenter' ? 'slides' : 'presenter') : null }; }
 // 発表者画面の中に映す「鏡」: 自分からは何も送らず、発表者画面から来た位置に合わせて動くだけ
 const Q = new URLSearchParams(location.search);
 const MIRROR = Q.has('mirror');
 // FOLLOW: 主のウィンドウが開いた 2 枚目。位置は主に合わせ、操作は主へ送る。中身（スライド／発表者画面）は入れ替えられる
 const FOLLOW = Q.has('follow');
 let ROLE = 'slides', slideWin = null;
+const SS = { get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} } };
+let DUAL = !FOLLOW && !MIRROR && SS.get('sukettocare-dual') === '1';
+const SAVED_POS = (() => { try { return DUAL ? JSON.parse(SS.get('sukettocare-pos') || 'null') : null; } catch (e) { return null; } })();
 const pv = document.getElementById('pv');
 function setRole(r) {
-  ROLE = r; pv.hidden = r !== 'presenter';
+  ROLE = r; if (!FOLLOW && !MIRROR) SS.set('sukettocare-role', r); pv.hidden = r !== 'presenter';
   if (r === 'presenter' && !pv.getAttribute('src')) pv.src = 'presenter.html?embedded=1';
   if (r === 'presenter') { try { hideStart(); } catch (e) {} }
+  if (FOLLOW) { const tp = document.getElementById('tap'); if (r === 'presenter') tp.hidden = true; else if (!document.fullscreenElement) tp.hidden = false; }
   setTimeout(send, 50);
 }
 function toPv(m) { if (!pv.hidden && pv.contentWindow) { try { pv.contentWindow.postMessage(m, '*'); } catch (e) {} } }
@@ -201,6 +205,7 @@ function send() {
   if (MIRROR) return;
   if (FOLLOW) { if (lastMaster) toPv(lastMaster); return; }
   const m = state();
+  if (DUAL) SS.set('sukettocare-pos', JSON.stringify({ i, step, startedAt }));
   toPv(m);
   if (slideWin && !slideWin.closed) { try { slideWin.postMessage(m, '*'); } catch (e) {} }
   if (presenter && !presenter.closed) { try { presenter.postMessage(m, '*'); } catch (e) {} }
@@ -255,6 +260,7 @@ function onMsg(m, source) {
     if (fromPv) { if (m.type === 'act') { if (LOCAL.includes(m.act)) act(m.act); else toMaster(m); } else if (m.type === 'jump') toMaster(m); return; }
     if (m.type === 'state') { lastMaster = m; lastMasterAt = Date.now(); applyState(m); toPv(m); }
     if (m.type === 'role') setRole(m.role);
+    if (m.type === 'master-hello') toMaster({ type: 'slave-hello' });
     return;
   }
   if (m.type === 'slave-hello') { if (source) slideWin = source; toSlave({ type: 'role', role: ROLE === 'presenter' ? 'slides' : 'presenter' }); send(); return; }
@@ -275,6 +281,7 @@ function markConn() {
 setInterval(markConn, 1000);
 addEventListener('message', (e) => onMsg(e.data, e.source));
 function applyState(m) {
+  if (m.slaveRole && m.slaveRole !== ROLE) setRole(m.slaveRole);
   if (m.i !== i) show(m.i, false, m.step > 0, m.step); else if (m.step !== step) setStep(m.step);
   document.getElementById('black').classList.toggle('on', !!m.black);
 }
@@ -330,24 +337,21 @@ function stepB(note) {
 if (fromPresenter) {
   if (window.opener) presenter = window.opener;
   stepB('発表者画面は手元の画面に置いたままにします。');
+} else if (DUAL) {
+  hideStart(); setRole(SS.get('sukettocare-role') || 'presenter');
+  try { const pos = SAVED_POS; if (pos) { show(pos.i, false, pos.step > 0, pos.step); startedAt = pos.startedAt; send(); } } catch (e) {}
+  toSlave({ type: 'master-hello' });
 } else if (location.hash && location.hash !== '#1') {
   hideStart();
 }
 function openSlides() {
-  try { slideWin = window.open('index.html?follow=1', 'sukettocare-slides', 'popup,width=1280,height=720'); } catch (e) { slideWin = null; }
+  const w = 960, h = 600, left = Math.round(window.screenX + (window.outerWidth - w) / 2), top = Math.round(window.screenY + (window.outerHeight - h) / 2);
+  try { slideWin = window.open('index.html?follow=1', 'sukettocare-slides', `popup,width=${w},height=${h},left=${left},top=${top}`); } catch (e) { slideWin = null; }
   if (!slideWin) { toPv({ type: 'notice', text: 'スライドのウィンドウが開けませんでした（ポップアップが止められています）。アドレスバー右のアイコンから、このサイトのポップアップを「常に許可」にして、もう一度「スライドを外のモニターに出す」を押してください。' }); return false; }
-  // Chrome 系: スライドのウィンドウを外のモニターへ移して広げる（初回は「ウィンドウの管理」の許可）
-  if (window.getScreenDetails) {
-    window.getScreenDetails().then((sd) => {
-      const cur = sd.currentScreen;
-      const ext = sd.screens.find((x) => x !== cur && !x.isInternal) || sd.screens.find((x) => x !== cur);
-      if (ext && slideWin && !slideWin.closed) { slideWin.moveTo(ext.availLeft, ext.availTop); slideWin.resizeTo(ext.availWidth, ext.availHeight); }
-      else if (!ext) toPv({ type: 'notice', text: '外のモニターが見つかりません。モニターを「拡張ディスプレイ」でつないでから、もう一度押してください。' });
-    }).catch(() => toPv({ type: 'notice', text: '外のモニターへ自動で移せませんでした。スライドのウィンドウを外のモニターへドラッグしてください。' }));
-  } else toPv({ type: 'notice', text: 'このブラウザでは自動で移せません。スライドのウィンドウを外のモニターへドラッグしてください。' });
   return true;
 }
 function goPresenter() {
+  DUAL = true; SS.set('sukettocare-dual', '1');
   hideStart(); setRole('presenter'); openSlides();
 }
 document.getElementById('goPresenter').addEventListener('click', goPresenter);
@@ -357,8 +361,30 @@ document.getElementById('goFull').addEventListener('click', goFull);
 if (MIRROR) hideStart();
 else if (FOLLOW) {
   hideStart();
-  const tap = document.getElementById('tap'); tap.hidden = false;
-  document.getElementById('tapBtn').addEventListener('click', (e) => { e.stopPropagation(); const p = document.documentElement.requestFullscreen(); if (p) p.catch(() => {}); tap.hidden = true; });
+  const tap = document.getElementById('tap'), tapBtn = document.getElementById('tapBtn'), tapNote = tap.querySelector('p');
+  tap.hidden = false;
+  const extFromHere = () => {
+    if (!screens || !screens.screens || screens.screens.length < 2) return null;
+    const cur = screens.currentScreen;
+    return screens.screens.find((s) => s !== cur && !s.isInternal) || screens.screens.find((s) => s !== cur) || null;
+  };
+  const note = () => {
+    if (!window.getScreenDetails) tapNote.textContent = 'このブラウザでは自動で外へ出せません。このウィンドウを外のモニターへドラッグしてから押してください。';
+    else if (!screens) tapNote.textContent = '押すと「ウィンドウの管理」の許可を求められます。「許可」を選んでください。';
+    else if (!extFromHere()) tapNote.textContent = '外のモニターが見つかりません。拡張ディスプレイでつないでいるか確かめてください。押すと、この画面で全画面になります。';
+    else tapNote.textContent = '外のモニター（' + (extFromHere().label || '') + '）で全画面になります。発表者画面はこの PC に残ります。';
+  };
+  loadScreens(false).then(note); note();
+  tapBtn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if (window.getScreenDetails && !screens) { await loadScreens(true); note(); if (screens) { tapBtn.textContent = 'もう一度押して、外のモニターで全画面にする'; return; } }
+    const ext = extFromHere();
+    const p = ext ? document.documentElement.requestFullscreen({ screen: ext }) : document.documentElement.requestFullscreen();
+    if (p) p.then(() => { tap.hidden = true; }).catch(() => { tapNote.textContent = '全画面にできませんでした。もう一度押してください。'; });
+    else tap.hidden = true;
+  });
+  // 全画面を抜けたら（Esc など）、もう一度ボタンを出す
+  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && ROLE === 'slides') { tapBtn.textContent = 'クリックで外のモニターで全画面にして始める'; tap.hidden = false; note(); } });
   toMaster({ type: 'slave-hello' }); setInterval(() => { if (!lastMaster || Date.now() - lastMasterAt > 3000) toMaster({ type: 'slave-hello' }); }, 2000);
 } else loadScreens(false).then(showScreenInfo);
 startEl.addEventListener('click', (e) => e.stopPropagation());
