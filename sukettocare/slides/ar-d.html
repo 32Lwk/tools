@@ -47,13 +47,12 @@
 <div class="gcl">Google Cloud<span>東京リージョン</span></div>
 
 <!-- 入口・セキュリティ -->
-<div class="layer" style="--c:#1A73E8; left:305px; top:262px; width:380px; height:676px" data-has="hosting auth armor alb"><div class="ln">入口・セキュリティ</div></div>
-<div class="svc tile row" data-s="hosting" style="--c:#1A73E8; left:325px; top:318px; width:340px; height:136px"><div class="num">1</div><img src="icons/web.svg" alt=""><div><b>Firebase Hosting</b><small>CDN で画面を配信</small></div></div>
-<div class="svc tile row" data-s="auth" style="--c:#1A73E8; left:325px; top:466px; width:340px; height:120px"><img src="icons/iam.svg" alt=""><div><b>Firebase Authentication</b><small>サインイン</small></div></div>
-<div class="svc tile row" data-s="armor" style="--c:#D93025; left:325px; top:612px; width:340px; height:136px"><div class="num">1</div><img src="icons/iam.svg" alt=""><div><b>Cloud Armor（WAF）</b><small>攻撃・使いすぎを遮断</small></div></div>
-<div class="svc tile row" data-s="alb" style="--c:#1A73E8; left:325px; top:782px; width:340px; height:136px"><div class="num">1</div><img src="icons/net.svg" alt=""><div><b>ロードバランサ（ALB）</b><small>API の入口</small></div></div>
-<div class="lane" style="left:268px; top:352px">画面</div>
-<div class="lane" style="left:268px; top:646px">API</div>
+<div class="layer" style="--c:#1A73E8; left:305px; top:262px; width:380px; height:676px" data-has="hosting armor alb"><div class="ln">入口・セキュリティ</div></div>
+<div class="svc tile" data-s="armor" style="--c:#D93025; left:325px; top:322px; width:158px; height:380px"><div class="num">1</div><img src="icons/iam.svg" alt=""><b>Cloud Armor</b><small>（WAF）</small><small style="margin-top:8px">攻撃を遮断<br>回数を制限</small></div>
+<div class="svc tile" data-s="alb" style="--c:#1A73E8; left:507px; top:322px; width:158px; height:380px"><div class="num">1</div><img src="icons/net.svg" alt=""><b>ロード<br>バランサ</b><small>（ALB）</small><small style="margin-top:8px">API の入口</small></div>
+<div class="svc tile" data-s="hosting" style="--c:#1A73E8; left:325px; top:728px; width:340px; height:190px"><div class="num">1</div><img src="icons/web.svg" alt=""><b>Firebase Hosting</b><small>CDN で画面を配信</small></div>
+<div class="lane" style="left:268px; top:470px">API</div>
+<div class="lane" style="left:268px; top:790px">画面</div>
 
 <!-- アプリケーション -->
 <div class="layer" style="--c:#188038; left:725px; top:262px; width:420px; height:676px" data-has="run firestore"><div class="ln">アプリケーション</div></div>
@@ -73,10 +72,10 @@
 <div class="svc tile" data-s="pipe" style="--c:#00796B; left:1649px; top:670px; width:206px; height:200px"><div class="num">4</div><img src="icons/vertex.svg" alt=""><b>Vertex AI Pipelines</b><small>施設ごとに学習</small></div>
 
 <svg class="l">
-  <path class="k" d="M262 386 H306"/><polygon class="k" points="322,386 302,374 302,398"/>
-  <path class="k" d="M262 680 H306"/><polygon class="k" points="322,680 302,668 302,692"/>
-  <path class="k" d="M495 748 V764"/><polygon class="k" points="495,780 483,760 507,760"/>
-  <path class="k" d="M665 850 H700 V520 H728"/><polygon class="k" points="744,520 724,508 724,532"/>
+  <path class="k" d="M262 505 H306"/><polygon class="k" points="322,505 302,493 302,517"/>
+  <path class="k" d="M262 825 H306"/><polygon class="k" points="322,825 302,813 302,837"/>
+  <path class="k" d="M483 505 H491"/><polygon class="k" points="505,505 489,495 489,515"/>
+  <path class="k" d="M665 505 H728"/><polygon class="k" points="744,505 724,493 724,517"/>
   <path class="k" d="M1146 430 H1168"/><polygon class="k" points="1184,430 1164,418 1164,442"/>
   <path class="k" d="M1146 760 H1168"/><polygon class="k" points="1184,760 1164,748 1164,772"/>
   <path d="M1411 770 H1423"/><polygon points="1427,770 1415,763 1415,777"/>
