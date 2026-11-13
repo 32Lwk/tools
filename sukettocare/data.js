@@ -215,26 +215,6 @@ window.DECK=[
   "steps": true
  },
  {
-  "id": "sv3",
-  "title": "足りない時間が見える",
-  "lines": [
-   "欠員が出ると、",
-   "必要な人数と配置の人数を時間ごとに比べ、",
-   "足りない時間が、自動で見つかります。"
-  ],
-  "target": 9.0,
-  "clip": 12.6,
-  "lineStart": [
-   0.0,
-   1.4,
-   5.4
-  ],
-  "cumEnd": 157.8,
-  "kind": "html",
-  "src": "slides/sv3.html",
-  "steps": true
- },
- {
   "id": "sv4",
   "title": "足りない時間を埋める",
   "lines": [
@@ -249,7 +229,7 @@ window.DECK=[
    2.3,
    6.4
   ],
-  "cumEnd": 168.3,
+  "cumEnd": 159.3,
   "kind": "html",
   "src": "slides/sv4.html",
   "steps": true
@@ -273,38 +253,27 @@ window.DECK=[
    33.4,
    42.8
   ],
-  "cumEnd": 215.7,
+  "cumEnd": 206.7,
   "kind": "html",
   "src": "slides/ar-d.html",
   "steps": true
  },
  {
-  "id": "g4",
-  "title": "導入後: リーダー",
+  "id": "sum",
+  "title": "まとめ",
+  "kind": "html",
+  "src": "slides/sum.html",
+  "steps": true,
   "lines": [
-   "導入後。リーダーは、欠員が埋まったことを、画面で確かめるだけ。"
+   "助っ人ケアなら、欠員の連絡から、代わりの確保、シフトの組み直しまで、リーダーは承認するだけです。",
+   "ルールは破らず、施設ごとの傾向を学んで、使うほど賢くなります。"
   ],
-  "target": 6.0,
-  "clip": 6.55,
+  "target": 14.5,
   "lineStart": [
-   0.0
+   0.0,
+   8.8
   ],
-  "rate": 1.0,
-  "cumEnd": 221.7
- },
- {
-  "id": "g5",
-  "title": "導入後: 穏やかな朝",
-  "lines": [
-   "入居者は、いつもの朝を迎えます。"
-  ],
-  "target": 3.5,
-  "clip": 5.27,
-  "lineStart": [
-   0.0
-  ],
-  "rate": 1.0,
-  "cumEnd": 225.2
+  "cumEnd": 221.2
  },
  {
   "id": "cl",
@@ -320,7 +289,7 @@ window.DECK=[
    9.8
   ],
   "rate": 1.0,
-  "cumEnd": 238.5
+  "cumEnd": 234.5
  },
  {
   "id": "qa",
@@ -355,16 +324,16 @@ window.DECK=[
    {
     "id": "sv4",
     "img": "png/14_足りない時間を埋める.png",
-    "label": "14. 足りない時間を埋める"
+    "label": "13. 足りない時間を埋める"
    },
    {
     "id": "ar",
     "img": "png/15_GoogleCloudで動く仕組み.png",
-    "label": "15. Google Cloud で動く仕組み"
+    "label": "14. Google Cloud で動く仕組み"
    }
   ],
   "target": 0,
-  "cumEnd": 238.5,
+  "cumEnd": 234.5,
   "lineStart": [
    0
   ]
@@ -379,7 +348,7 @@ window.DECK=[
    "作る（Terraform・GitHub Actions）→ 出す（Cloud Build・Artifact Registry・プレビュー）→ 見守る（Cloud Monitoring・Cloud Logging・AI の品質）。守るは IAM の最小権限。"
   ],
   "target": 0,
-  "cumEnd": 238.5,
+  "cumEnd": 234.5,
   "lineStart": [
    0
   ]
@@ -394,10 +363,31 @@ window.DECK=[
    "（クリックした所を拡大、もう一度クリックで戻る）"
   ],
   "target": 0,
-  "cumEnd": 238.5,
+  "cumEnd": 234.5,
   "lineStart": [
    0
   ]
+ },
+ {
+  "id": "sv3",
+  "title": "予備: 足りない時間が見える",
+  "lines": [
+   "欠員が出ると、",
+   "必要な人数と配置の人数を時間ごとに比べ、",
+   "足りない時間が、自動で見つかります。"
+  ],
+  "target": 0,
+  "clip": 12.6,
+  "lineStart": [
+   0,
+   0,
+   0
+  ],
+  "cumEnd": 234.5,
+  "kind": "html",
+  "src": "slides/sv3.html",
+  "steps": true,
+  "backup": true
  }
 ];
 window.LIMIT=240;

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>まとめ</title>
+<link rel="stylesheet" href="ar-common.css">
+<style>
+  .eb { background:#188038; } .tt { font-size:78px; }
+  .flow { position:absolute; left:90px; top:250px; width:1740px; display:flex; align-items:center; gap:22px; }
+  .st { flex:1; background:#fff; border:4px solid #DADCE0; border-radius:22px; padding:26px 26px; text-align:center; }
+  .st b { display:block; font-size:42px; font-weight:900; }
+  .st small { display:block; font-size:24px; color:var(--mute); margin-top:6px; font-weight:700; }
+  .arr { font-size:52px; font-weight:900; color:#5F6368; }
+  .ok { position:absolute; left:90px; top:450px; width:1740px; text-align:center; font-size:46px; font-weight:900; color:#137333; }
+  .ok em { font-style:normal; background:#E6F4EA; border-radius:14px; padding:4px 18px; }
+  .cards { position:absolute; left:90px; top:580px; width:1740px; display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
+  .cd { background:#fff; border:4px solid color-mix(in srgb, var(--c) 40%, #fff); border-radius:24px; padding:28px 30px; min-height:330px; }
+  .cd .n { width:56px; height:56px; border-radius:50%; background:var(--c); color:#fff; font-size:30px; font-weight:900; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .cd b { display:block; font-size:44px; font-weight:900; color:color-mix(in srgb, var(--c) 85%, #000); line-height:1.2; }
+  .cd p { font-size:26px; line-height:1.5; color:var(--sub); margin-top:14px; }
+  .cd p strong { color:var(--ink); }
+  .rv { opacity:0; transform:translateY(16px); transition:opacity .55s ease, transform .55s ease; }
+  .rv.on { opacity:1; transform:none; }
+</style>
+</head>
+<body>
+<div class="eb">まとめ</div>
+<div class="tt">助っ人ケアで、できること</div>
+<img class="badge" src="badge.png" alt="">
+
+<div class="flow rv" data-cue="0">
+  <div class="st"><b>欠員の連絡</b><small>職員がアプリで</small></div><div class="arr">→</div>
+  <div class="st"><b>代わりの確保</b><small>AI が順に打診</small></div><div class="arr">→</div>
+  <div class="st"><b>シフトの組み直し</b><small>変更は最小に</small></div>
+</div>
+<div class="ok rv" data-cue="0">リーダーは、<em>承認するだけ</em></div>
+
+<div class="cards">
+  <div class="cd rv" data-cue="1" style="--c:#E37400; transition-delay:0s"><div class="n">1</div><b>ルールを<br>破らない</b><p>最適化ソルバーが、条件を満たす案だけを出す。<strong>別の検証器でも違反 0 件</strong>。</p></div>
+  <div class="cd rv" data-cue="1" style="--c:#188038; transition-delay:.15s"><div class="n">2</div><b>施設ごとに<br>育つ</b><p>打診に応じてくれる見込みを、施設ごとに学習（<strong>AUC 0.77</strong>）。勝てないモデルは使わない。</p></div>
+  <div class="cd rv" data-cue="1" style="--c:#1A73E8; transition-delay:.3s"><div class="n">3</div><b>リーダーは<br>承認だけ</b><p>夜中に電話をかけ続けなくていい。<strong>決めるのは人</strong>、探すのは AI。</p></div>
+</div>
+<script>window.STEPS = [[[0, 0]], [[1, 0]]];</script>
+<script src="stepper.js"></script>
+</body>
+</html>
