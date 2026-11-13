@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>想定問答</title>
+<style>
+  :root { --bg:#f7f5ee; --ink:#202124; --sub:#5f6368; --line:#dadce0; --card:#fff; --blue:#1a73e8; --warn:#b3261e; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#15171a; --ink:#eceff1; --sub:#a4acb4; --line:#30353c; --card:#1d2025; --blue:#8ab4f8; --warn:#f2b8b5; } }
+  :root[data-theme="dark"] { --bg:#15171a; --ink:#eceff1; --sub:#a4acb4; --line:#30353c; --card:#1d2025; --blue:#8ab4f8; --warn:#f2b8b5; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:'Hiragino Sans','Noto Sans JP',system-ui,sans-serif; line-height:1.75; padding:32px 16px 64px; }
+  main { max-width:860px; margin:0 auto; }
+  h1 { font-size:26px; } .lead { color:var(--sub); margin:6px 0 24px; font-size:15px; }
+  h2 { font-size:15px; color:var(--blue); margin:28px 0 10px; letter-spacing:.04em; }
+  details { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 18px; margin-bottom:10px; }
+  summary { font-weight:700; cursor:pointer; font-size:17px; }
+  details p, details ul { margin-top:8px; font-size:16px; }
+  ul { padding-left:1.3em; }
+  .say { border-left:4px solid var(--blue); padding-left:12px; }
+  .note { color:var(--sub); font-size:14px; }
+  .todo { color:var(--warn); font-weight:700; }
+  nav { margin-bottom:12px; font-size:14px; } nav a { color:var(--blue); }
+  @media print { details { break-inside:avoid; } details:not([open]) > *:not(summary) { display:block; } }
+</style>
+</head>
+<body>
+<main>
+<nav><a href="index.html">スライド</a>　<a href="print.html">印刷用の原稿</a></nav>
+<h1>想定問答</h1>
+<p class="lead">答えは短く、最初の一文で結論を言う。数字は README と設計書の実測値です（すべて合成データ）。<span class="todo">赤字</span>は発表の前に状況を確かめてから答える項目です。</p>
+
+<h2>正しさ・安全</h2>
+<details open><summary>法令の条件は、本当に法令どおりですか？</summary>
+<p class="say">ルールの数値は、いまはすべてデモ用の仮値です。夜勤明けの休みや連続勤務の上限といった「ルールの型」を作ってあり、数値は施設ごとに設定で変えられます。実際の運用では、施設や自治体の基準に合わせて設定します。</p></details>
+<details><summary>AI が間違えたら、勤務表が壊れませんか？</summary>
+<p class="say">壊れません。AI は提案までで、勤務表を書き換える道具をそもそも持たせていません。シフトを組むのは最適化ソルバー（OR-Tools CP-SAT）で、必須ルールを破る案は出しません。ソルバーとは別に書いた検証器でも、ルール違反は 0 件でした。</p></details>
+<details><summary>なぜ AI に直接シフトを組ませないのですか？</summary>
+<p class="say">AI だと、ルールを守ったかを保証できないからです。CP-SAT なら違反ゼロを保証でき、解けないときも「どのルールを何件破れば組めるか」を示せます。Gemini は、リーダーの言葉をルールに翻訳することと、結果の理由を説明することに使っています。</p></details>
+<details><summary>個人情報は大丈夫ですか？</summary>
+<p class="say">AI に渡す前に、職員の氏名を置き換え、Sensitive Data Protection で氏名・電話・メールなどを伏せます。伏せられなければ AI は呼びません。Model Armor で入力と出力も検査しています。データは東京リージョンに置いています（Gemini の呼び出しだけはグローバルのエンドポイント）。</p></details>
+
+<h2>精度・データ</h2>
+<details><summary>使っているデータは本物ですか？</summary>
+<p class="say">すべて架空です。3 つの施設（さくら苑・みどりの丘・ひだまりの家）の合成データです。最初の夜の話は、私が介護体験で現場の方から聞いた話で、個別の聞き取りです。</p></details>
+<details><summary>打診の順番の学習は、どのくらい当たりますか？</summary>
+<p class="say">合成データでの交差検証で、AUC はさくら苑 0.77、みどりの丘 0.70 です。ひだまりの家はデータが 164 件と少なく、基準に勝てなかったので、学習したモデルを使わずに基準の順番のままにしています。勝てないモデルは使わない、という仕組みです。</p>
+<p class="note">限界: 合成データに埋め込んだ傾向を再現できたかの数字で、実際の運用での精度ではありません。</p></details>
+<details><summary>「毎週学習」は実際に動いていますか？</summary>
+<p class="say">学習のパイプライン（Vertex AI Pipelines）と、定期的に起動する Cloud Scheduler のジョブは用意してあります。提出の時点では、定期実行は一時停止にしています。また、公開デモは誰でも操作できるので、デモで出たデータは学習に使わない設定にしています（データの汚染を防ぐため）。</p></details>
+<details><summary>計算にどのくらい時間がかかりますか？</summary>
+<p class="say">1 か月のシフトと 30 日分の日次の割り当てを、Cloud Run 上で 2 秒〜19 秒ほどで組めます（職員 16〜34 人の施設）。</p></details>
+
+<h2>使い方・運用</h2>
+<details><summary>誰も入れないときは、どうなりますか？</summary>
+<p class="say">勤務をずらす・延ばす、ほかのユニットに応援を頼む、と順に試し、それでも埋まらなければ、求人の掲載まで自動で進めます。リーダーはいつでも取り消せます。</p></details>
+<details><summary>打診される職員の負担になりませんか？</summary>
+<p class="say">打診の文面には「断っても評価には影響しません」と書いてあり、返信がなければ期限で次の人に移ります。夜勤の回数が偏らないように、公平性もルールに入れています。</p></details>
+<details><summary>勤務をずらすとき、本人の同意は？</summary>
+<p class="say">勤務を変える案は、影響を受ける人の承認を待ってから確定します。勤務の間隔や翌日の勤務も、事前に確認しています。</p></details>
+<details><summary>公開デモを触ってみたいのですが。</summary>
+<p class="say"><span class="todo">（発表の前に状況を確認）</span> 画面は care.yutok.dev で開けます。<span class="todo">裏側の API は 11 月 13 日から、クラウドの請求の設定の問題で止まっていて、復旧中です。</span>復旧していれば、従業員画面で休みを送り、リーダー画面で承認すると、打診から充足まで通しで試せます。</p></details>
+
+<h2>今後</h2>
+<details><summary>実際の施設に導入するには、何が足りませんか？</summary>
+<p class="say">ログインと権限の管理、施設の実際のシフト表の取り込み、施設の基準に合わせたルールの数値の設定、実際の打診での効果の検証（今は AUC などでしか測っていません）です。</p>
+<p class="note">ここは事実として「まだ作っていない」ことを言えば十分です。費用や事業の話を聞かれたら、自分の考えで答えてください。</p></details>
+<details><summary>介護以外にも使えますか？</summary>
+<p class="say">ルールは「必要人数・希望・連なり・回数・偏り」の 5 つの型にまとめてあるので、看護や保育など、夜勤や交代勤務のある職場に広げられる設計です。ただし、試したのは介護施設だけです。</p></details>
+
+<h2>背景の数字（聞かれたときだけ）</h2>
+<details><summary>人手不足はどのくらいですか？</summary>
+<p class="say">介護職員は 2040 年度に約 272 万人が必要で、2022 年度から約 57 万人増やす必要があるとされています（厚生労働省、第 9 期介護保険事業計画に基づく推計）。介護福祉士の登録者は約 200 万人で、そのうち約 2 割は介護の仕事に就いていません。</p></details>
+<details><summary>使っている Google の技術は？</summary>
+<ul>
+<li>Firebase Hosting（画面）、Cloud Run（最適化ソルバー・画面の同期）</li>
+<li>Vertex AI の Gemini（ルールの翻訳・理由の説明・チャット）、Vertex AI Pipelines・Model Registry（応諾予測の学習）</li>
+<li>Sensitive Data Protection・Model Armor（個人情報と入出力の検査）</li>
+<li>Firestore（データと追記の記録）、Pub/Sub → BigQuery（イベントの蓄積）、BigQuery ML（比較用の学習・欠員数の予測）</li>
+<li>Vertex AI Search（運用マニュアルの検索）、Cloud Monitoring、Terraform</li>
+</ul></details>
+</main>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>助っ人ケア 発表</title>
+<style>
+  :root { --bg:#000; --ink:#fff; --muted:rgba(255,255,255,.6); }
+  * { box-sizing:border-box; margin:0; }
+  html, body { height:100%; background:var(--bg); color:var(--ink); overflow:hidden;
+    font-family:'Hiragino Sans','Noto Sans JP',system-ui,sans-serif; }
+  #stage { position:absolute; left:50%; top:50%; width:1920px; height:1080px;
+    transform-origin:0 0; background:#F7F5EE; overflow:hidden; cursor:none; }
+  #stage video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    opacity:0; transition:opacity .25s ease; background:#F7F5EE; }
+  #stage video.on { opacity:1; }
+  #black { position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; transition:opacity .2s; z-index:5; }
+  #black.on { opacity:1; }
+  #help { position:fixed; left:16px; bottom:16px; z-index:10; font-size:14px; line-height:1.7;
+    background:rgba(0,0,0,.78); color:#fff; padding:14px 18px; border-radius:10px; max-width:calc(100% - 32px); }
+  #help.hide { display:none; }
+  #help kbd { display:inline-block; min-width:1.6em; text-align:center; padding:0 6px; border:1px solid rgba(255,255,255,.4); border-radius:5px; font-family:inherit; }
+  #count { position:fixed; right:16px; bottom:12px; z-index:10; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+<div id="stage"><div id="black"></div></div>
+<div id="help">
+  <b>助っ人ケア 発表スライド</b><br>
+  <kbd>→</kbd> <kbd>Space</kbd> クリック: 次へ　<kbd>←</kbd>: 戻る<br>
+  <kbd>P</kbd>: 発表者画面を開く　<kbd>F</kbd>: 全画面　<kbd>S</kbd>: タイマーを開始（最初の「次へ」でも開始）<br>
+  <kbd>T</kbd>: タイマーを 0 に戻す　<kbd>R</kbd>: このページの映像を最初から　<kbd>B</kbd>: 画面を黒に<br>
+  <kbd>H</kbd>: この説明を消す／出す
+</div>
+<div id="count"></div>
+<script src="data.js"></script>
+<script>
+const D = window.DECK, stage = document.getElementById('stage');
+const vids = D.map((s) => {
+  const v = document.createElement('video');
+  v.src = 'media/' + s.id + '.mp4'; v.poster = 'media/' + s.id + '.jpg';
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  stage.insertBefore(v, document.getElementById('black')); return v;
+});
+let i = 0, startedAt = null, slideAt = null, presenter = null;
+
+function fit() {
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `scale(${k}) translate(-50%,-50%)`;
+}
+addEventListener('resize', fit); fit();
+
+function play(n) {
+  const v = vids[n]; v.playbackRate = D[n].rate; v.currentTime = 0;
+  const p = v.play(); if (p) p.catch(() => {});
+  v.playbackRate = D[n].rate;
+}
+function show(n, fromUser) {
+  n = Math.max(0, Math.min(D.length - 1, n));
+  if (fromUser && startedAt === null && n > i) startTimer(false);
+  vids.forEach((v, k) => { if (k !== n) { v.classList.remove('on'); if (k !== n) v.pause(); } });
+  i = n; vids[n].classList.add('on'); play(n); slideAt = Date.now();
+  document.getElementById('count').textContent = (n + 1) + ' / ' + D.length;
+  try { history.replaceState(null, '', '#' + (n + 1)); } catch (e) {}
+  send();
+}
+function startTimer(restartSlide) {
+  startedAt = Date.now(); if (restartSlide) { slideAt = Date.now(); play(i); } send();
+}
+function state() { return { type: 'state', i, startedAt, slideAt, now: Date.now() }; }
+let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onMsg(e.data, null); } catch (e) {}
+function send() {
+  const m = state();
+  if (presenter && !presenter.closed) { try { presenter.postMessage(m, '*'); } catch (e) {} }
+  if (bc) { try { bc.postMessage(m); } catch (e) {} }
+}
+setInterval(send, 500);
+
+function act(k) {
+  switch (k) {
+    case 'next': show(i + 1, true); break;
+    case 'prev': show(i - 1, true); break;
+    case 'first': show(0, true); break;
+    case 'start': startTimer(true); break;
+    case 'reset': startedAt = null; send(); break;
+    case 'replay': play(i); slideAt = Date.now(); send(); break;
+    case 'black': document.getElementById('black').classList.toggle('on'); break;
+    case 'full': if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); else document.exitFullscreen(); break;
+    case 'presenter':
+      presenter = window.open('presenter.html', 'sukettocare-presenter', 'width=1280,height=800');
+      setTimeout(send, 400); break;
+    case 'help': document.getElementById('help').classList.toggle('hide'); break;
+  }
+}
+const KEYS = { ArrowRight:'next', ' ':'next', PageDown:'next', Enter:'next', ArrowDown:'next',
+  ArrowLeft:'prev', PageUp:'prev', ArrowUp:'prev', Backspace:'prev', Home:'first',
+  s:'start', t:'reset', r:'replay', b:'black', '.':'black', f:'full', p:'presenter', h:'help' };
+function onKey(key) { const a = KEYS[key] || KEYS[key.toLowerCase()]; if (a) { act(a); return true; } return false; }
+addEventListener('keydown', (e) => { if (e.metaKey || e.ctrlKey || e.altKey) return; if (onKey(e.key)) e.preventDefault(); });
+stage.addEventListener('click', () => act('next'));
+stage.addEventListener('contextmenu', (e) => { e.preventDefault(); act('prev'); });
+function onMsg(m, source) {
+  m = m || {};
+  if (m.type === 'hello') { if (source) presenter = source; send(); }
+  if (m.type === 'act') act(m.act);
+}
+addEventListener('message', (e) => onMsg(e.data, e.source));
+const h = parseInt(location.hash.slice(1), 10);
+show(Number.isFinite(h) ? h - 1 : 0, false);
+setTimeout(() => document.getElementById('help').classList.add('hide'), 12000);
+</script>
+</body>
+</html>

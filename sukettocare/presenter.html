@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>発表者画面</title>
+<style>
+  :root { --bg:#111317; --panel:#1b1e24; --line:#2c313a; --ink:#f1f3f5; --sub:#9aa3ad;
+    --now:#ffd666; --ok:#4cd28a; --warn:#ffb347; --bad:#ff6b6b; }
+  * { box-sizing:border-box; margin:0; }
+  html, body { height:100%; background:var(--bg); color:var(--ink);
+    font-family:'Hiragino Sans','Noto Sans JP',system-ui,sans-serif; }
+  body { display:grid; grid-template-rows:auto 1fr auto; height:100vh; }
+  header { display:flex; align-items:center; gap:28px; padding:14px 24px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .big { font-size:56px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+  .lab { font-size:13px; color:var(--sub); }
+  .delta { font-size:30px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+  #bar { height:8px; background:var(--line); border-radius:4px; flex:1; min-width:200px; position:relative; overflow:hidden; }
+  #bar i { position:absolute; left:0; top:0; bottom:0; background:var(--ok); }
+  #bar b { position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff; }
+  main { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr); gap:20px; padding:20px 24px; min-height:0; }
+  #script { overflow:auto; min-height:0; }
+  #title { font-size:18px; color:var(--sub); margin-bottom:10px; }
+  #title b { color:var(--ink); }
+  .line { font-size:34px; line-height:1.6; padding:6px 14px; margin:0 -14px 6px; border-radius:10px; color:#c9ced4; }
+  .line.now { color:#fff; background:rgba(255,214,102,.12); box-shadow:inset 4px 0 0 var(--now); }
+  .line.done { color:#6c747d; }
+  aside { display:flex; flex-direction:column; gap:14px; min-height:0; overflow:auto; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; }
+  .card img { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:6px; display:block; background:#000; }
+  .card p { font-size:15px; color:var(--sub); margin-top:8px; line-height:1.5; }
+  .card p b { color:var(--ink); }
+  footer { padding:10px 24px; border-top:1px solid var(--line); font-size:13px; color:var(--sub); display:flex; gap:18px; flex-wrap:wrap; align-items:center; }
+  footer button { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font:inherit; font-size:14px; cursor:pointer; }
+  #warn { color:var(--bad); }
+  @media (max-width: 800px) { main { grid-template-columns:1fr; } .big { font-size:40px; } .line { font-size:24px; } }
+</style>
+</head>
+<body>
+<header>
+  <div><div class="lab">経過</div><div class="big" id="elapsed">0:00</div></div>
+  <div><div class="lab">予定とのずれ</div><div class="delta" id="delta">—</div></div>
+  <div><div class="lab">このページ</div><div class="delta" id="slideT">0 / 0 秒</div></div>
+  <div><div class="lab">4:00 まで</div><div class="delta" id="left">4:00</div></div>
+  <div id="bar" title="緑: 経過　白線: 予定"><i></i><b></b></div>
+</header>
+<main>
+  <section id="script"><div id="title"></div><div id="lines"></div></section>
+  <aside>
+    <div class="card"><img id="curImg" alt=""><p id="curCap"></p></div>
+    <div class="card"><img id="nextImg" alt=""><p id="nextCap"></p></div>
+  </aside>
+</main>
+<footer>
+  <button data-a="prev">← 戻る</button><button data-a="next">次へ →</button>
+  <button data-a="start">タイマー開始 (S)</button><button data-a="reset">タイマーを 0 に (T)</button>
+  <button data-a="replay">映像を最初から (R)</button><button data-a="black">黒画面 (B)</button>
+  <span>キー操作はこの画面でもスライド側でも同じです。</span>
+  <span id="warn"></span>
+</footer>
+<script src="data.js"></script>
+<script>
+const D = window.DECK, LIMIT = window.LIMIT, TOTAL = D[D.length - 1].cumEnd;
+let st = null, skew = 0;
+const $ = (id) => document.getElementById(id);
+const fmt = (s) => { const neg = s < 0; s = Math.abs(Math.round(s)); return (neg ? '-' : '') + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+let shown = -1;
+function renderSlide() {
+  const s = D[st.i], n = D[st.i + 1];
+  $('title').innerHTML = `<b>${st.i + 1} / ${D.length}　${s.title}</b>　目安 ${s.target} 秒（ここまでで ${fmt(s.cumEnd)}）`;
+  $('lines').innerHTML = s.lines.map((l, k) => `<div class="line" data-k="${k}">${l}</div>`).join('');
+  $('curImg').src = 'media/' + s.id + '.jpg';
+  $('curCap').innerHTML = '<b>いま</b>　' + s.title;
+  if (n) { $('nextImg').src = 'media/' + n.id + '.jpg'; $('nextImg').style.visibility = 'visible';
+    $('nextCap').innerHTML = '<b>次</b>　' + n.title + '<br>「' + n.lines[0] + '」'; }
+  else { $('nextImg').style.visibility = 'hidden'; $('nextCap').innerHTML = '<b>次</b>　（最後のページです）'; }
+  shown = st.i;
+}
+function tick() {
+  if (!st) return;
+  if (shown !== st.i) renderSlide();
+  const now = Date.now() + skew, s = D[st.i];
+  const se = (now - st.slideAt) / 1000;
+  const el = st.startedAt ? (now - st.startedAt) / 1000 : 0;
+  $('elapsed').textContent = fmt(el);
+  $('slideT').textContent = Math.floor(se) + ' / ' + Math.round(s.target) + ' 秒';
+  $('slideT').className = 'delta ' + (se > s.target + 3 ? 'bad' : se > s.target ? 'warn' : '');
+  const left = LIMIT - el; $('left').textContent = fmt(left);
+  $('left').className = 'delta ' + (left < 0 ? 'bad' : left < 20 ? 'warn' : 'ok');
+  if (st.startedAt) {
+    // 予定: このページの開始予定 + このページでの経過（目安を上限）
+    const planStart = s.cumEnd - s.target, plan = planStart + Math.min(se, s.target);
+    const d = el - plan;
+    $('delta').textContent = (d >= 0 ? '+' : '') + Math.round(d) + ' 秒' + (d > 2 ? '（遅れ）' : d < -2 ? '（早い）' : '');
+    $('delta').className = 'delta ' + (d > 8 ? 'bad' : d > 2 ? 'warn' : 'ok');
+    document.querySelector('#bar i').style.width = Math.min(100, el / LIMIT * 100) + '%';
+    document.querySelector('#bar i').style.background = el > LIMIT ? 'var(--bad)' : d > 8 ? 'var(--warn)' : 'var(--ok)';
+    document.querySelector('#bar b').style.left = Math.min(100, plan / LIMIT * 100) + '%';
+  } else { $('delta').textContent = 'S で開始'; $('delta').className = 'delta'; }
+  // いま読む行の目安
+  let k = 0; s.lineStart.forEach((t, j) => { if (se >= t) k = j; });
+  document.querySelectorAll('.line').forEach((e, j) => { e.classList.toggle('now', j === k); e.classList.toggle('done', j < k); });
+  $('warn').textContent = (Date.now() - lastState > 2000) ? 'スライドの画面とつながっていません。スライド側で P を押して開き直してください。' : '';
+}
+setInterval(tick, 200);
+let lastState = 0;
+function onState(m) { m = m || {}; if (m.type === 'state') { st = m; skew = m.now - Date.now(); lastState = Date.now(); tick(); } }
+addEventListener('message', (e) => onState(e.data));
+let bc = null; try { bc = new BroadcastChannel('sukettocare-deck'); bc.onmessage = (e) => onState(e.data); } catch (e) {}
+function act(a) {
+  const m = { type: 'act', act: a };
+  if (window.opener && !window.opener.closed) window.opener.postMessage(m, '*');
+  else if (bc) bc.postMessage(m);
+}
+const KEYS = { ArrowRight:'next', ' ':'next', PageDown:'next', Enter:'next', ArrowDown:'next',
+  ArrowLeft:'prev', PageUp:'prev', ArrowUp:'prev', Backspace:'prev', Home:'first',
+  s:'start', t:'reset', r:'replay', b:'black', '.':'black' };
+addEventListener('keydown', (e) => { if (e.metaKey || e.ctrlKey || e.altKey) return; const a = KEYS[e.key] || KEYS[e.key.toLowerCase()]; if (a) { e.preventDefault(); act(a); } });
+document.querySelectorAll('footer button').forEach((b) => b.addEventListener('click', () => act(b.dataset.a)));
+if (window.opener) window.opener.postMessage({ type: 'hello' }, '*');
+if (bc) bc.postMessage({ type: 'hello' });
+setInterval(tick, 1000);
+$('warn').textContent = '';
+</script>
+</body>
+</html>
