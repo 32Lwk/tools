@@ -257,19 +257,19 @@ window.DECK=[
    "画面は Firebase Hosting の CDN から。API は Cloud Armor の WAF とロードバランサを通り、データは Firestore へ。",
    "組むのは、Cloud Run 上の最適化ソルバー。ルールを破る案は出しません。",
    "Gemini は、言葉をルールに翻訳し、理由を説明。個人情報は、Sensitive Data Protection で伏せて渡します。",
-   "打診の結果は Pub/Sub から BigQuery へ。記録から学習し、順番が育ちます。",
+   "打診の結果は Pub/Sub から BigQuery へ。記録から学習し、施設ごとに最適化されていきます。",
    "AI は提案。正しさはソルバー。決めるのは、人です。"
   ],
-  "target": 46.1,
+  "target": 47.4,
   "clip": 44.94,
   "lineStart": [
    0.0,
    14.7,
    21.6,
-   33.5,
-   41.5
+   33.4,
+   42.8
   ],
-  "cumEnd": 210.7,
+  "cumEnd": 212.0,
   "kind": "html",
   "src": "slides/ar-d.html",
   "steps": true
@@ -286,7 +286,7 @@ window.DECK=[
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 216.7
+  "cumEnd": 218.0
  },
  {
   "id": "g5",
@@ -300,7 +300,7 @@ window.DECK=[
    0.0
   ],
   "rate": 1.0,
-  "cumEnd": 220.2
+  "cumEnd": 221.5
  },
  {
   "id": "cl",
@@ -316,7 +316,7 @@ window.DECK=[
    9.8
   ],
   "rate": 1.0,
-  "cumEnd": 233.5
+  "cumEnd": 234.8
  },
  {
   "id": "arch-full",
@@ -328,7 +328,7 @@ window.DECK=[
    "（質疑で構成を聞かれたときだけ出す。クリックした所を拡大、もう一度クリックで戻る）"
   ],
   "target": 0,
-  "cumEnd": 233.5,
+  "cumEnd": 234.8,
   "lineStart": [
    0
   ]
