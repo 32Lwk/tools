@@ -238,22 +238,22 @@ window.DECK=[
   "id": "ar",
   "title": "Google Cloud で動く仕組み",
   "lines": [
-   "画面は Firebase Hosting の CDN から。API は Cloud Armor の WAF とロードバランサを通り、データは Firestore へ。",
-   "組むのは、Cloud Run 上の最適化ソルバー。ルールを破る案は出しません。",
+   "WAF、ALB、Cloud Run で動かし、Firebase Hosting で配信。",
+   "シフトを組むのは、Cloud Run 上の最適化ソルバー。ルールを破る案は出しません。",
    "Gemini は、言葉をルールに翻訳し、理由を説明。個人情報は、Sensitive Data Protection で伏せて渡します。",
    "打診の結果は Pub/Sub から BigQuery へ。記録から学習し、施設ごとに最適化されていきます。",
    "AI は提案。正しさはソルバー。決めるのは、人です。"
   ],
-  "target": 47.4,
+  "target": 41.5,
   "clip": 44.94,
   "lineStart": [
    0.0,
-   14.7,
-   21.6,
-   33.4,
-   42.8
+   7.8,
+   15.5,
+   27.4,
+   36.9
   ],
-  "cumEnd": 206.7,
+  "cumEnd": 200.8,
   "kind": "html",
   "src": "slides/ar-d.html",
   "steps": true
@@ -273,7 +273,7 @@ window.DECK=[
    0.0,
    8.8
   ],
-  "cumEnd": 221.2
+  "cumEnd": 215.3
  },
  {
   "id": "cl",
@@ -289,7 +289,7 @@ window.DECK=[
    9.8
   ],
   "rate": 1.0,
-  "cumEnd": 234.5
+  "cumEnd": 228.6
  },
  {
   "id": "qa",
@@ -333,7 +333,7 @@ window.DECK=[
    }
   ],
   "target": 0,
-  "cumEnd": 234.5,
+  "cumEnd": 228.6,
   "lineStart": [
    0
   ]
@@ -348,7 +348,7 @@ window.DECK=[
    "作る（Terraform・GitHub Actions）→ 出す（Cloud Build・Artifact Registry・プレビュー）→ 見守る（Cloud Monitoring・Cloud Logging・AI の品質）。守るは IAM の最小権限。"
   ],
   "target": 0,
-  "cumEnd": 234.5,
+  "cumEnd": 228.6,
   "lineStart": [
    0
   ]
@@ -363,7 +363,7 @@ window.DECK=[
    "（クリックした所を拡大、もう一度クリックで戻る）"
   ],
   "target": 0,
-  "cumEnd": 234.5,
+  "cumEnd": 228.6,
   "lineStart": [
    0
   ]
@@ -383,7 +383,7 @@ window.DECK=[
    0,
    0
   ],
-  "cumEnd": 234.5,
+  "cumEnd": 228.6,
   "kind": "html",
   "src": "slides/sv3.html",
   "steps": true,

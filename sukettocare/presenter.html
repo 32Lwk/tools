@@ -24,7 +24,7 @@
   #script { overflow:auto; min-height:0; }
   #title { font-size:18px; color:var(--sub); margin-bottom:10px; }
   #title b { color:var(--ink); }
-  .line { font-size:34px; line-height:1.6; padding:6px 14px; margin:0 -14px 6px; border-radius:10px; color:#c9ced4; }
+  .line { font-size:var(--fs, 34px); line-height:1.6; padding:6px 14px; margin:0 -14px 6px; border-radius:10px; color:#c9ced4; }
   .line.now { color:#fff; background:rgba(255,214,102,.12); box-shadow:inset 4px 0 0 var(--now); }
   .line.done { color:#6c747d; }
   aside { display:flex; flex-direction:column; gap:14px; min-height:0; overflow:auto; }
@@ -74,7 +74,7 @@
   <button data-a="prev">← 戻る</button><button data-a="next">次へ →</button>
   <button data-a="start">タイマー開始 (S)</button><button data-a="reset">タイマーを 0 に (T)</button>
   <button data-a="replay">映像を最初から (R)</button><button data-a="black">黒画面 (B)</button>
-  <button id="editBtn">原稿を編集 (E)</button><button data-a="swap">表示を入れ替え (X)</button><button data-a="full">この画面を全画面 (F)</button>
+  <button id="fsDown" title="文字を小さく（-）">A−</button><button id="fsUp" title="文字を大きく（+）">A＋</button><button id="editBtn">原稿を編集 (E)</button><button data-a="swap">表示を入れ替え (X)</button><button data-a="full">この画面を全画面 (F)</button>
   <button id="openDeck2">スライドを外のモニターに出す</button>
   
   <span id="warn"></span>
@@ -218,6 +218,12 @@ else { if (window.opener) window.opener.postMessage({ type: 'hello' }, '*'); if 
 setInterval(tick, 1000);
 $('warn').textContent = '';
 $('editBtn').addEventListener('click', toggleEdit);
+// 原稿の文字の大きさ（このブラウザに覚える）
+let FS = 34; try { FS = +localStorage.getItem('sukettocare-fs') || 34; } catch (e) {}
+function setFs(v) { FS = Math.max(18, Math.min(60, v)); document.documentElement.style.setProperty('--fs', FS + 'px'); try { localStorage.setItem('sukettocare-fs', FS); } catch (e) {} }
+setFs(FS);
+$('fsDown').addEventListener('click', () => setFs(FS - 2)); $('fsUp').addEventListener('click', () => setFs(FS + 2));
+addEventListener('keydown', (e) => { if (e.target && e.target.isContentEditable) return; if (e.key === '-' ) { e.preventDefault(); setFs(FS - 2); } if (e.key === '+' || e.key === '=' || e.key === ';') { e.preventDefault(); setFs(FS + 2); } });
 updateTotal();
 </script>
 </body>

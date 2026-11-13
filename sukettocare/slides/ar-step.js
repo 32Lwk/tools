@@ -1,7 +1,7 @@
 // 15枚目の段階表示: 原稿の1文ごとに、その文で話すサービスと、その層を強調する。最後の段で全体とまとめ。
 (function () {
   const STEPS = [
-    ['hosting', 'armor', 'alb', 'firestore'], // 画面は CDN、API は WAF と ALB、データは Firestore
+    ['armor', 'alb', 'run', 'hosting'],     // WAF、ALB、Cloud Run で動かし、Firebase Hosting で配信
     ['run'],                               // Cloud Run 上の最適化ソルバー
     ['gemini', 'sdp'],                     // Gemini（Vertex AI）、Sensitive Data Protection
     ['pubsub', 'bq', 'pipe'],              // Pub/Sub → BigQuery → 学習
