@@ -34,7 +34,7 @@
   #black.on { opacity:1; }
   #help { position:fixed; left:16px; bottom:16px; z-index:10; font-size:14px; line-height:1.7;
     background:rgba(0,0,0,.78); color:#fff; padding:14px 18px; border-radius:10px; max-width:calc(100% - 32px); }
-  #help.hide { display:none; }
+  #help, #help.hide { display:none !important; }
   #help kbd { display:inline-block; min-width:1.6em; text-align:center; padding:0 6px; border:1px solid rgba(255,255,255,.4); border-radius:5px; font-family:inherit; }
   #start { position:fixed; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
     background:rgba(10,12,16,.82); padding:16px; }
@@ -50,7 +50,7 @@
   #start .conn { font-size:15px; font-weight:700; color:#ffb347; margin-bottom:4px; }
   #start .conn.ok { color:#4cd28a; }
   #start .ver { font-size:12px; color:var(--muted); margin-top:14px; text-align:right; }
-  #count { position:fixed; right:16px; bottom:12px; z-index:10; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  #count { display:none; } #count-old { position:fixed; right:16px; bottom:12px; z-index:10; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
 </style>
 </head>
 <body>
@@ -95,7 +95,7 @@ const els = D.map((s) => {
     el = document.createElement('iframe'); el.src = s.src; el.setAttribute('scrolling', 'no'); el.tabIndex = -1;
   } else if (kind(s) === 'hub') {
     el = document.createElement('div'); el.className = 'hub';
-    el.innerHTML = `<div class="hh"><span>質疑対応</span>画像を押すとそのページへ。そこで ← を押すとここに戻ります。→ で運用・監視、詳しい構成図へ。</div><div class="hg">` +
+    el.innerHTML = `<div class="hh"><span>質疑対応</span></div><div class="hg">` +
       s.links.map((L, k) => `<button class="hc" data-k="${k}"><img src="${L.img}" alt=""><span>${L.label}</span></button>`).join('') + '</div>';
     el.querySelectorAll('.hc').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); jump(+b.dataset.k); }));
   } else if (kind(s) === 'image') {
