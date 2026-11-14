@@ -215,6 +215,22 @@ window.DECK=[
   "steps": true
  },
  {
+  "id": "sv3",
+  "title": "足りない時間が見える",
+  "lines": [
+   "欠員が出ると、足りない時間が、自動で見つかります。"
+  ],
+  "target": 5.0,
+  "clip": 12.6,
+  "lineStart": [
+   0.0
+  ],
+  "cumEnd": 153.8,
+  "kind": "html",
+  "src": "slides/sv3.html",
+  "steps": true
+ },
+ {
   "id": "sv4",
   "title": "足りない時間を埋める",
   "lines": [
@@ -229,7 +245,7 @@ window.DECK=[
    2.3,
    6.4
   ],
-  "cumEnd": 159.3,
+  "cumEnd": 164.3,
   "kind": "html",
   "src": "slides/sv4.html",
   "steps": true
@@ -253,7 +269,7 @@ window.DECK=[
    27.4,
    36.9
   ],
-  "cumEnd": 200.8,
+  "cumEnd": 205.8,
   "kind": "html",
   "src": "slides/ar-d.html",
   "steps": true
@@ -273,7 +289,7 @@ window.DECK=[
    0.0,
    8.8
   ],
-  "cumEnd": 215.3
+  "cumEnd": 220.3
  },
  {
   "id": "cl",
@@ -289,7 +305,7 @@ window.DECK=[
    9.8
   ],
   "rate": 1.0,
-  "cumEnd": 228.6
+  "cumEnd": 233.6
  },
  {
   "id": "qa",
@@ -324,16 +340,16 @@ window.DECK=[
    {
     "id": "sv4",
     "img": "png/14_足りない時間を埋める.png",
-    "label": "13. 足りない時間を埋める"
+    "label": "14. 足りない時間を埋める"
    },
    {
     "id": "ar",
     "img": "png/15_GoogleCloudで動く仕組み.png",
-    "label": "14. Google Cloud で動く仕組み"
+    "label": "15. Google Cloud で動く仕組み"
    }
   ],
   "target": 0,
-  "cumEnd": 228.6,
+  "cumEnd": 233.6,
   "lineStart": [
    0
   ]
@@ -348,7 +364,7 @@ window.DECK=[
    "作る（Terraform・GitHub Actions）→ 出す（Cloud Build・Artifact Registry・プレビュー）→ 見守る（Cloud Monitoring・Cloud Logging・AI の品質）。守るは IAM の最小権限。"
   ],
   "target": 0,
-  "cumEnd": 228.6,
+  "cumEnd": 233.6,
   "lineStart": [
    0
   ]
@@ -363,31 +379,10 @@ window.DECK=[
    "（クリックした所を拡大、もう一度クリックで戻る）"
   ],
   "target": 0,
-  "cumEnd": 228.6,
+  "cumEnd": 233.6,
   "lineStart": [
    0
   ]
- },
- {
-  "id": "sv3",
-  "title": "予備: 足りない時間が見える",
-  "lines": [
-   "欠員が出ると、",
-   "必要な人数と配置の人数を時間ごとに比べ、",
-   "足りない時間が、自動で見つかります。"
-  ],
-  "target": 0,
-  "clip": 12.6,
-  "lineStart": [
-   0,
-   0,
-   0
-  ],
-  "cumEnd": 228.6,
-  "kind": "html",
-  "src": "slides/sv3.html",
-  "steps": true,
-  "backup": true
  }
 ];
 window.LIMIT=240;
